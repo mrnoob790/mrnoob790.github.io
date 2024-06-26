@@ -1,0 +1,1 @@
+<a href="blob:google.com" target="x" onclick="setTimeout('d()', 2000);">Click Me</a>
