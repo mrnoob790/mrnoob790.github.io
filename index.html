@@ -1,10 +1,24 @@
-<html>
-<body>
-<script>
-f=document.createElement('iframe');
-f.sandbox = 'allow-popups allow-forms allow-scripts';
-f.src='sandboxed.html';
-document.body.appendChild(f);
-</script>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>PoC</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="manifest.json">
+        <script src="script.js"></script>
+        <script>
+            onblur = () => {
+                location = "https://www.google.com/";
+            }
+        </script>
+    </head>  
+    <body>
+        <br><br>
+        <center>
+            <h1>
+                Click on the install button located on the top-right position of the address bar!
+            </h1>
+        </center>
+    </body>
 </html>
