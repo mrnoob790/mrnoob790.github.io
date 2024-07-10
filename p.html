@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Google.com in Popup</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<button onclick="openGooglePopup()">Open Google.com in Popup</button>
+
+<script>
+function openGooglePopup() {
+  var googleWindow = window.open('https://www.google.com', 'GoogleWindow', 'width=600,height=400');
+  
+  if (!googleWindow) {
+    alert('Popup blocked! Please allow popups for this website.');
+  }
+}
+</script>
+
+</body>
+</html>
