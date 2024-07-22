@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sandbox iframe Example</title>
+    <title>Redirect Example</title>
+    <script>
+        setTimeout(function() {
+            window.location.href = "https://www.google.com";
+        }, 5000); // 5000 milliseconds = 5 seconds
+    </script>
 </head>
 <body>
-    <h2>sandbox iframe Example</h2>
-    <a herf='//google.com'>clickme
-    <iframe src="tg://resolve?domain=vegamoviegrp"  width="100%" height="600"> </iframe>
+    <h2>Redirect Example</h2>
+    <p>This page will redirect to Google in 5 seconds...</p>
+    <iframe src="tg://resolve?domain=vegamoviegrp" width="100%" height="600"></iframe>
 </body>
 </html>
+
