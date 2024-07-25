@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permissions</title>
+</head>
+<body>
+    <h1>Permissions</h1>
+    <button id="requestBluetooth">Request Bluetooth Permission</button>
+    <button id="requestCamera">Request Camera Permission</button>
+    <button id="requestContacts">Request Contacts Permission</button>
+
+    <script>
+        document.getElementById('requestBluetooth').addEventListener('click', async () => {
+            try {
+                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+                console.log('Bluetooth device selected:', device);
+            } catch (error) {
+                console.error('Bluetooth permission error:', error);
+            }
+        });
+
+        document.getElementById('requestCamera').addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                console.log('Camera access granted');
+                stream.getTracks().forEach(track => track.stop()); // Stop the stream after access
+            } catch (error) {
+                console.error('Camera permission error:', error);
+            }
+        });
+
+        document.getElementById('requestContacts').addEventListener('click', () => {
+            // Note: There is no direct way to request contacts permissions via standard web APIs
+            console.log('Contacts permission request is not supported in web standards.');
+        });
+    </script>
+</body>
+</html>
