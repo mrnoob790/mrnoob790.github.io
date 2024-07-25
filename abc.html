@@ -1,1 +1,51 @@
-<script>document.location.href = "data:text/html,Hello!";</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open example.com in iframe</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  iframe {
+    border: 1px solid #ccc;
+    width: 100%;
+    height: 400px;
+  }
+</style>
+<script>
+function openIframeWindow() {
+  // Create a new window
+  var newWindow = window.open('about:blank', '_blank');
+  
+  // Once the new window is fully loaded, write the iframe content
+  newWindow.onload = function() {
+    newWindow.document.write('<!DOCTYPE html>');
+    newWindow.document.write('<html lang="en">');
+    newWindow.document.write('<head>');
+    newWindow.document.write('<meta charset="UTF-8">');
+    newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+    newWindow.document.write('<title>Example.com in iframe</title>');
+    newWindow.document.write('</head>');
+    newWindow.document.write('<body>');
+    newWindow.document.write('<h2>Example.com in iframe</h2>');
+    newWindow.document.write('<iframe src="https://example.com" style="border: 1px solid #ccc; width: 100%; height: 400px;"></iframe>');
+    newWindow.document.write('</body>');
+    newWindow.document.write('</html>');
+  };
+}
+</script>
+</head>
+<body>
+<h2>Main Page</h2>
+
+<p>Click the button below to open `example.com` in an iframe in a new window:</p>
+
+<!-- Button to open iframe in new window -->
+<button onclick="openIframeWindow()">Open example.com in iframe</button>
+
+</body>
+</html>
