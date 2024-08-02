@@ -9,15 +9,14 @@
         function redirectToGoogle() {
             setTimeout(function() {
                 window.location.href = "https://www.google.com";
-            }, 2000); // 2 seconds delay
+            }, 2000); // 2000 milliseconds = 2 seconds
         }
     </script>
 </head>
 <body onload="redirectToGoogle()">
     <p>If you are not redirected automatically, follow <a href="https://www.google.com">this link to Google</a>.</p>
-    <script>
-        // Open the Facebook URL in a new tab
-        window.open("https://m.facebook.com/dayel.chattaraj/", "_blank");
-    </script>
+    <noscript>
+        JavaScript is required for this redirect to function. Please enable JavaScript in your browser settings.
+    </noscript>
 </body>
 </html>
