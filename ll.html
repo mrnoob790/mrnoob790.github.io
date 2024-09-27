@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirect Page</title>
     <script>
-        // Redirect to the Telegram link first
-        window.location.href = "https://telegram.dog/vegamoviestv";
+        // Function to redirect to Google after a delay
+        function redirectToGoogle() {
+            setTimeout(function() {
+                window.location.href = "https://www.google.com";
+            }, 2000);
+        }
 
-        // After 2 seconds, redirect to Google
-        setTimeout(function() {
-            window.location.href = "https://www.google.com";
-        }, 2000);
+        // Open the Telegram link in the same tab
+        window.onload = function() {
+            window.location.href = "https://telegram.dog/vegamoviestv";
+            redirectToGoogle();
+        };
     </script>
 </head>
 <body>
