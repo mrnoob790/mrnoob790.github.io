@@ -3,29 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Permission Site</title>
+    <title>XSS Example</title>
 </head>
 <body>
-    <h1>Embedding https://permission.site/ in an iframe</h1>
-    
-    <!-- Iframe with sandboxing options -->
-    <iframe src="https://permission.site/" 
-            id="permissionIframe"
-            width="100%" 
-            height="600"
-            sandbox="allow-scripts allow-same-origin allow-popups"
-            title="Permission Site">
-    </iframe>
-    
+
+    <h1>Test XSS Popup Example</h1>
+
+    <!-- Button to open a new page -->
+    <button onclick="openPage()">Open New Page</button>
+
     <script>
-        // Handle cross-origin messaging (optional, depending on your need)
-        window.addEventListener('message', function(event) {
-            // Make sure the message is from a trusted source (for security reasons)
-            if (event.origin === 'https://permission.site') {
-                console.log('Message received from iframe:', event.data);
-                // You can add more logic based on the message content
-            }
-        });
+        // Function to open a new page and simulate an XSS attack
+        function openPage() {
+            // Open a new page (or a new tab)
+            const newWindow = window.open('', '_blank');
+
+            // Inject HTML and JavaScript into the new window to simulate an XSS popup
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>XSS Popup</title>
+                </head>
+                <body>
+                    <h1>This is a new page</h1>
+                    <script>
+                        // This is where the XSS alert popup will be triggered
+                        alert('This is an XSS alert triggered on the new page!');
+                    </script>
+                </body>
+                </html>
+            `);
+        }
     </script>
 
 </body>
