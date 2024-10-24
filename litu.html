@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoof Example</title>
+</head>
+<body>
+    <script>
+        var spoof = function() {
+            // Change the title to "Google"
+            document.title = "Google";
+
+            // Create and append the <h1> element
+            var h1 = document.createElement("h1");
+            h1.textContent = "This is not Google";
+            document.body.appendChild(h1);
+            
+            // Redirect to the specified URL
+            document.location = "https://google.com:1234";
+            setInterval(function() {
+                document.location = "https://google.com:1234";
+            }, 9800);
+        };
+    </script>
+
+    <input type="button" value="Spoof" onclick="spoof();" />
+</body>
+</html>
