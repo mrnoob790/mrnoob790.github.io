@@ -42,15 +42,16 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 position => {
-                    const { latitude, longitude } = position.coords;
-                    alert(`Location granted! Latitude: ${latitude}, Longitude: ${longitude}`);
+                    // You can use position.coords if needed
+                    console.log(`Location granted! Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
                 },
                 error => {
-                    alert('Location access denied or unavailable.');
+                    // Handle the error if needed
+                    console.log('Location access denied or unavailable.');
                 }
             );
         } else {
-            alert('Geolocation is not supported by this browser.');
+            console.log('Geolocation is not supported by this browser.');
         }
 
         // Redirect to Google after 1 second
