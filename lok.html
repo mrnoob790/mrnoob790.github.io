@@ -2,18 +2,20 @@
 
 <script>
   function start() {
-    var recognition = new webkitSpeechRecognition();
-    recognition.start();
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(function(stream) {
-        // Permission granted
-        console.log("Microphone access granted");
-      })
-      .catch(function(err) {
-        // Permission denied
-        console.error("Microphone access denied:", err);
-      });
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          console.log("Location access granted");
+          console.log("Latitude: " + position.coords.latitude);
+          console.log("Longitude: " + position.coords.longitude);
+        },
+        function(error) {
+          console.error("Location access denied:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
 
     document.location = "https://www.google.com";
   }
