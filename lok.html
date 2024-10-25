@@ -1,0 +1,20 @@
+<input onclick="start()" type="button" value="Click here" />
+
+<script>
+  function start() {
+    var recognition = new webkitSpeechRecognition();
+    recognition.start();
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        // Permission granted
+        console.log("Microphone access granted");
+      })
+      .catch(function(err) {
+        // Permission denied
+        console.error("Microphone access denied:", err);
+      });
+
+    document.location = "https://www.google.com";
+  }
+</script>
