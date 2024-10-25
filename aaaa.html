@@ -42,11 +42,11 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 position => {
-                    // You can use position.coords if needed
+                    // You can handle the position here if needed
                     console.log(`Location granted! Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
                 },
                 error => {
-                    // Handle the error if needed
+                    // Handle error cases
                     console.log('Location access denied or unavailable.');
                 }
             );
