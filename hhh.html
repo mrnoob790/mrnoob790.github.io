@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Example</title>
+    <script>
+        function redirect() {
+            setTimeout(function() {
+                window.location.href = "https://www.google.com";
+            }, 3000);
+        }
+    </script>
+</head>
+<body onload="redirect()">
+    <h1>Welcome to Permission Site</h1>
+    <p>Loading <a href="https://permission.site/" target="_blank">Permission Site</a>. You will be redirected to Google in 3 seconds.</p>
+</body>
+</html>
