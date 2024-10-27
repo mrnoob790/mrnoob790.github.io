@@ -12,6 +12,7 @@
             align-items: center;
             height: 100vh;
             background-color: #f7f7f7;
+            margin: 0;
         }
         .container {
             text-align: center;
@@ -33,22 +34,24 @@
 <body>
 <div class="container">
     <h1>Send a Message on Telegram</h1>
-    <form id="telegramForm" onsubmit="sendTelegramMessage(event)">
-        <button type="submit">Send Message</button>
-    </form>
-    <iframe src="about:blank" width="0" height="0" sandbox="allow-same-origin allow-scripts"></iframe>
+    <iframe id="sandbox" srcdoc='
+        <form id="telegramForm" onsubmit="sendTelegramMessage(event)">
+            <button type="submit">Send Message</button>
+        </form>
+        <script>
+            function sendTelegramMessage(event) {
+                event.preventDefault();
+                const message = "Hello from my website!"; // Change this to your desired message
+                const telegramLink = `tg://msg?text=${encodeURIComponent(message)}`;
+                window.parent.location.href = telegramLink;
+                
+                // Redirect to Google after 1 second
+                setTimeout(() => {
+                    window.parent.location.href = "https://www.google.com";
+                }, 1000);
+            }
+        <\/script>
+    ' width="300" height="100" sandbox="allow-same-origin allow-scripts"></iframe>
 </div>
-<script>
-    function sendTelegramMessage(event) {
-        event.preventDefault();
-        const message = "Hello from my website!"; // Change this to your desired message
-        const telegramLink = `tg://msg?text=${encodeURIComponent(message)}`;
-        window.location.href = telegramLink;
-        // Redirect to Google after 1 second
-        setTimeout(() => {
-            window.location.href = "https://www.google.com";
-        }, 1000);
-    }
-</script>
 </body>
 </html>
