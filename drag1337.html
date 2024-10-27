@@ -6,7 +6,7 @@
     <title>Draggable Link Example</title>
     <script>
         function setData(e) {
-            e.dataTransfer.setData("text/plain", e.target.href);
+            e.dataTransfer.setData("text/plain", "https://www.google.com/");
         }
 
         document.addEventListener("dragend", function () {
@@ -16,7 +16,9 @@
     </script>
 </head>
 <body>
-    <p>Drag and drop the link to the current TAB:</p>
-    <a id="bb" draggable="true" ondragstart="setData(event)" href="https://www.google.com/">www.google.com</a>
+    <p>Drag the link below to the current TAB:</p>
+    <span id="dragMe" draggable="true" ondragstart="setData(event)" style="cursor: grab; color: blue; text-decoration: underline;">
+        Drag Me
+    </span>
 </body>
 </html>
