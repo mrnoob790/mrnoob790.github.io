@@ -1,0 +1,15 @@
+<button id="playAudioButton">Play Audio</button>
+
+<script>
+  const audioButton = document.getElementById('playAudioButton');
+
+  audioButton.addEventListener('click', async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Use the audio stream here (e.g., for playing audio)
+      console.log('Audio permission granted!');
+    } catch (err) {
+      console.error('Error obtaining audio permission:', err);
+    }
+  });
+</script>
