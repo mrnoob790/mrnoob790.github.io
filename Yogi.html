@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Multiple Tabs</title>
+    <script>
+        function openMultipleTabs() {
+            const url = "https://lbstyle.github.io/alert_exploit.html"; // Replace with your desired URL
+            for (let i = 0; i < 20; i++) {
+                window.open(url, '_blank');
+            }
+        }
+    </script>
+</head>
+<body>
+    <button onclick="openMultipleTabs()">Open 20 Tabs</button>
+</body>
+</html>
