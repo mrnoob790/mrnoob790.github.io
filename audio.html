@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Permission Request</title>
+</head>
+<body>
+    <h1>Audio Permission Example</h1>
+    <button id="requestAudio">Request Audio Permission</button>
+
+    <script>
+        document.getElementById('requestAudio').addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                console.log('Audio permission granted');
+                // You can use the audio stream here
+                // For example, you might play it or connect it to an audio context
+            } catch (error) {
+                console.error('Audio permission denied:', error);
+            }
+        });
+    </script>
+</body>
+</html>
