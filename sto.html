@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Permission Example</title>
+</head>
+<body>
+    <h1>Request Storage Permission</h1>
+    <button id="requestPermission">Request Storage Permission</button>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('requestPermission').addEventListener('click', async () => {
+            try {
+                // Check if the Storage Access API is supported
+                if (document.requestStorageAccess) {
+                    const result = await document.requestStorageAccess();
+                    document.getElementById('status').textContent = 'Storage access granted!';
+                } else {
+                    document.getElementById('status').textContent = 'Storage Access API not supported in this browser.';
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 'Storage access denied: ' + error;
+            }
+        });
+    </script>
+</body>
+</html>
