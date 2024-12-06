@@ -1,0 +1,94 @@
+<html>
+  <head></head>
+  <body id="xx" onload="jjk()">
+
+    <div style="position: absolute; margin-top: 20px;">
+      <label><span style="width: 100px; margin-left: 50px;">PRESS ENTER 2 TIME FAST.............</span></label>
+    </div>
+
+    <div style="margin-left:80px; margin-top: 20px; z-index: 1; position: absolute;">
+      <span id="xz" style="width: 100px;"></span>
+      <select onclick="getVideo()" ondblclick="getVideo()" onkeypress="getVideo()" autofocus="" id="sf" style="width:200px; opacity: 0;">
+        <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access Camera</option>
+      </select>
+    </div>
+
+    <script>
+      var x = document.getElementById("demo");
+
+      function getVideo() {
+        document.getElementById("sf").removeAttribute("disabled");
+
+        // Request video stream permission
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+              // Stream is available, focus on the select element and display success message
+              console.log("Video access granted");
+              document.getElementById("sf").focus();
+              // Optionally, you could display the video stream on a video element like below:
+              // const videoElement = document.createElement('video');
+              // videoElement.srcObject = stream;
+              // videoElement.play();
+            })
+            .catch(function(error) {
+              console.log("Error accessing video: " + error.message);
+              alert("Error accessing video. Please ensure that your camera is available and not blocked.");
+            });
+        } else {
+          console.log("Video is not supported by this browser.");
+          alert("Video permission is not supported by this browser.");
+        }
+      }
+
+      function jjk() {
+        const myTimeout = setTimeout(xxy, 10);
+      }
+
+      function fullscreen() {
+        document.getElementById("xx").requestFullscreen().then(function() {
+          // Fullscreen logic
+        })
+        .catch(function(error) {
+          console.log(error.message);
+        });
+      }
+
+      var t = 0;
+      document.onmousedown = function (e) {
+        t = t + 1;
+        if (t === 1) {
+          document.getElementById("sf").removeAttribute("disabled");
+        }
+        if (t === 2) {
+          if (document.getElementById("sf").options[0] == undefined) {
+            var min = 0, max = 0, select = document.getElementById('sf');
+            for (var i = min; i <= max; i++) {
+              var opt = document.createElement('option');
+              opt.value = i;
+              opt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access Camera";
+              select.appendChild(opt);
+            }
+          }
+          getVideo();
+        }
+        if (t === 3) {
+          document.getElementById("sf").style.marginLeft = '100px';
+          var u = document.getElementById("xz");
+          u.innerHTML = "Span content changed";
+        }
+      };
+
+      document.addEventListener("keypress", myEventHandler);
+
+      function myEventHandler(event) {
+        document.getElementById("sf").focus();
+      }
+
+      function xxy() {
+        document.getElementById("sf").focus();
+      }
+    </script>
+
+  </body>
+</html>
