@@ -1,31 +1,54 @@
-<html>
-<head></head>
-<body id="xx" onload="jjk()">
-  <div style="
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio and Video Access</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    video {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body onload="initialize()">
+<div style="
     position: absolute;    margin-top: 20px;"><label><span style="
        width: 100px;    margin-left: 50px;">HOLD SPACEBAR AND FASTLY PRESS ENTER</span></label></div>
-<div style="margin-left:80px;margin-top: 20px;z-index: 1;position: absolute;">  <span id="xz" style="
-    width: 100px;"></span>  <select onclick="getAudio()" ondblclick="getAudio()" onkeypress="getAudio()" autofocus="" id="sf" style="width:200px;opacity: 0;">    <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access Microphone</option></select></div>
+  <script>
+    let mediaStreamStarted = false; // Prevent multiple attempts to start media
 
+    function initialize() {
+      // Add event listener to detect keydown events on the document
+      document.addEventListener('keydown', getMedia);
+    }
 
+    function getMedia() {
+      if (mediaStreamStarted) return; // Prevent multiple calls to getUserMedia
+      mediaStreamStarted = true;
 
-<script>
-var x = document.getElementById("demo");  
-function getAudio() {
-  navigator.mediaDevices.getUserMedia({ audio: true  })
-    .then(function(stream) {
-      // Use the stream to play audio or record
-      const audioContext = new AudioContext();
-      const audioSource = audioContext.createMediaStreamSource(stream);
-      // ... process the audio stream as needed
-    })
-    .catch(function(err) {
-      console.error('Error accessing microphone:', err);
-    });
-}
+      navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        .then(function(stream) {
+          console.log("Audio and video stream received");
 
-// ... rest of the code (jjk, fullscreen, etc.) remains the same
-</script>
+          // Create a video element to display the camera feed
+          const videoElement = document.createElement("video");
+          videoElement.srcObject = stream;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true; // For mobile devices to autoplay inline
+
+          // Append the video element to the body to show the camera feed
+          document.body.appendChild(videoElement);
+        })
+        .catch(function(err) {
+          console.error('Error accessing media devices:', err);
+          alert("Failed to access microphone or camera: " + err.message);
+        });
+    }
+  </script>
 
 </body>
 </html>
