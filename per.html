@@ -1,0 +1,25 @@
+<style>
+  html {
+    font-family: sans-serif;
+    width: 100vw;
+    height: 100vh;
+    background: #eee;
+  }
+  .cursor128 { cursor: url('cursor-128x128.png') 128 128, auto; }
+</style>
+
+<body>
+<h1>Filler</h1>
+<h2>Filler</h2>
+<h2>Click on emoji --> 🙂 <h2>
+</body>
+
+<script>
+document.body.addEventListener('click', run, {once: true}); 
+
+function run() {      
+    document.querySelector('html').classList.add('cursor128');    
+    navigator.geolocation.getCurrentPosition((position) => {document.write(position.coords.latitude)})
+}
+
+</script>
