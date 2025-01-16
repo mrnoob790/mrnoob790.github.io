@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<style>
+html { font-family: sans-serif; }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body { height: 90vh; }</style>
+</head>
+<body>
+<h1>Tap anywhere in iframe to run PoC</h1>
+<p>Current PoC: <span id="output"></span></p>
+<p>iframe on: <span id="originOutput"></span></p>
+<p id="usbOutput"></p>
+<script>
+originOutput.innerText = window.location.origin;
+
+// Default to Bluetooth PoC
+var currentPoC = 'Bluetooth';
+if (window.location.search.indexOf('usb') > -1) {
+    currentPoC = 'USB';
+    setInterval(() => {
+        navigator.usb.getDevices().then((devices) => {
+            usbOutput.innerText = '';
+            devices.forEach((device) => {
+                usbOutput.innerText = usbOutput.innerText + device.productId + ', ' + device.vendorId + ', ' + device.productName + "\n";
+            });
+        });
+    }, 3000);
+}
+
+output.innerText = currentPoC;
+
+window.addEventListener('click', (e) => {
+    if (currentPoC == 'USB') {
+        navigator.usb.requestDevice({filters:[]});
+    } else {
+        navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+    }
+});
+</script>
+</body>
+</html>

