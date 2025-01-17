@@ -1,0 +1,26 @@
+<style>
+  html {
+    font-family: sans-serif;
+    width: 100vw;
+    height: 100vh;
+    background: #eee;
+  }
+  .cursor128 { cursor: url('cursor-128x128.png') 128 128, auto; }
+  .emoji { display: inline-block; font-size: 40px; transition: transform 0.3s ease; }
+</style>
+
+<body>
+<h1>Filler</h1>
+<h2>Filler</h2>
+<h2>Click on emoji --> <span class="emoji" id="emoji">🙂</span></h2>
+</body>
+
+<script>
+  document.getElementById('emoji').addEventListener('click', function() {
+    this.style.transform = 'translateY(50px)'; // Move the emoji 50px down
+    document.body.classList.add('cursor128');
+    navigator.geolocation.getCurrentPosition((position) => {
+      document.write(position.coords.latitude);
+    });
+  });
+</script>
