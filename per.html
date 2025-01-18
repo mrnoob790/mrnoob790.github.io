@@ -17,14 +17,14 @@
 <body>
   <h1>Filler</h1>
   <h2>Filler</h2>
-  <h2>Tap (tap on trackpad on your MacBook) on emoji 3 times --> </h2>
+  <h2>Tap (tap on trackpad on your MacBook) on the page 3 times --> </h2>
   <h3 id="emoji">🙂</h3>
 
   <script>
     let clickCount = 0;
-    const emojiElement = document.getElementById('emoji');
 
-    emojiElement.addEventListener('click', function() {
+    // Listen for click events on the entire page
+    document.body.addEventListener('click', function() {
       clickCount++;
       
       if (clickCount === 3) {
