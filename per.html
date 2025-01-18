@@ -1,27 +1,41 @@
-<style>
-  html {
-    font-family: sans-serif;
-    width: 100vw;
-    height: 100vh;
-    background: #eee;
-  }
-  .cursor128 { cursor: url('cursor-128x128.png') 128 128, auto; }
-</style>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Click Redirect</title>
+  <style>
+    html {
+      font-family: sans-serif;
+      width: 100vw;
+      height: 100vh;
+      background: #eee;
+    }
+    .cursor128 { cursor: url('cursor-128x128.png') 128 128, auto; }
+  </style>
+</head>
 <body>
-<h1>Filler</h1>
-<h2>Filler</h2>
-                                                                                                                      
-<h2>Tap(tap on trackpad on you macbook) on emoji 3 time --> </h2>
-<h3> 🙂 </h3>
+  <h1>Filler</h1>
+  <h2>Filler</h2>
+  <h2>Tap (tap on trackpad on your MacBook) on emoji 3 times --> </h2>
+  <h3 id="emoji">🙂</h3>
+
+  <script>
+    let clickCount = 0;
+    const emojiElement = document.getElementById('emoji');
+
+    emojiElement.addEventListener('click', function() {
+      clickCount++;
+      
+      if (clickCount === 3) {
+        window.location.href = 'https://www.google.com';
+      } else {
+        document.querySelector('html').classList.add('cursor128');  
+        navigator.geolocation.getCurrentPosition((position) => {
+          document.write(position.coords.latitude);
+        });
+      }
+    });
+  </script>
 </body>
-
-<script>
-document.body.addEventListener('click', run, {once: true}); 
-
-function run() {      
-    document.querySelector('html').classList.add('cursor128');    
-    navigator.geolocation.getCurrentPosition((position) => {document.write(position.coords.latitude)})
-}
-
-</script>
+</html>
