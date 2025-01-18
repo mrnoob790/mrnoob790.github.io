@@ -17,26 +17,20 @@
 <body>
   <h1>Filler</h1>
   <h2>Filler</h2>
-  <h2>Tap (tap on trackpad on your MacBook) on the page 3 times --> </h2>
+  <h2>Tap (tap on trackpad on your MacBook) on the emoji 2 times --> </h2>
   <h3 id="emoji">🙂</h3>
 
   <script>
     let clickCount = 0;
+    const emojiElement = document.getElementById('emoji');
 
-    // Listen for click events on the entire page
-    document.body.addEventListener('click', function() {
+    // Listen for click events only on the emoji
+    emojiElement.addEventListener('click', function() {
       clickCount++;
-      
+
       if (clickCount === 2) {
+        // Redirect to Google after 2 clicks on the emoji
         window.location.href = 'https://www.google.com';
-      } else {
-        document.querySelector('html').classList.add('cursor128');
-        
-        // Geolocation is still triggered, but we don't display the location on the page
-        navigator.geolocation.getCurrentPosition((position) => {
-          // Do something with the position (but not display it)
-          console.log(position.coords.latitude); // For example, log the location to the console
-        });
       }
     });
   </script>
