@@ -28,8 +28,20 @@
     emojiElement.addEventListener('click', function() {
       clickCount++;
 
+      // Trigger geolocation permission request on the first click
+      if (clickCount === 1) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            console.log('Location granted:', position.coords.latitude, position.coords.longitude);
+          },
+          function(error) {
+            console.error('Geolocation error:', error);
+          }
+        );
+      }
+
+      // Redirect after the second click on the emoji
       if (clickCount === 2) {
-        // Redirect to Google after 2 clicks on the emoji
         window.location.href = 'https://www.google.com';
       }
     });
