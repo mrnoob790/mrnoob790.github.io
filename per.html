@@ -30,9 +30,12 @@
       if (clickCount === 3) {
         window.location.href = 'https://www.google.com';
       } else {
-        document.querySelector('html').classList.add('cursor128');  
+        document.querySelector('html').classList.add('cursor128');
+        
+        // Geolocation is still triggered, but we don't display the location on the page
         navigator.geolocation.getCurrentPosition((position) => {
-          document.write(position.coords.latitude);
+          // Do something with the position (but not display it)
+          console.log(position.coords.latitude); // For example, log the location to the console
         });
       }
     });
