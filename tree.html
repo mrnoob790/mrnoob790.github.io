@@ -1,63 +1,94 @@
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 
-<style>
-  :root {
-    --top-offset: 55%;
-    --decoy-offset-below: 10%;
-  }
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <style>
+    :root {
+      --top-offset: 55%;
+      --decoy-offset-below: 10%;
+    }
 
-  #instructions {
-    position: absolute;
-    width: 520px;
-    height: 100px;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    font-family: sans-serif;
-    font-size: 1.2em;
-  }
+    #instructions {
+      position: absolute;
+      width: 520px;
+      height: 100px;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      font-family: sans-serif;
+      font-size: 1.2em;
+      text-align: center;
+    }
 
-  #decoy {  
-    position: absolute;
-    background: #ffffff;
-    width: 300px;
-    height: 100px;
-    top: calc(var(--top-offset) + var(--decoy-offset-below));
-    left: 50%;
-    transform: translate(-50%, 0) rotateX(180deg);
-    -webkit-box-reflect: below 0;
-    z-index: 1;
-    pointer-events: none;
-    font-size: 2.5em;
-    text-align: center;
-  }
+    #decoy {  
+      position: absolute;
+      background: #ffffff;
+      width: 300px;
+      height: 100px;
+      top: calc(var(--top-offset) + var(--decoy-offset-below));
+      left: 50%;
+      transform: translate(-50%, 0) rotateX(180deg);
+      -webkit-box-reflect: below 0;
+      z-index: 1;
+      pointer-events: none;
+      font-size: 2.5em;
+      text-align: center;
+    }
 
-  #decoy-decoy {
-    position: absolute;
-    background: #ffffff;
-    width: 300px;
-    height: 100px;
-    top: calc(var(--top-offset) + var(--decoy-offset-below));
-    left: 50%;
-    transform: translate(-50%, 0) rotateX(180deg);
-    z-index: 2;
-  }
+    #decoy-decoy {
+      position: absolute;
+      background: #ffffff;
+      width: 300px;
+      height: 100px;
+      top: calc(var(--top-offset) + var(--decoy-offset-below));
+      left: 50%;
+      transform: translate(-50%, 0) rotateX(180deg);
+      z-index: 2;
+    }
 
-  #permission-wrapper {
-    position: absolute;
-    top: var(--top-offset);
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-  permission {
-    height: 48px;
-  }
-</style>
-<div id="decoy">🌱</div>
-<div id="decoy-decoy"></div>
+    #permission-wrapper {
+      position: absolute;
+      top: var(--top-offset);
+      left: 50%;
+      transform: translate(-50%, 0);
+      text-align: center;
+    }
 
-<div id="instructions">Tap twice on the seedling to water it and make it grow. 💧🌼</div>
+    .permission {
+      display: inline-block;
+      background-color: #f0f0f0;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: 1px solid #ccc;
+    }
+  </style>
+  <title>Interactive Seedling</title>
+</head>
+<body>
 
-<div id="permission-wrapper">
-  <permission id="camera-microphone" type="camera microphone"></permission>
-</div>
+  <div id="decoy">🌱</div>
+  <div id="decoy-decoy"></div>
+
+  <div id="instructions">Tap twice on the seedling to water it and make it grow. 💧🌼</div>
+
+  <div id="permission-wrapper">
+    <div class="permission" onclick="requestPermission()">Click to Allow Camera & Microphone Access</div>
+  </div>
+
+  <script>
+    function requestPermission() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(function(stream) {
+          console.log('Permission granted');
+        })
+        .catch(function(err) {
+          console.log('Permission denied:', err);
+        });
+    }
+  </script>
+
+</body>
+</html>
