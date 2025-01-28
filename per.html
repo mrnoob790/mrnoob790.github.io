@@ -3,40 +3,25 @@
   <h2>Filler</h2>
   <h2>Fast Tap (tap on trackpad on your MacBook) on the emoji  3-4 times  --> </h2>
   <h3 id="emoji">⏩</h3>
-  <p id="instructions">Click the emoji to give permission for audio, video, and location access.</p>
 
   <script>
     let clickCount = 0;
     const emojiElement = document.getElementById('emoji');
-    const instructions = document.getElementById('instructions');
 
     // Listen for click events only on the emoji
     emojiElement.addEventListener('click', function() {
       clickCount++;
 
-      // Provide an explanation to the user before the permissions
+      // Trigger both microphone and camera permission request on the first click
       if (clickCount === 1) {
-        instructions.textContent = "You'll be asked to allow microphone, camera, and location access.";
-
-        // Request both audio and camera permissions
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
           .then(function(stream) {
             console.log('Audio and Camera access granted');
-            // Optionally stop the stream if you don't need it
+            // Optionally, you can stop the stream if you don't need it
             stream.getTracks().forEach(track => track.stop());
-
-            // After audio and video permission, request geolocation
-            navigator.geolocation.getCurrentPosition(
-              function(position) {
-                console.log('Location granted:', position.coords.latitude, position.coords.longitude);
-              },
-              function(error) {
-                console.error('Geolocation error:', error);
-              }
-            );
           })
           .catch(function(error) {
-            console.error('Error accessing audio, video, or geolocation:', error);
+            console.error('Error accessing audio and/or camera:', error);
           });
       }
 
