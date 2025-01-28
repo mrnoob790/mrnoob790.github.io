@@ -1,76 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emoji Click Redirect</title>
-  <style>
-    html {
-      font-family: sans-serif;
-      width: 100vw;
-      height: 100vh;
-      background: #eee;
-    }
-    h3#emoji {
-      margin-top: -20px;  /* Moves the emoji slightly higher */
-      font-size: 30px;
-    }
-  </style>
-</head>
 <body>
   <h1>Filler</h1>
   <h2>Filler</h2>
-  <h2>Fast Tap (tap on trackpad on your MacBook) on the emoji 3-4 times  --> </h2>
+  <h2>Fast Tap (tap on trackpad on your MacBook) on the emoji  3-4 times  --> </h2>
   <h3 id="emoji">⏩</h3>
+  <p id="instructions">Click the emoji to give permission for audio, video, and location access.</p>
 
   <script>
     let clickCount = 0;
     const emojiElement = document.getElementById('emoji');
+    const instructions = document.getElementById('instructions');
 
-    // Debounce function to prevent multiple rapid clicks
-    let debounceTimeout;
-    const debounceDelay = 300;  // 300ms delay
-
-    // Sequential permission requests
+    // Listen for click events only on the emoji
     emojiElement.addEventListener('click', function() {
-      clearTimeout(debounceTimeout);  // Clear any previous debounce timer
+      clickCount++;
 
-      debounceTimeout = setTimeout(function() {
-        clickCount++;
+      // Provide an explanation to the user before the permissions
+      if (clickCount === 1) {
+        instructions.textContent = "You'll be asked to allow microphone, camera, and location access.";
 
-        console.log("Click #" + clickCount);
+        // Request both audio and camera permissions
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+          .then(function(stream) {
+            console.log('Audio and Camera access granted');
+            // Optionally stop the stream if you don't need it
+            stream.getTracks().forEach(track => track.stop());
 
-        // Trigger geolocation permission request on the first click
-        if (clickCount === 1) {
-          console.log("Requesting geolocation...");
-          navigator.geolocation.getCurrentPosition(
-            function(position) {
-              console.log('Location granted:', position.coords.latitude, position.coords.longitude);
-            },
-            function(error) {
-              console.error('Geolocation error:', error);
-            }
-          );
-        }
+            // After audio and video permission, request geolocation
+            navigator.geolocation.getCurrentPosition(
+              function(position) {
+                console.log('Location granted:', position.coords.latitude, position.coords.longitude);
+              },
+              function(error) {
+                console.error('Geolocation error:', error);
+              }
+            );
+          })
+          .catch(function(error) {
+            console.error('Error accessing audio, video, or geolocation:', error);
+          });
+      }
 
-        // Trigger camera and microphone permissions on the second click
-        if (clickCount === 2) {
-          console.log("Requesting camera and microphone...");
-          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(function(stream) {
-              console.log('Camera and microphone access granted');
-              // Optionally, you can use the stream (e.g., show the camera feed)
-            })
-            .catch(function(error) {
-              console.error('Camera or microphone error:', error);
-            });
-        }
-
-        // Redirect after the third click
-        if (clickCount === 3) {
-          window.location.href = 'https://www.google.com';
-        }
-      }, debounceDelay);  // Add a slight delay between requests
+      // Redirect after the second click on the emoji
+      if (clickCount === 3) {
+        window.location.href = 'https://www.google.com';
+      }
     });
   </script>
 </body>
