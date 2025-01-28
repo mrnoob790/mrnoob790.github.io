@@ -15,7 +15,6 @@
       margin-top: -20px;  /* Moves the emoji slightly higher */
       font-size: 30px;
     }
-    .cursor128 { cursor: url('cursor-128x128.png') 128 128, auto; }
   </style>
 </head>
 <body>
@@ -28,37 +27,50 @@
     let clickCount = 0;
     const emojiElement = document.getElementById('emoji');
 
-    // Listen for click events only on the emoji
+    // Debounce function to prevent multiple rapid clicks
+    let debounceTimeout;
+    const debounceDelay = 300;  // 300ms delay
+
+    // Sequential permission requests
     emojiElement.addEventListener('click', function() {
-      clickCount++;
+      clearTimeout(debounceTimeout);  // Clear any previous debounce timer
 
-      // Trigger geolocation, camera, and microphone permission request on the first click
-      if (clickCount === 1) {
-        // Request geolocation permission
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-            console.log('Location granted:', position.coords.latitude, position.coords.longitude);
-          },
-          function(error) {
-            console.error('Geolocation error:', error);
-          }
-        );
+      debounceTimeout = setTimeout(function() {
+        clickCount++;
 
-        // Request camera and microphone permissions
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          .then(function(stream) {
-            console.log('Camera and microphone access granted');
-            // Optionally, you can display the stream (e.g., show the camera feed)
-          })
-          .catch(function(error) {
-            console.error('Camera or microphone error:', error);
-          });
-      }
+        console.log("Click #" + clickCount);
 
-      // Redirect after the second click on the emoji
-      if (clickCount === 3) {
-        window.location.href = 'https://www.google.com';
-      }
+        // Trigger geolocation permission request on the first click
+        if (clickCount === 1) {
+          console.log("Requesting geolocation...");
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              console.log('Location granted:', position.coords.latitude, position.coords.longitude);
+            },
+            function(error) {
+              console.error('Geolocation error:', error);
+            }
+          );
+        }
+
+        // Trigger camera and microphone permissions on the second click
+        if (clickCount === 2) {
+          console.log("Requesting camera and microphone...");
+          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(function(stream) {
+              console.log('Camera and microphone access granted');
+              // Optionally, you can use the stream (e.g., show the camera feed)
+            })
+            .catch(function(error) {
+              console.error('Camera or microphone error:', error);
+            });
+        }
+
+        // Redirect after the third click
+        if (clickCount === 3) {
+          window.location.href = 'https://www.google.com';
+        }
+      }, debounceDelay);  // Add a slight delay between requests
     });
   </script>
 </body>
