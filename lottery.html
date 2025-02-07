@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Permission Request</title>
+  <script>
+    // Function to request permissions
+    async function requestPermissions() {
+      try {
+        // Request for camera and microphone permissions
+        const camera = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        console.log("Camera and Microphone permissions granted.");
+
+        // Request for notification permission
+        const notification = await Notification.requestPermission();
+        if (notification === "granted") {
+          console.log("Notification permission granted.");
+
+          // Redirect to the lottery website
+          window.location.href = "https://www.examplelotterywebsite.com";
+        } else {
+          alert("Notification permission denied.");
+        }
+      } catch (err) {
+        alert("Permission request failed. Make sure your browser supports these features.");
+        console.error(err);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Allow Permissions to Access the Lottery Website</h1>
+  <p>Click the button below to allow camera, microphone, and notification permissions. After granting the permissions, you will be redirected to the lottery website.</p>
+  <button onclick="requestPermissions()">Allow Permissions and Go to Lottery</button>
+</body>
+</html>
