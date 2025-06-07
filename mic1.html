@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mic Permission Spoof</title>
+  <script>
+    function start() {
+      // Trigger mic permission
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(() => console.log("Mic allowed"))
+        .catch(() => console.log("Mic denied"));
+
+      // Add small delay to let the prompt appear before redirect
+      setTimeout(() => {
+        window.location.href = "https://www.google.com";
+      }, 800); // Adjust between 500–1500ms for testing
+    }
+  </script>
+</head>
+<body>
+  <input onclick="start()" type="button" value="Click here" />
+</body>
+</html>
