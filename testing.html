@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Trying to auto-open https://google.com without user click...</p>
+    <iframe 
+      sandbox="allow-scripts" 
+      srcdoc='
+        <script>
+          location.href = "https://google.com";
+        </script>
+      '>
+    </iframe>
+  </body>
+</html>
