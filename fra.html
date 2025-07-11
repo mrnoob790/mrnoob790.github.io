@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Auto Tel Scheme Redirect</title>
+  </head>
+  <body>
+    <h3>If not blocked, this should auto-redirect to a tel: link</h3>
+    <script>
+      var x = window.open("https://www.apple.com/contact/");
+      setTimeout(function () {
+        try {
+          x.location = "tel:+92253263223";
+        } catch (e) {
+          console.log("Redirect blocked or popup blocked", e);
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
