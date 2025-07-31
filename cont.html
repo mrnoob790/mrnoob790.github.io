@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>Chrome Console IPC Trigger Demo</h2>
-    <button onclick="sendPayload()">Trigger sandbox bypass (demo)</button>
+<head>
+  <title>Chrome Sandbox Escape Simulation</title>
+</head>
+<body>
+  <h1>Simulated Chrome Sandbox Escape</h1>
+  <button onclick="triggerExploit()">Trigger Exploit</button>
 
-    <script>
-      function sendPayload() {
-        console.debug(0x42, "SHELLCODE_PLACEHOLDER");
-        alert("console.debug triggered; sandbox escape payload would be activated here.");
-      }
-    </script>
-  </body>
+  <script>
+    function triggerExploit() {
+      // Imagine this code being run from renderer process
+      const ab = new ArrayBuffer(8);
+      const ar = new Int32Array(ab);
+      ar[0] = 0xcccccccc;
+
+      // This is where DLL-triggered hook would respond
+      console.debug("[Exploit Triggered] Sandbox escape payload would execute here.");
+      alert("Sandbox escape trigger simulation complete.");
+    }
+  </script>
+</body>
 </html>
