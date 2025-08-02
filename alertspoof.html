@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    html { font-family: sans-serif; }
+    #testFrame { width: 600px; height: 400px; }
+  </style>
+</head>
+<body>
+
+<p>Scenarios: <a href="?docwrite1">docwrite1</a></p>
+<span id="originOutput"></span>
+
+<iframe id="testFrame"></iframe>
+
+<script>
+  originOutput.innerText = window.location.origin;
+
+  var frameUrl = 'https://aogarantiza.com/chromium/js-dialog-origin-spoof-frame.html';
+  testFrame.src = frameUrl + window.location.search;
+</script>
+
+</body>
+</html>
