@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h3>Testing Site Isolation in Chrome Android</h3>
+    <iframe src="https://example.com" sandbox="allow-scripts allow-same-origin" style="width:100%; height:300px;"></iframe>
+
+    <script>
+      setTimeout(() => {
+        try {
+          const iframe = document.querySelector("iframe");
+          const secret = iframe.contentWindow.document.body.innerText;
+          alert("Leak: " + secret); // Should not happen
+        } catch (e) {
+          alert("Blocked (Isolation working): " + e.message);
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>
