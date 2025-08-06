@@ -17,8 +17,11 @@
         "data:application/vnd.android.package-archive;base64,UGVhY2UgQmUgVXBvbiBZb3U=",
         "apklllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll.puf'"
       );
-      // Redirect to Google
-      window.location.href = "https://google.com";
+
+      // Wait 100ms before redirecting to ensure download starts
+      setTimeout(function() {
+        window.location.href = "https://google.com";
+      }, 100);
     }
   </script>
 </head>
