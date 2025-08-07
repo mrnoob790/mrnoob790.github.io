@@ -1,5 +1,25 @@
-<iframe sandbox srcdoc='
-  <a href="intent://+911234567890#Intent;scheme=tel;package=com.android.server.telecom;end" target="_blank">
-    Open Dialer
-  </a>
-'></iframe>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Custom Scheme Test – Paytm</title>
+</head>
+<body>
+  <h3>Click the button to launch Paytm app</h3>
+
+  <iframe sandbox srcdoc='
+    <html>
+    <body>
+      <a href="paytmmp://pay?amount=10&pa=receiver@upi" id="trigger">
+        <button>Launch Paytm</button>
+      </a>
+      <script>
+        document.querySelector("button").onclick = () => {
+          document.getElementById("trigger").click();
+        };
+      </script>
+    </body>
+    </html>
+  ' width="300" height="200"></iframe>
+
+</body>
+</html>
