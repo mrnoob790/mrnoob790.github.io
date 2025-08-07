@@ -1,13 +1,12 @@
 <iframe sandbox srcdoc='
   <html>
   <body>
-    <a id="upi" target="_blank"
-       href="intent://pay?pa=receiver@paytm&pn=Test+User&am=1&cu=INR#Intent;scheme=upi;package=net.one97.paytm;end">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Paytm_logo.png/320px-Paytm_logo.png" width="200">
+    <a id="open" href="intent://openapp#Intent;scheme=https;package=com.zomato;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.zomato;end">
+      <button>Continue in App</button>
     </a>
     <script>
-      document.querySelector("img").onclick = () => {
-        document.getElementById("upi").click();
+      document.querySelector("button").onclick = () => {
+        document.getElementById("open").click();
       };
     </script>
   </body>
