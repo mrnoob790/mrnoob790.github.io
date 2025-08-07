@@ -1,14 +1,25 @@
-<iframe sandbox srcdoc='
-  <html>
-  <body>
-    <a id="open" href="intent://openapp#Intent;scheme=https;package=com.zomato;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.zomato;end">
-      <button>Continue in App</button>
-    </a>
-    <script>
-      document.querySelector("button").onclick = () => {
-        document.getElementById("open").click();
-      };
-    </script>
-  </body>
-  </html>
-'></iframe>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sandbox Intent Test – Zomato</title>
+</head>
+<body>
+  <h3>Click the button below</h3>
+
+  <iframe sandbox srcdoc='
+    <html>
+    <body>
+      <a id="trigger" href="intent://#Intent;scheme=https;package=com.application.zomato;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.application.zomato&hl=en_IN;end">
+        <button>Continue in App</button>
+      </a>
+      <script>
+        document.querySelector("button").onclick = () => {
+          document.getElementById("trigger").click();
+        };
+      </script>
+    </body>
+    </html>
+  ' width="300" height="200"></iframe>
+
+</body>
+</html>
