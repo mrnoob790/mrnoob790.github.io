@@ -1,1 +1,21 @@
-<input type="file" webkitdirectory id="fileinput" />
+<!DOCTYPE html>
+<html>
+  <body>
+    <input type="file" id="fileinput" webkitdirectory>
+    <script>
+      document.getElementById('fileinput').addEventListener('change', function() {
+        const files = this.files;
+        console.log("Total files:", files.length);
+        for (let i = 0; i < Math.min(files.length, 10); i++) {
+          console.log(i, files[i].webkitRelativePath || files[i].name);
+        }
+        // Example: second file ka content print karenge agar hai
+        if (files[1]) {
+          const r = new FileReader();
+          r.onloadend = function() { console.log("Content of file[1]:", r.result); }
+          r.readAsText(files[1]); // readAsText for readable output
+        }
+      });
+    </script>
+  </body>
+</html>
