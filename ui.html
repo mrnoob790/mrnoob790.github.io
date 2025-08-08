@@ -2,25 +2,16 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>File Picker → Google + Calculator</title>
+<title>File Picker → Google</title>
 </head>
 <body>
-<h1>Tap anywhere to start</h1>
+<h1>Tap anywhere to pick a file</h1>
 
 <script>
 document.body.onclick = async () => {
     try {
-        // Trigger file picker
-        const [fileHandle] = await showOpenFilePicker();
-
-        // Open Google in a new tab
+        await showOpenFilePicker();
         window.open("https://www.google.com", "_blank");
-
-        // Short delay so both actions trigger from the same activation
-        setTimeout(() => {
-            // Try opening Samsung Calculator via intent
-            location.href = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
-        }, 200);
     } catch (err) {
         console.error(err);
     }
@@ -28,26 +19,3 @@ document.body.onclick = async () => {
 </script>
 </body>
 </html>
-        setTimeout(resolve, 12000);
-      });
-      input.remove();
-    }
-
-    // Within the same activation, open the relay popup (this popup inherits the gesture)
-    // Note: do NOT pass 'noopener' — keep the opener relationship so the popup is considered opened by the gesture.
-    const popup = window.open(relayDataUrl, '_blank', 'noopener=no');
-
-    if (!popup) {
-      alert('Popup blocked — ensure popups are not globally blocked for this test.');
-    } else {
-      // Optional: focus popup to help some devices render it
-      try { popup.focus(); } catch(e) {}
-    }
-  } catch (err) {
-    alert('Error: ' + (err && err.message ? err.message : String(err)));
-    console.error(err);
-  }
-}
-
-btn.addEventListener('click', (e) => { e.preventDefault(); start(); });
-</script>
