@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CORB WebSocket Bypass Test</title>
+</head>
+<body>
+<h2>CORB WebSocket Bypass Test</h2>
+<p>Open DevTools (F12) → Console tab → and check the logs.</p>
+
+<script>
+(function(){
+    console.log("Starting CORB WebSocket Bypass Test...");
+    try {
+        var ws = new WebSocket("wss://httpbin.org/html");
+
+        ws.onopen = function() {
+            console.log("✅ WebSocket connected");
+            ws.send("Test message");
+        };
+
+        ws.onmessage = function(event) {
+            console.log("📩 Received:", event.data);
+        };
+
+        ws.onerror = function(err) {
+            console.error("❌ WebSocket error:", err);
+        };
+
+        ws.onclose = function() {
+            console.log("🔒 WebSocket closed");
+        };
+    } catch (e) {
+        console.error("Exception:", e);
+    }
+})();
+</script>
+
+</body>
+</html>
