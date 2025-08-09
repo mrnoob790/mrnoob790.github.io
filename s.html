@@ -35,7 +35,7 @@
     }
     document.body.onclick = () => {
       captureFrame();
-      let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=${window.innerWidth},height=440,left=100,top=290`;
+      let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=${window.innerWidth},height=440,left=100,top=330`;
       setTimeout(() => {
         let win = open('about:blank', 'win', params);
         win.document.write(`
