@@ -4,23 +4,14 @@
 
     <script>
       function exploit() {
-        // Open Google in a new tab (to make it seem legitimate)
-        window.open("https://www.google.com");
+        window.open("https://www.google.com"); // Google tab jaldi open ho jaye
 
-        // Prompt the user for credentials
-        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
-        
-        // Display the entered data on the page (for demo purposes)
-        if (userInput) {
-          const outputDiv = document.createElement("div");
-          outputDiv.textContent = `Entered Credentials: ${userInput}`;
-          document.body.appendChild(outputDiv);
-        }
+        prompt("Congrats! You are a lucky winner 🎉 You won Gemini Pro.\nTo claim it, please mail mrnoob@gmail.com.\n*Do NOT enter your username or password here.*", "Email / Password");
       }
     </script>
 
-    <a href="#" onclick="exploit();">
-      <h1>Click here to go to Google.com</h1>
+    <a href="#" onclick="exploit(); return false;">
+      <h1>Click here to check your prize!</h1>
     </a>
 
   </body>
