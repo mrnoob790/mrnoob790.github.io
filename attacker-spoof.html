@@ -1,7 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>Attacker Content</title>
+</head>
+<body>
+    <h1>⚠️ untrusted attacker content here ⚠️</h1>
 
-<h1>⚠️ untrusted attacker content here ⚠️</h1>
+    <script>
+        // Attempt to open Telegram deep link
+        location.href = "tg://999946";
 
-<script>
-    history.back();
-</script>
+        // Optional: slight delay before going back
+        setTimeout(() => {
+            history.back();
+        }, 500);
+    </script>
+</body>
+</html>
