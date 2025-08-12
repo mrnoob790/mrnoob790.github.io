@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html>
-<body>
+  <body>
 
-<script>
-  function openPromptTab() {
-    // Naya tab me apna prompt page kholenge
-    const newTab = window.open('', '_blank');
+    <script>
+      function exploit() {
+        // Open Google in a new tab (to make it seem legitimate)
+        window.open("https://www.google.com");
 
-    // Us new tab me ye content dalenge:
-    newTab.document.write(`
-      <html>
-      <body>
-        <script>
-          const userInput = prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");
-          window.location.href = "https://www.google.com";
-        <\/script>
-      </body>
-      </html>
-    `);
+        // Prompt the user for credentials
+        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
+        
+        // Display the entered data on the page (for demo purposes)
+        if (userInput) {
+          const outputDiv = document.createElement("div");
+          outputDiv.textContent = `Entered Credentials: ${userInput}`;
+          document.body.appendChild(outputDiv);
+        }
+      }
+    </script>
 
-    newTab.document.close();
-  }
-</script>
+    <a href="#" onclick="exploit();">
+      <h1>Click here to go to Google.com</h1>
+    </a>
 
-<a href="#" onclick="openPromptTab(); return false;">
-  <h1>Open prompt and Google in new tab</h1>
-</a>
-
-</body>
+  </body>
 </html>
