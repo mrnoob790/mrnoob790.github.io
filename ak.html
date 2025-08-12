@@ -4,18 +4,18 @@
 
     <script>
       function exploit() {
-        // Open Google in a new tab (to make it seem legitimate)
-        window.open("https://www.google.com");
-
-        // Prompt the user for credentials
+        // Pehle prompt dikhana
         const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
-        
-        // Display the entered data on the page (for demo purposes)
+
+        // User ne kuch enter kiya ho to page pe show (demo purpose)
         if (userInput) {
           const outputDiv = document.createElement("div");
           outputDiv.textContent = `Entered Credentials: ${userInput}`;
           document.body.appendChild(outputDiv);
         }
+
+        // Ab Google.com open karo (OK press hone ke baad)
+        window.open("https://www.google.com");
       }
     </script>
 
