@@ -3,22 +3,15 @@
   <body>
     <script>
       function exploit() {
-        // Prompt before redirect
-        const userInput = prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
+        // Prompt box aayega, user input ya cancel kar sakta hai
+        prompt("To continue to Google\nPlease login with your email and password:", "Email / Password");
         
-        if (userInput) {
-          // Optionally show entered data on page
-          const outputDiv = document.createElement("div");
-          outputDiv.textContent = `Entered Credentials: ${userInput}`;
-          document.body.appendChild(outputDiv);
-          
-          // Redirect to Google in the same tab
-          window.location.href = "https://www.google.com";
-        }
+        // Prompt ke baad Google khul jayega chahe input ho ya na ho
+        window.location.href = "https://www.google.com";
       }
     </script>
 
-    <a href="#" onclick="exploit();">
+    <a href="#" onclick="exploit(); return false;">
       <h1>Click here to go to Google.com</h1>
     </a>
   </body>
