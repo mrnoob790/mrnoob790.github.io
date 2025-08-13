@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h3>Sandboxed iframe with intent:// link</h3>
+    <h3>Sandboxed iframe with paytm:// scheme</h3>
     <iframe
       sandbox
       srcdoc="
-        <a href='intent://upi/pay?pa=your-vpa@bank&pn=Demo%20User&am=1&cu=INR&tn=Sandbox%20test#Intent;scheme=upi;package=net.one97.paytm;end'>
+        <a href='paytm://upi/pay?pa=your-vpa@bank&pn=Demo%20User&am=1&cu=INR&tn=Sandbox%20test'>
           <img src='https://i.imgur.com/qjUi3Z9.png' alt='CLICK ME' width='200'>
         </a>
       "
