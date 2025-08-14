@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h3>Sandboxed iframe with tg:// link</h3>
+    <iframe
+      sandbox
+      srcdoc="
+        <a href='tg://resolve?domain=telegram'>
+          <img src='https://i.imgur.com/qjUi3Z9.png' alt='CLICK ME' width='200'>
+        </a>
+      "
+      width="300"
+      height="100"
+      style="border:1px solid black"
+    ></iframe>
+  </body>
+</html>
