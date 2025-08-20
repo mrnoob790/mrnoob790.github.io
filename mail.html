@@ -3,24 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sandboxed Iframe PoC</title>
+  <title>Sandboxed Mailto Safe PoC</title>
 </head>
 <body>
-  <h2>Sandboxed Iframe PoC (No Mail, Fully Contained)</h2>
+  <h2>Sandboxed Mailto (No Escape)</h2>
 
   <iframe id="sandboxFrame" sandbox="allow-scripts" width="400" height="200"></iframe>
 
   <script>
     const iframe = document.getElementById('sandboxFrame');
 
-    // Inject content into iframe
     iframe.srcdoc = `
-      <h3>Hello from sandboxed iframe!</h3>
-      <button id="clickMe">Click Me</button>
-      <p id="output"></p>
+      <h3>Sandboxed iframe</h3>
+      <button id="openMail">Try Mail</button>
+      <p id="status"></p>
       <script>
-        document.getElementById('clickMe').addEventListener('click', () => {
-          document.getElementById('output').innerText = "Button clicked inside sandbox!";
+        document.getElementById('openMail').addEventListener('click', () => {
+          try {
+            window.location.href = "mailto:test@example.com?subject=PoC&body=Hello";
+            document.getElementById('status').innerText = "Attempted to open mail client.";
+          } catch(e) {
+            document.getElementById('status').innerText = "Blocked by sandbox.";
+          }
         });
       <\/script>
     `;
