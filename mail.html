@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Mail App PoC</title>
+</head>
+<body>
+  <button id="openMail">Open Mail App</button>
+
+  <script>
+    document.getElementById('openMail').addEventListener('click', () => {
+      // This will open the default mail client on iOS
+      window.location.href = "mailto:test@example.com?subject=PoC&body=Hello";
+    });
+  </script>
+</body>
+</html>
