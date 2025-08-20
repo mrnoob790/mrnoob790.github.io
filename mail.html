@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Open Mail App PoC</title>
+  <title>Sandboxed Iframe PoC</title>
 </head>
 <body>
-  <button id="openMail">Open Mail App</button>
+  <h2>Sandboxed Iframe PoC (No Mail, Fully Contained)</h2>
+
+  <iframe id="sandboxFrame" sandbox="allow-scripts" width="400" height="200"></iframe>
 
   <script>
-    document.getElementById('openMail').addEventListener('click', () => {
-      // This will open the default mail client on iOS
-      window.location.href = "mailto:test@example.com?subject=PoC&body=Hello";
-    });
+    const iframe = document.getElementById('sandboxFrame');
+
+    // Inject content into iframe
+    iframe.srcdoc = `
+      <h3>Hello from sandboxed iframe!</h3>
+      <button id="clickMe">Click Me</button>
+      <p id="output"></p>
+      <script>
+        document.getElementById('clickMe').addEventListener('click', () => {
+          document.getElementById('output').innerText = "Button clicked inside sandbox!";
+        });
+      <\/script>
+    `;
   </script>
 </body>
 </html>
