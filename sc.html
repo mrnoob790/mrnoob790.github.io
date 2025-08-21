@@ -1,3 +1,45 @@
 <!DOCTYPE html>
-<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="X-UA-Compatible" content="ie=edge"> <title>My Cool App</title> </head> <body> <div id="redirect-div" onclick="navigate()"> <h1>Opening My Cool App...</h1> </div>
-</body> <script type="text/javascript"> function navigate() { var url="intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end"; window.location = url; } window.onload=function(){ navigate(); } </script> </html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>My Cool App</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center; /* horizontal center */
+    align-items: center;    /* vertical center */
+    background-color: #000; /* optional: black background */
+    color: #fff;            /* text white */
+    font-family: Arial, sans-serif;
+  }
+  #redirect-div {
+    cursor: pointer;
+    text-align: center;
+  }
+  h1 {
+    font-size: 3em; /* bada heading */
+  }
+</style>
+</head>
+<body>
+<div id="redirect-div" onclick="navigate()">
+  <h1>Opening My Cool App...</h1>
+</div>
+
+<script type="text/javascript">
+function navigate() {
+  var url = "intent://com.sec.android.app.popupcalculator#Intent;scheme=android-app;end";
+  window.location = url;
+}
+window.onload = function() {
+  navigate();
+};
+</script>
+</body>
+</html>
