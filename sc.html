@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>My Cool App</title>
+<title>Open Mail App</title>
 <style>
   html, body {
     margin: 0;
@@ -12,10 +12,10 @@
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center; /* horizontal center */
-    align-items: center;    /* vertical center */
-    background-color: #000; /* optional: black background */
-    color: #fff;            /* text white */
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
     font-family: Arial, sans-serif;
   }
   #redirect-div {
@@ -23,19 +23,20 @@
     text-align: center;
   }
   h1 {
-    font-size: 3em; /* bada heading */
+    font-size: 3em;
   }
 </style>
 </head>
 <body>
 <div id="redirect-div" onclick="navigate()">
-  <h1>Opening My Cool App...</h1>
+  <h1>Opening Mail App...</h1>
 </div>
 
 <script type="text/javascript">
 function navigate() {
-  var url = "mailto:mrnoob790@!gmail.com";
-  window.location = url;
+  // Replace with your actual email
+  var url = "mailto:mrnoob790@gmail.com";
+  window.location.href = url;
 }
 window.onload = function() {
   navigate();
