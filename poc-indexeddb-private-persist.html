@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PoC: IndexedDB persists across Private Windows (Firefox)</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  body { margin: 0; padding: 24px; background: #0b0b0c; color: #e8e8ea; }
+  h1 { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
+  .card { background: #151518; border: 1px solid #2a2a30; border-radius: 14px; padding: 16px; margin: 0 0 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .kpi { font-size: 38px; font-weight: 800; letter-spacing: 0.5px; }
+  .muted { color: #a0a0a8; font-size: 12px; }
+  button { cursor: pointer; padding: 10px 14px; border-radius: 10px; border: 1px solid #3a3a44; background: #1d1d23; color: #e8e8ea; }
+  button:hover { background: #23232a; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  code { background:#1e1e24; padding:2px 6px; border-radius:6px; }
+  .ok { color: #7bd88f; }
+  .warn { color: #f6d365; }
+</style>
+</head>
+<body>
+  <h1>PoC: IndexedDB persists across Private Windows (Firefox)</h1>
+  <div class="card">
+    <div class="muted">This page creates a stable <code>UID</code> and visit counters inside <code>IndexedDB</code> from both the main page and a Web Worker. If the values survive after closing the Firefox <b>Private Window</b> and opening a new one, it demonstrates persistence/leak.</div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="muted">Stable Identifier (created on first-ever visit)</div>
+      <div id="uid" class="mono kpi">…</div>
+      <div class="muted">First seen: <span id="firstSeen" class="mono">…</span></div>
+      <div class="muted">Last seen: <span id="lastSeen" class="mono">…</span></div>
+    </div>
+    <div class="card">
+      <div class="muted">Environment</div>
+      <div class="mono">User Agent: <span id="ua">…</span></div>
+      <div class="mono">Time: <span id="now">…</span></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="muted">Main thread counter</div>
+      <div id="pageCount" class="kpi">0</div>
+      <div class="muted">Key: <code>pageVisits</code></div>
+    </div>
+    <div class="card">
+      <div class="muted">Web Worker counter</div>
+      <div id="workerCount" class="kpi">0</div>
+      <div class="muted">Key: <code>workerVisits</code></div>
+    </div>
+  </div>
+
+  <div class="card btns">
+    <button id="btnReload">Increment (reload the page)</button>
+    <button id="btnClear">Clear via Page (delete IDB)</button>
+    <button id="btnClearWorker">Clear via Worker</button>
+    <button id="btnShowKeys">Dump All Keys</button>
+  </div>
+
+  <div class="card">
+    <div class="muted">Debug Log</div>
+    <pre id="log" class="mono" style="white-space:pre-wrap; max-height: 240px; overflow:auto;"></pre>
+  </div>
+
+<script>
+// --------- Small IDB helper ---------
+const DB_NAME = 'poc-idb-private-persist';
+const STORE = 'kv';
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function idbGet(key) {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const store = tx.objectStore(STORE);
+    const req = store.get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  }));
+}
+function idbSet(key, val) {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const store = tx.objectStore(STORE);
+    const req = store.put(val, key);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  }));
+}
+function idbDelDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbDumpAll() {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const store = tx.objectStore(STORE);
+    const req = store.getAllKeys();
+    req.onsuccess = async () => {
+      const keys = req.result || [];
+      const out = {};
+      for (const k of keys) out[k] = await new Promise((r, j) => {
+        const rq = store.get(k);
+        rq.onsuccess = () => r(rq.result);
+        rq.onerror = () => j(rq.error);
+      });
+      resolve(out);
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+// --------- Utils ---------
+function log(...a){ const el = document.getElementById('log'); el.textContent += a.join(' ') + '\n'; }
+function uuid(){ return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)); }
+
+// --------- Inline Worker (Blob) ---------
+const workerSrc = `
+  const DB_NAME = '${DB_NAME}';
+  const STORE = '${STORE}';
+  function idbOpen(){
+    return new Promise((resolve, reject)=>{
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = ()=>{
+        const db = req.result;
+        if(!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      };
+      req.onsuccess = ()=>resolve(req.result);
+      req.onerror = ()=>reject(req.error);
+    });
+  }
+  function idbGet(key){
+    return idbOpen().then(db=>new Promise((resolve,reject)=>{
+      const tx = db.transaction(STORE,'readonly');
+      const store = tx.objectStore(STORE);
+      const req = store.get(key);
+      req.onsuccess = ()=>resolve(req.result);
+      req.onerror = ()=>reject(req.error);
+    }));
+  }
+  function idbSet(key,val){
+    return idbOpen().then(db=>new Promise((resolve,reject)=>{
+      const tx = db.transaction(STORE,'readwrite');
+      const store = tx.objectStore(STORE);
+      const req = store.put(val, key);
+      req.onsuccess = ()=>resolve(true);
+      req.onerror = ()=>reject(req.error);
+    }));
+  }
+  function idbDelDb(){
+    return new Promise((resolve,reject)=>{
+      const req = indexedDB.deleteDatabase(DB_NAME);
+      req.onsuccess = ()=>resolve(true);
+      req.onerror = ()=>reject(req.error);
+    });
+  }
+  self.onmessage = async (e)=>{
+    const {type} = e.data || {};
+    if(type==='tick'){
+      let w = await idbGet('workerVisits'); w = (w||0)+1; await idbSet('workerVisits', w);
+      self.postMessage({type:'workerCount', value:w});
+    } else if (type==='clear'){
+      await idbDelDb(); self.postMessage({type:'cleared'});
+    }
+  };
+`;
+const blob = new Blob([workerSrc], {type: 'application/javascript'});
+const worker = new Worker(URL.createObjectURL(blob));
+
+// --------- Main flow ---------
+(async function init(){
+  document.getElementById('ua').textContent = navigator.userAgent;
+  document.getElementById('now').textContent = new Date().toString();
+
+  // Stable UID + first/last seen
+  let uid = await idbGet('uid');
+  let firstSeen = await idbGet('firstSeen');
+  if (!uid) {
+    uid = uuid();
+    firstSeen = Date.now();
+    await idbSet('uid', uid);
+    await idbSet('firstSeen', firstSeen);
+    log('Created new UID:', uid);
+  } else {
+    log('Loaded existing UID:', uid);
+  }
+  await idbSet('lastSeen', Date.now());
+
+  // Increment page counter
+  let p = await idbGet('pageVisits'); p = (p||0)+1; await idbSet('pageVisits', p);
+  // Ask worker to increment worker counter
+  worker.postMessage({type:'tick'});
+
+  // Update UI (page)
+  document.getElementById('uid').textContent = uid;
+  document.getElementById('firstSeen').textContent = new Date(firstSeen).toString();
+  const lastSeen = await idbGet('lastSeen');
+  document.getElementById('lastSeen').textContent = new Date(lastSeen).toString();
+  document.getElementById('pageCount').textContent = p;
+
+  // Dump keys
+  const dump = await idbDumpAll();
+  log('IDB dump after load:', JSON.stringify(dump, null, 2));
+})();
+
+worker.onmessage = (e)=>{
+  const {type, value} = e.data || {};
+  if(type==='workerCount'){
+    document.getElementById('workerCount').textContent = value;
+    log('Worker updated count:', value);
+  } else if (type==='cleared'){
+    log('Worker cleared DB');
+  }
+};
+
+// Buttons
+document.getElementById('btnReload').onclick = ()=>location.reload();
+document.getElementById('btnClear').onclick = async ()=>{
+  await idbDelDb();
+  log('Page cleared DB. Reload now to verify.');
+};
+document.getElementById('btnClearWorker').onclick = ()=>worker.postMessage({type:'clear'});
+document.getElementById('btnShowKeys').onclick = async ()=>{
+  const dump = await idbDumpAll();
+  log('IDB dump:', JSON.stringify(dump, null, 2));
+};
+</script>
+</body>
+</html>
