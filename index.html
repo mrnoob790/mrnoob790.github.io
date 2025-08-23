@@ -1,24 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>PoC</title>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="manifest" href="manifest.json">
-        <script src="script.js"></script>
-        <script>
-            onblur = () => {
-                location = "https://www.google.com/";
-            }
-        </script>
-    </head>  
-    <body>
-        <br><br>
-        <center>
-            <h1>
-                Click on the 3 Dot  located on the top-right position of the address bar!
-            </h1>
-        </center>
-    </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Firefox iOS – Private Browsing Bypass via Download (PoC)</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#10161c; --text:#e7eef7; --muted:#a8b3be; --accent:#7dc4ff; --warn:#ffd166; --danger:#ff6b6b; --ok:#2ecc71;
+      --border:#1d2730;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Helvetica,Arial,sans-serif;line-height:1.4}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{opacity:.9;text-decoration:underline}
+    .wrap{max-width:880px;margin:40px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{font-size:clamp(22px,3.8vw,32px);margin:0 0 10px;font-weight:800}
+    h2{font-size:clamp(18px,3vw,22px);margin:24px 0 8px}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#0f2436;border:1px solid #123049;color:#a7d3ff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:14px}
+    .step{background:#0d131a;border:1px dashed #203040;border-radius:14px;padding:16px}
+    .step h3{margin:0 0 8px;font-size:16px}
+    .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;border:1px solid var(--border);padding:12px 14px;border-radius:12px;background:#0e1720;cursor:pointer}
+    .btn svg{width:18px;height:18px}
+    .btn.warn{border-color:#423400;background:#1b1500;color:var(--warn)}
+    .btn.primary{border-color:#16324a;background:#0b2233;color:#bce2ff}
+    .btn.ghost{background:#0b0f14;color:#cbd6e2}
+    .kbd{background:#0b0f14;border:1px solid var(--border);border-radius:8px;padding:2px 6px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px}
+    .note{font-size:14px;color:var(--muted)}
+    .callout{border-left:4px solid var(--warn);background:#171407;padding:12px;border-radius:8px}
+    .hr{height:1px;background:var(--border);margin:20px 0}
+    code{background:#0b0f14;border:1px solid var(--border);padding:2px 6px;border-radius:6px}
+    footer{opacity:.7;margin-top:20px;font-size:12px}
+    .danger{color:var(--danger)}
+    .ok{color:var(--ok)}
+    .small{font-size:13px;color:var(--muted)}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <span class="pill">Firefox iOS Privacy Bug · PoC</span>
+      <h1>Private Browsing Bypass via Download</h1>
+      <p class="note">Demonstrates that <strong>downloads initiated in Private Browsing</strong> are fetched by a process that <em>does not respect private-context isolation</em>, allowing data (cookie ID) to leak into Normal Browsing via a subsequent download.</p>
+      <div class="callout">
+        <strong>Test target:</strong> Firefox for iOS. Open this page in Firefox iOS. The behavior of interest is specific to the iOS app's download client.
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>How to Run</h2>
+      <ol>
+        <li>In Firefox iOS, open a <strong>Private</strong> tab.</li>
+        <li>Tap the first button (<span class="mono">set_cookie.php</span>) to trigger a download that <em>sets</em> a tracking cookie on the server.</li>
+        <li>Close the Private tab (do not quit the app).</li>
+        <li>Open a <strong>Normal</strong> tab and return to this PoC page.</li>
+        <li>Tap the second button (<span class="mono">get_cookie.php</span>) to download the server’s recorded cookie value.</li>
+      </ol>
+      <p class="note">If the bug reproduces, the file downloaded in step 5 shows the <strong class="danger">same cookie ID</strong> set during Private browsing in step 2 — proving <em>cross-mode data leakage</em>.</p>
+
+      <div class="grid">
+        <div class="step">
+          <h3>Step 1 (Private Tab)</h3>
+          <p>Start in Private browsing and perform a download that sets a cookie on the server.</p>
+          <a class="btn primary" download href="http://csrf.jp/2020/dl_fxios/set_cookie.php" rel="noopener noreferrer">
+            <!-- download icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 16l4-5h-3V4h-2v7H8l4 5zm-9 2v2h18v-2H3z"/></svg>
+            Download: set_cookie.php
+          </a>
+          <p class="small">Source endpoint hosted by <code>csrf.jp</code>. Using an external dynamic endpoint is necessary because GitHub Pages is static and cannot run PHP.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2 (Normal Tab)</h3>
+          <p>Switch to Normal browsing and download the server’s recorded cookie value.</p>
+          <a class="btn warn" download href="http://csrf.jp/2020/dl_fxios/get_cookie.php" rel="noopener noreferrer">
+            <!-- file-text icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm1 7h-4V5h2v2h2v2z"/></svg>
+            Download: get_cookie.php
+          </a>
+          <p class="small">If the downloaded text shows the same ID as Step 1, the private context was not isolated.</p>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>Why this works (bug)</h2>
+      <p class="note">Firefox iOS uses an HTTP client for downloads that <em>doesn’t check</em> whether the originating context was Private or Normal. The download therefore reuses non-private storage/cookies, enabling <span class="danger">cross-mode tracking</span>.</p>
+
+      <h2>What to record in your video</h2>
+      <ul>
+        <li>Show starting from a clean state, then open a <strong>Private</strong> tab.</li>
+        <li>Tap <span class="mono">set_cookie.php</span> → accept the download.</li>
+        <li>Open a <strong>Normal</strong> tab and tap <span class="mono">get_cookie.php</span>.</li>
+        <li>Open the file viewer → show the cookie ID matches the one set in Private mode.</li>
+      </ul>
+
+      <div class="hr"></div>
+
+      <details>
+        <summary><strong>Notes for reviewers</strong></summary>
+        <ul class="small">
+          <li>The endpoints are hosted on <code>csrf.jp</code> (credit: public demo pages for this bug class).</li>
+          <li>GitHub Pages cannot execute PHP; therefore the PoC links out to dynamic endpoints.</li>
+          <li>No storage APIs (IndexedDB/LocalStorage) are used by this page; the leak is purely via download client behavior.</li>
+        </ul>
+      </details>
+
+      <footer>
+        PoC page by <span class="mono">mrnoob790</span>. You can host this file at <span class="mono">mrnoob790.github.io</span>.
+      </footer>
+    </div>
+  </div>
+</body>
 </html>
