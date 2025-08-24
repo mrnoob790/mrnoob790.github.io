@@ -1,36 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>PoC - index</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Tap to Open PoC</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      user-select: none;
+    }
+    #log {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: #fff;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-width: 300px;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
 <body>
-  <h3>PoC — Click the button</h3>
-  <button id="openBtn">Open a New Tab</button>
-  <pre id="log"></pre>
+  <h2>Tap anywhere on the page to try opening a new tab</h2>
+  <div id="log">Console output will appear here...</div>
 
   <script>
     const logEl = document.getElementById('log');
-    function log(s){ console.log(s); logEl.textContent += s + "\n"; }
+    function log(s) {
+      console.log(s);
+      logEl.textContent += s + "\n";
+    }
 
-    document.getElementById('openBtn').addEventListener('click', function (e) {
-      // IMPORTANT: window.open must be called synchronously inside this click handler
+    document.body.addEventListener('click', function tapHandler(e) {
+      log("Page tapped by user... trying to open a new tab.");
+      
+      // Directly call window.open inside user gesture
       const newWin = window.open('https://mrnoob790.github.io/second.html', '_blank', 'noopener');
       if (!newWin) {
-        log('window.open returned null — popup blocked by browser or returned window not allowed.');
-        alert('Popup blocked (check Arc settings / extensions). See console for details.');
-        return;
+        log("Popup blocked by browser or Arc/iOS restriction.");
+      } else {
+        log("New tab/window opened successfully!");
       }
-      log('New tab/window opened successfully.');
-      // Now watch visibilitychange on THIS page — typical exploit flow:
-      document.addEventListener('visibilitychange', function onV(){
-        log('visibility changed: ' + document.visibilityState);
-        if (document.visibilityState === 'hidden') {
-          log('This tab is backgrounded. Will redirect after 10s.');
-          setTimeout(function(){
-            // safe demo: just navigate this tab to second.html
-            window.location.href = 'https://mrnoob790.github.io/second.html';
-          }, 10000);
-          document.removeEventListener('visibilitychange', onV);
-        }
-      });
+
+      // Remove listener after first tap
+      document.body.removeEventListener('click', tapHandler);
     });
   </script>
 </body>
