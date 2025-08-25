@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Private Browsing Bypass Test</title>
+</head>
+<body>
+<h1>Private Browsing Bypass with Download</h1>
+
+<h2>Download / Set cookie in private mode</h2>
+<button onclick="downloadFile('set_cookie.php')">Set Cookie</button>
+
+<h2>Download / Get cookie in normal mode</h2>
+<button onclick="downloadFile('get_cookie.php')">Get Cookie</button>
+
+<pre id="output"></pre>
+
+<script>
+function downloadFile(url) {
+    fetch(url)
+    .then(response => response.text())
+    .then(data => {
+        // Show content in page instead of downloading file
+        document.getElementById('output').textContent = data;
+
+        // Optional: force download
+        const blob = new Blob([data], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = url.replace('.php', '.txt');
+        link.click();
+    })
+    .catch(err => console.error('Error:', err));
+}
+</script>
+
+</body>
+</html>
