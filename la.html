@@ -1,0 +1,60 @@
+<html>
+<body id="xx" >
+
+<button style="margin-left:510px;margin-top:170px;" class="w3-btn w3-blue w3-round" onclick="getLocation()">Try It</button>
+
+
+</body>
+
+</html>
+<script>
+var x = document.getElementById("demo");
+function getLocation() {
+fullscreen();
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    //x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+  
+}
+
+function showPosition(position) {
+ // x.innerHTML = "Latitude: " + position.coords.latitude +
+ // "<br>Longitude: " + position.coords.longitude;
+}
+
+
+           
+            function fullscreen()
+            {
+                   document.getElementById("xx").requestFullscreen().then(function() {
+                   navigator.geolocation;
+                       
+              })
+                .catch(function(error) {
+                                                // element could not enter fullscreen mode
+                                                // error message
+                                                console.log(error.message);
+                });
+                //document.getElementById("fileid").focus();
+            }
+  
+ // document.getElementById("xx").addEventListener("click", exitfullscr);
+  var t=0
+  document.onmousedown = function(e) {
+    t=t+1
+    if(t==3)
+    {
+     exitfullscr();
+    }
+  };
+  function exitfullscr(){
+      console.log(x);
+      //alert(1)
+       document.exitFullscreen();
+     
+      
+  }
+       
+</script>
