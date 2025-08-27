@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Child — request fullscreen</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { margin:0; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; }
+    button { font-size:20px; padding:12px 18px; }
+  </style>
+</head>
+<body>
+  <button id="fs">Open this iframe Fullscreen</button>
+
+  <script>
+    document.getElementById('fs').addEventListener('click', async () => {
+      try {
+        // Request fullscreen for the iframe's top-level element (the iframe element itself in parent)
+        // but from inside iframe we request fullscreen on document.documentElement:
+        await document.documentElement.requestFullscreen();
+      } catch (e) {
+        console.error('FS error', e);
+      }
+    });
+  </script>
+</body>
+</html>
