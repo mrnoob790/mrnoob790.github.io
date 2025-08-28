@@ -29,6 +29,7 @@
   <script>
 
     function requestCameraPermission() {
+      // Get access to the camera
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(function (stream) {
           console.log('Camera permission granted.');
@@ -49,21 +50,36 @@
 </head>
 <body>
 <center>
-    <button onclick="handleClick()">🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩] the Green Box to Win a Free Gift! 🎉</button>
+    <button onclick="handleClick()">ð Click to Open Your Lucky Ticket and Double-Tap [&#x1F7E9; = ð] the Green Box to Win a Free Gift! ð</button>
+
 </center>
     
-<div>
-  <select id="selectme" ondblclick="handleDoubleClick()">
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
-    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+    
+    
+  <div>
+    <select id="selectme" ondblclick="handleDoubleClick()">
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option></option>
+    </select>
+  </div>
+
+</body>
+
+</html>    <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
     <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
     <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
     <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
