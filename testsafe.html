@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>APK Download Button</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", Arial; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#f5f7fb; }
+    .card { background:white; padding:24px; border-radius:12px; box-shadow:0 6px 24px rgba(30,40,50,0.08); text-align:center; width:320px; }
+    button { padding:12px 18px; font-size:15px; border-radius:8px; border:0; cursor:pointer; background:#007bff; color:white; }
+    button:hover { background:#0056b3; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>APK Download Test</h3>
+    <p>Click the button below to download/open the file.</p>
+    <button id="downloadBtn">Download unknown.apk</button>
+    <p id="status" style="font-size:13px;color:#666;margin-top:12px;"></p>
+  </div>
+
+  <script>
+    const url = 'http://testsafebrowsing.appspot.com/s/unknown.apk';
+    const btn = document.getElementById('downloadBtn');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', async () => {
+      status.textContent = 'Attempting to download...';
+      try {
+        // Try to use an <a download> approach
+        const a = document.createElement('a');
+        a.href = url;
+        a.setAttribute('download', 'unknown.apk'); // may be ignored cross-origin
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // Inform user
+        setTimeout(() => {
+          status.textContent = 'If the file did not download, it was opened in a new tab.';
+        }, 800);
+      } catch (err) {
+        // Fallback: open in new tab
+        window.open(url, '_blank');
+        status.textContent = 'Opened the link in a new tab (fallback).';
+      }
+    });
+  </script>
+</body>
+</html>
