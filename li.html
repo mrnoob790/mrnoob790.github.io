@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Tapjacking Permission POC — Green + Red Adjusted</title>
+  <title>Tapjacking Permission POC — Green + Red Adjusted (Closer)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <style>
     :root {
@@ -50,12 +50,12 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* 🔴 Red circular button — right side but slightly up and inward */
+    /* 🔴 Red circular button — more up & more left (closer to center) */
     .red-circle {
       position: absolute;
-      right: 8%;          /* a little more leftwards */
-      bottom: -32px;      /* moved up from -42px to -32px */
-      transform: translateX(-10%);
+      right: 14%;          /* more left (closer to center) */
+      bottom: -18px;       /* moved further up */
+      transform: translateX(-6%);
       width: clamp(48px,9vw,72px);
       height: clamp(48px,9vw,72px);
       border-radius: 50%;
@@ -80,9 +80,9 @@
 
     @media (max-width: 420px) {
       .red-circle {
-        right: 10%;
-        bottom: -28px;
-        transform: translateX(-6%);
+        right: 16%;
+        bottom: -16px;
+        transform: translateX(-4%);
       }
       .card { padding-bottom: 56px; }
     }
@@ -98,7 +98,7 @@
         🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩 = 🎁] the Green Box to Win a Free Gift! 🎉
       </button>
 
-      <!-- 🔴 Red circle (slightly higher and more left) -->
+      <!-- 🔴 Red circle closer to green button and more inward -->
       <button class="red-circle" onclick="handleClick()">●</button>
 
       <div class="spacer"></div>
