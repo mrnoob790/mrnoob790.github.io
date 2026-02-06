@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTTPS → HTTP Form Downgrade PoC</title>
+
+  <!-- FORCE HTTP DOWNGRADE -->
+  <base href="http://neverssl.com/">
+
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    input, button { padding: 10px; width: 100%; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Secure Page (HTTPS)</h2>
+
+<p>
+This page is loaded over <b>HTTPS</b>.  
+Submitting this form sends data to an <b>HTTP</b> endpoint.
+</p>
+
+<form action="/" method="POST">
+  <input name="testdata" placeholder="Type anything" required>
+  <button type="submit">Submit</button>
+</form>
+
+<p style="color:gray;margin-top:20px">
+Expected: Browser warning about insecure form submission
+</p>
+
+</body>
+</html>
