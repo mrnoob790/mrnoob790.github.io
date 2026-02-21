@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Mixed Content High Impact PoC</title>
+</head>
 <body>
+<h2>Secure Page (HTTPS)</h2>
+
+<script src="http://httpbin.org/anything"></script>
+
 <script>
-  const img = document.createElement("img");
-  img.src = "http://httpbin.org/image/png";
-  document.body.appendChild(img);
+  console.log("If this runs, HTTP JS executed inside HTTPS page");
 </script>
+
 </body>
 </html>
