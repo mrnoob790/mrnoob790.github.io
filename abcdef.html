@@ -1,16 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Mixed Content High Impact PoC</title>
+  <meta charset="UTF-8">
+  <title>Mixed Content Auto-Upgrade Bypass PoC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+    }
+    h2 { color: #ff4d4d; }
+    section {
+      margin-bottom: 40px;
+      border: 1px solid #444;
+      padding: 15px;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: 2px solid red;
+      background: #fff;
+    }
+    img {
+      border: 2px solid orange;
+      max-width: 100%;
+    }
+    input, button {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 300px;
+    }
+  </style>
 </head>
 <body>
-<h2>Secure Page (HTTPS)</h2>
 
-<script src="http://httpbin.org/anything"></script>
+<h1>HTTPS Page – Mixed Content Auto-Upgrade Test</h1>
+<p>If any HTTP request below is fetched over <b>port 80</b>, the browser is vulnerable.</p>
 
-<script>
-  console.log("If this runs, HTTP JS executed inside HTTPS page");
-</script>
+<!-- ================= IMAGE TEST ================= -->
+<section>
+  <h2>1️⃣ Passive Content (IMG over HTTP)</h2>
+  <p>Expected: HTTPS upgrade or block</p>
+  <img src="http://internetlogonpage.azurewebsites.net/">
+</section>
+
+<!-- ================= IFRAME TEST ================= -->
+<section>
+  <h2>2️⃣ Active UI Content (IFRAME Login Portal)</h2>
+  <p>If this renders over HTTP → UI spoofing + MITM possible</p>
+
+  <iframe src="http://internetlogonpage.azurewebsites.net/"></iframe>
+</section>
+
+<!-- ================= FORM TEST ================= -->
+<section>
+  <h2>3️⃣ Credential Leakage (FORM over HTTP)</h2>
+  <p>Submitting this over HTTP exposes credentials in plaintext</p>
+
+  <form action="http://httpbin.org/post" method="POST">
+    <input name="username" placeholder="username">
+    <input name="password" type="password" placeholder="password">
+    <button type="submit">Login</button>
+  </form>
+</section>
 
 </body>
 </html>
