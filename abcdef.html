@@ -2,76 +2,113 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mixed Content Research Test</title>
+  <title>about:blank Mixed Content High Severity PoC</title>
 </head>
 <body>
 
-<h2>HTTPS Parent Test Page</h2>
-<button id="btn">Open Security Test Window</button>
+<button id="btn">CLICK HERE</button>
 
 <script>
 document.getElementById("btn").onclick = function () {
 
+  // 1️⃣ Open about:blank (inherits HTTPS origin)
   const w = window.open("about:blank", "_blank");
 
-  if (!w) {
-    alert("Popup blocked");
-    return;
-  }
-
+  // 2️⃣ Inject vulnerable content
   w.document.open();
   w.document.write(`
     <!doctype html>
     <html>
-    <head>
-      <title>Security Research Test</title>
-      <style>
-        body {
-          margin:0;
-          font-family:Arial;
-          background:#f4f4f4;
-        }
-        .container {
-          padding:20px;
-        }
-        h3 {
-          margin-top:0;
-        }
-        .box {
-          margin-bottom:20px;
-          padding:10px;
-          background:white;
-          border:1px solid #ddd;
-        }
-      </style>
-    </head>
-    <body>
+      <body style="
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:flex-start;
+        background:#111;
+        color:#fff;
+        font-family:Arial;
+        padding:20px;
+      ">
 
-      <div class="container">
+        <h2>HTTPS Context → HTTP Subresources</h2>
 
-        <div class="box">
-          <h3>HTTP Image Test</h3>
-          <p>Testing whether HTTP image loads inside about:blank.</p>
-          <img src="http://httpbin.org/image/png" style="max-width:100%;">
-        </div>
+        <!-- 🔴 Passive mixed content (IMAGE) -->
+        <section style="margin-bottom:30px;">
+          <h3>1️⃣ Image over HTTP</h3>
+          <img src="http://httpbin.org/image/png"
+               style="max-width:80%;border:4px solid red;">
+        </section>
 
-        <div class="box">
-          <h3>HTTP Iframe Test</h3>
-          <p>Testing iframe load behavior.</p>
+        <!-- 🔴 HIGH SEVERITY: FORM over HTTP -->
+        <section style="margin-bottom:30px;">
+          <h3>2️⃣ Credential Submission over HTTP</h3>
+          <form action="http://httpbin.org/post" method="POST"
+                style="background:#222;padding:15px;border:2px solid red;">
+            <input name="username" placeholder="username"
+                   style="display:block;margin-bottom:10px;padding:6px;">
+            <input name="password" type="password" placeholder="password"
+                   style="display:block;margin-bottom:10px;padding:6px;">
+            <button type="submit">Login</button>
+          </form>
+        </section>
+
+        <!-- 🔴 UI CONTENT (IFRAME over HTTP) -->
+        <section style="margin-bottom:30px;width:100%;">
+          <h3>3️⃣ UI Content via IFRAME (HTTP)</h3>
+          <p style="color:#ff8080">
+            Even if this does not visually render, the HTTP request itself is the issue.
+          </p>
           <iframe
             src="http://internetlogonpage.azurewebsites.net/"
-            style="width:100%; height:400px; border:1px solid #ccc;">
+            style="width:100%;height:400px;border:4px solid red;background:#fff;">
           </iframe>
-        </div>
+        </section>
 
-      </div>
+        <p style="color:#ff4d4d;font-weight:bold;">
+          Any HTTP request here confirms a transport security downgrade.
+        </p>
 
-    </body>
+      </body>
     </html>
   `);
   w.document.close();
 };
 </script>
+
+</body>
+</html><body>
+
+<h1>HTTPS Page – Mixed Content Auto-Upgrade Test</h1>
+<p>If any HTTP request below is fetched over <b>port 80</b>, the browser is vulnerable.</p>
+
+<!-- ================= IMAGE TEST ================= -->
+<section>
+  <h2>1️⃣ Passive Content (IMG over HTTP)</h2>
+  <p>Expected: HTTPS upgrade or block</p>
+  <img src="http://internetlogonpage.azurewebsites.net/">
+</section>
+
+<!-- ================= IFRAME TEST ================= -->
+<section>
+  <h2>2️⃣ Active UI Content (IFRAME Login Portal)</h2>
+  <p>If this renders over HTTP → UI spoofing + MITM possible</p>
+
+  <iframe src="http://internetlogonpage.azurewebsites.net/"></iframe>
+</section>
+
+<!-- ================= FORM TEST ================= -->
+<section>
+  <h2>3️⃣ Credential Leakage (FORM over HTTP)</h2>
+  <p>Submitting this over HTTP exposes credentials in plaintext</p>
+
+  <form action="http://httpbin.org/post" method="POST">
+    <input name="username" placeholder="username">
+    <input name="password" type="password" placeholder="password">
+    <button type="submit">Login</button>
+  </form>
+</section>
 
 </body>
 </html>
