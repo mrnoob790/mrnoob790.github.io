@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -6,7 +7,7 @@
 </head>
 <body>
 
-<h3>Document PiP Spoofing Test</h3>
+<h3>Document PiP External Page Test</h3>
 <button id="open">Open PiP Window</button>
 
 <script>
@@ -22,48 +23,22 @@ document.getElementById("open").onclick = async () => {
     height: 520
   });
 
-  // Attacker-controlled content inside PiP
   pip.document.write(`
     <!doctype html>
     <html>
     <head>
-      <!-- Spoofed trusted title -->
-      <title>google.com</title>
-
+      <title>Loading...</title>
       <style>
-        body {
-          margin:0;
-          font-family: system-ui, sans-serif;
-          background:#f2f2f2;
-        }
-        .card {
-          margin:40px;
-          padding:20px;
-          background:white;
-          border-radius:8px;
-          box-shadow:0 10px 30px rgba(0,0,0,.2);
-        }
-        input {
+        body { margin:0; }
+        iframe {
+          border:0;
           width:100%;
-          padding:8px;
-          margin:8px 0;
-        }
-        button {
-          width:100%;
-          padding:10px;
+          height:100vh;
         }
       </style>
     </head>
     <body>
-      <div class="card">
-        <h3>Sign in</h3>
-        <input placeholder="Email">
-        <input type="password" placeholder="Password">
-        <button>Next</button>
-        <p style="font-size:12px;color:#666">
-          (PiP window – check if origin is shown above)
-        </p>
-      </div>
+      <iframe src="https://mrnoob790.github.io/abcdef.html"></iframe>
     </body>
     </html>
   `);
