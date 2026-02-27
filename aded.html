@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0">
+
+<button onclick="goFS()">Enter Fullscreen</button>
+
+<div id="portal" style="display:none; height:100vh;">
+  <input id="urlInput" value="/aet.html">
+  <button onclick="loadPage()">Go</button>
+  <iframe id="viewer" style="width:100%; height:90vh; border:none;"></iframe>
+</div>
+
+<script>
+function goFS() {
+  document.documentElement.requestFullscreen().then(() => {
+    document.getElementById("portal").style.display = "block";
+  });
+}
+
+function loadPage() {
+  const url = document.getElementById("urlInput").value;
+  document.getElementById("viewer").src = url;
+}
+</script>
+
+</body>
+</html>
