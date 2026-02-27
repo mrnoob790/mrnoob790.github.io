@@ -1,26 +1,56 @@
-<!DOCTYPE html>
 <html>
-<body style="margin:0">
 
-<button onclick="goFS()">Enter Fullscreen</button>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    #ul1 {
+        height: calc(100vh - 110px);
+        padding-left: 5;
+    }
 
-<div id="portal" style="display:none; height:100vh;">
-  <input id="urlInput" value="/aet.html">
-  <button onclick="loadPage()">Go</button>
-  <iframe id="viewer" style="width:100%; height:90vh; border:none;"></iframe>
-</div>
+    a, body, span {
+        font-family: roboto, Arial, sans-serif;
+    }
+
+    img {
+        width: 100%;
+        z-index: 99999;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<picture id="spoofBar" style="display: none;">
+    <!-- tumhara existing image base64 yahi rahega -->
+</picture>
 
 <script>
-function goFS() {
-  document.documentElement.requestFullscreen().then(() => {
-    document.getElementById("portal").style.display = "block";
-  });
-}
+let clicked = false;
 
-function loadPage() {
-  const url = document.getElementById("urlInput").value;
-  document.getElementById("viewer").src = url;
-}
+document.body.addEventListener("click", function () {
+
+    if (clicked) return; // multiple trigger prevent
+    clicked = true;
+
+    console.log("Tap detected. Fullscreen in 4 seconds...");
+
+    setTimeout(() => {
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen()
+                .then(() => {
+                    console.log("Fullscreen activated");
+                })
+                .catch(err => {
+                    console.log("Fullscreen blocked:", err);
+                });
+        }
+
+    }, 4000); // 4 seconds delay
+
+});
 </script>
 
 </body>
