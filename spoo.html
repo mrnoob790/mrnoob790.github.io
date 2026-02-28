@@ -2,62 +2,77 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        #ul1 {
-            height: calc(100vh - 110px);
-            padding-left: 5;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        a,body,span {
-            font-family: roboto, 'Noto Sans Myanmar UI', arial, sans-serif;
-        }
+<style>
+body {
+    margin:0;
+    background:black;
+}
 
-        img {
-            width: 100%;
-            z-index: 99999;
-        }
-    </style>
+#spoofBar {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    z-index:999999;
+}
+
+#spoofBar img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+</style>
+
 </head>
 
 <body>
 
-    <picture id="spoofBar" style="display: none;">
-        <source srcset="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/...">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/..." />
-    </picture>
-<h1>hey how r u </h1>
+<picture id="spoofBar">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/...">
+</picture>
+<h1>hey let test it </h1>
 <script>
 
-let fullscreenTriggered = false;
-let fullscreenTimer = null;
+let triggered = false;
 
-function startFullscreenDelay() {
+function startProcess() {
 
-    if (fullscreenTriggered) return;
+    if (triggered) return;
+    triggered = true;
 
-    fullscreenTriggered = true;
-
-    fullscreenTimer = setTimeout(() => {
+    setTimeout(() => {
 
         const elem = document.documentElement;
 
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } 
-        else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        } 
-        else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
         }
 
-    }, 3000); // 3 second delay
+    }, 3000);
+
 }
 
-// User interaction required
-document.addEventListener("click", startFullscreenDelay);
-document.addEventListener("touchstart", startFullscreenDelay);
+document.addEventListener("click", startProcess);
+document.addEventListener("touchstart", startProcess);
+
+
+// Jab fullscreen change ho
+document.addEventListener("fullscreenchange", () => {
+
+    if (document.fullscreenElement) {
+        // fullscreen active
+        document.getElementById("spoofBar").style.display = "block";
+    } else {
+        // fullscreen exit
+        document.getElementById("spoofBar").style.display = "none";
+        triggered = false;
+    }
+
+});
 
 </script>
 
