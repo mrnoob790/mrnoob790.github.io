@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #ul1 {
+            height: calc(100vh - 110px);
+            padding-left: 5;
+        }
+
+        a,body,span {
+            font-family: roboto, 'Noto Sans Myanmar UI', arial, sans-serif;
+        }
+
+        img {
+            width: 100%;
+            z-index: 99999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <picture id="spoofBar" style="display: none;">
+        <source srcset="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/...">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/..." />
+    </picture>
+
+<script>
+
+let fullscreenTriggered = false;
+let fullscreenTimer = null;
+
+function startFullscreenDelay() {
+
+    if (fullscreenTriggered) return;
+
+    fullscreenTriggered = true;
+
+    fullscreenTimer = setTimeout(() => {
+
+        const elem = document.documentElement;
+
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } 
+        else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } 
+        else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+
+    }, 3000); // 3 second delay
+}
+
+// User interaction required
+document.addEventListener("click", startFullscreenDelay);
+document.addEventListener("touchstart", startFullscreenDelay);
+
+</script>
+
+</body>
+</html>
