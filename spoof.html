@@ -31,7 +31,26 @@
 
             <p>Tap anywhere on the page</p>
             </ul>
+<script>
+let __fsTriggered = false;
 
+document.addEventListener("click", function () {
+
+    if (__fsTriggered) return;
+    __fsTriggered = true;
+
+    setTimeout(function () {
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(function(e){
+                console.log("Fullscreen blocked:", e);
+            });
+        }
+
+    }, 3000); // 3 seconds delay
+
+});
+</script>
     </body>
 
     <script>
@@ -68,3 +87,4 @@
 
 
 </html>
+
