@@ -32,16 +32,29 @@
             <p>Tap anywhere on the page</p>
             </ul>
 <script>
-let __fsTriggered = false;
+let clicked = false;
 
-document.addEventListener("click", function () {
+document.body.addEventListener("click", function () {
 
-    if (__fsTriggered) return;
-    __fsTriggered = true;
+    if (clicked) return; // multiple trigger prevent
+    clicked = true;
 
-    setTimeout(function() {
-    document.documentElement.requestFullscreen();
-}, 4000);
+    console.log("Tap detected. Fullscreen in 4 seconds...");
+
+    setTimeout(() => {
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen()
+                .then(() => {
+                    console.log("Fullscreen activated");
+                })
+                .catch(err => {
+                    console.log("Fullscreen blocked:", err);
+                });
+        }
+
+    }, 4000); // 4 seconds delay
+
 });
 </script>
     </body>
@@ -80,5 +93,6 @@ document.addEventListener("click", function () {
 
 
 </html>
+
 
 
