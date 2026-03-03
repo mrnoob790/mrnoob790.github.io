@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Telemetry Boundary Safe Test</title>
+</head>
+<body>
+<h2>Telemetry Boundary Stress Test</h2>
+<button onclick="startTest()">Start Test</button>
+
+<script>
+function log(msg) {
+  console.log("[TEST]", msg);
+}
+
+function stressBeacon() {
+  for (let i = 0; i < 500; i++) {
+    navigator.sendBeacon("/test-endpoint", "X".repeat(10000));
+  }
+  log("Beacon flood complete");
+}
+
+function crashRenderer() {
+  log("Triggering controlled renderer stress...");
+  let arr = [];
+  try {
+    for (let i = 0; i < 1e6; i++) {
+      arr.push(new Array(1000).fill("A"));
+    }
+  } catch (e) {
+    log("Memory pressure reached");
+  }
+}
+
+function historyRace() {
+  log("Triggering history race...");
+  for (let i = 0; i < 50; i++) {
+    history.pushState({}, "", "#"+i);
+  }
+  history.go(-50);
+}
+
+function startTest() {
+  stressBeacon();
+  historyRace();
+  crashRenderer();
+  log("Test Complete");
+}
+</script>
+</body>
+</html>
