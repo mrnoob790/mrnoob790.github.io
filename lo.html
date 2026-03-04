@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<body>
+
+<h2>Tap to start test</h2>
+
 <script>
 
-function startTest(){
+document.body.onclick = () => {
 
     document.documentElement.requestFullscreen();
 
-    setTimeout(()=>{
-        location.href =
-        "intent://assistant.google.com/#Intent;scheme=https;package=com.google.android.googlequicksearchbox;end";
-    },300);
+    setTimeout(() => {
 
-}
+        location.href =
+        "intent://assistant/#Intent;scheme=googleassistant;package=com.google.android.googlequicksearchbox;end";
+
+    }, 500);
+
+};
 
 </script>
-</head>
-
-<body onclick="startTest()">
-
-<h2>Tap to start fullscreen test</h2>
 
 </body>
 </html>
