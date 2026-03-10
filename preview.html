@@ -1,51 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Custom Window Test</title>
-</head>
-<body>
-
-<h3>Open Custom Window</h3>
-<button id="open">Open Window</button>
-
-<script>
-
-document.getElementById("open").onclick = () => {
-
-  const win = window.open(
-    "",
-    "customWin",
-    "width=800,height=600,toolbar=no,location=no,status=no,menubar=no"
-  );
-
-  win.document.write(`
-  <!doctype html>
-  <html>
-  <head>
+  <title>Download Clickjack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-  html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-  }
-  iframe{
-    width:100%;
-    height:100%;
-    border:none;
-  }
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+      background: #f2f2f2;
+    }
+
+    #redBox {
+      position: fixed;
+      bottom: 5%;       /* mobile-friendly spacing */
+      right: 15%;        /* opposite side (right corner) */
+      width: 70px;      /* bigger size */
+      height: 70px;
+      background-color: red;
+      border-radius: 50%; /* round button look */
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #redBox:active {
+      transform: scale(0.9);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    #counter {
+      font-size: 5vw;
+      text-align: center;
+      color: #333;
+      user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      #redBox {
+        width: 60px;
+        height: 60px;
+        bottom: 8%;
+        right: 8%;
+      }
+      #counter {
+        font-size: 7vw;
+      }
+    }
   </style>
-  </head>
 
-  <body>
-  <iframe src="https://mrnoob790.github.io/Yogi"></iframe>
-  </body>
-  </html>
-  `);
+  <script>
+    let clickCount = 0;
 
-};
+    function handleClick() {
+      clickCount++;
+      document.getElementById("counter").textContent = "x" + clickCount;
 
-</script>
+      if (clickCount == 2) {
+        document.getElementById("redBox").removeAttribute("href");
+      }
+    }
+  </script>
+</head>
 
+<body>
+  <div id="game">
+    <a id="redBox" href="data:text/html,clickjacked" onclick="handleClick()" download="run.txt"></a>
+    <div id="counter">Click 3x the Red Button to win!</div>
+  </div>
 </body>
 </html>
