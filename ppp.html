@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Blob → Document PiP Test</title>
+</head>
+
+<body>
+
+<h2>Blob → Document PiP Test</h2>
+<button onclick="start()">Start Test</button>
+
+<script>
+function start() {
+
+const blobContent = `
+<!DOCTYPE html>
+<html>
+<body style="margin:0;background:#111;color:white;font-family:sans-serif">
+
+<h3 style="padding:10px">Blob Page</h3>
+
+<button onclick="openPip()">Open PiP</button>
+
+<script>
+async function openPip(){
+
+if(!("documentPictureInPicture" in window)){
+alert("Document PiP not supported");
+return;
+}
+
+const pip = await documentPictureInPicture.requestWindow({
+width:400,
+height:300
+});
+
+pip.document.body.innerHTML = `
+<h3 style="background:black;color:white;padding:10px">
+PiP Window From Blob
+</h3>
+
+<iframe src="https://mrnoob790.github.io/adeed"
+style="width:100%;height:90%;border:0"></iframe>
+`;
+
+}
+<\/script>
+
+</body>
+</html>
+`;
+
+const blob = new Blob([blobContent], {type:"text/html"});
+const blobURL = URL.createObjectURL(blob);
+
+window.open(blobURL);
+
+}
+</script>
+
+</body>
+</html>
