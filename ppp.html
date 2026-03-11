@@ -1,59 +1,57 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Blob Fullscreen PoC</title>
+<title>Blob Fullscreen Test</title>
 <style>
 body{
-  font-family: Arial;
-  text-align:center;
-  margin-top:100px;
+font-family:sans-serif;
+text-align:center;
+margin-top:120px;
 }
 button{
-  padding:15px 30px;
-  font-size:18px;
+font-size:20px;
+padding:12px 30px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Tap to Continue</h2>
-<button onclick="toBlob()">Tap</button>
+<h2>Click to Continue</h2>
+<button onclick="start()">Start</button>
 
 <script>
 
-function toBlob(){
+function start(){
 
-  // current page ka HTML lo
-  var html = document.documentElement.outerHTML;
+const html = `
+<!DOCTYPE html>
+<html>
+<body style="text-align:center;margin-top:150px;font-family:sans-serif">
 
-  // blob create karo
-  var blob = new Blob([html], {type:"text/html"});
+<h2>Tap anywhere to enter fullscreen</h2>
 
-  // blob URL banao
-  var url = URL.createObjectURL(blob);
+<script>
 
-  // blob page par redirect
-  location.href = url;
+document.addEventListener("click",function(){
 
-}
-
-// blob page par click → fullscreen
-document.addEventListener("click", function(){
-
-  if(location.href.startsWith("blob:")){
-
-    var el = document.documentElement;
-
-    if(el.requestFullscreen){
-      el.requestFullscreen();
-    }
-
-  }
+document.documentElement.requestFullscreen();
 
 });
+
+<\/script>
+
+</body>
+</html>
+`;
+
+const blob = new Blob([html],{type:"text/html"});
+const url = URL.createObjectURL(blob);
+
+location.href = url;
+
+}
 
 </script>
 
