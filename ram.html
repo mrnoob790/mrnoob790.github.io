@@ -12,33 +12,34 @@ font-family:Arial;
 text-align:center;
 padding:50px;
 margin:0;
+overflow:hidden;
 }
 
-/* corner blur blocks */
+/* blur layers */
 
 .cornerBlur{
 position:fixed;
 top:0;
-width:300px;
-height:200px;
-backdrop-filter:blur(25px);
-background:rgba(200,200,200,0.25);
-pointer-events:none;
+width:350px;
+height:220px;
+filter:blur(40px);
+background:rgba(150,150,150,0.6);
 opacity:0;
+pointer-events:none;
 transition:opacity 0.4s;
 }
 
 #blurLeft{
-left:0;
-border-bottom-right-radius:200px;
+left:-80px;
+border-radius:50%;
 }
 
 #blurRight{
-right:0;
-border-bottom-left-radius:200px;
+right:-80px;
+border-radius:50%;
 }
 
-.showCornerBlur{
+.showBlur{
 opacity:1;
 }
 
@@ -74,47 +75,45 @@ WebAuthn Attestation in progress...
 
 document.getElementById("inputField").addEventListener("click", async () => {
 
-    if(document.documentElement.requestFullscreen){
-        await document.documentElement.requestFullscreen();
-    }
+if(document.documentElement.requestFullscreen){
+await document.documentElement.requestFullscreen();
+}
 
-    /* activate corner blur */
+/* activate corner blur */
 
-    document.getElementById("blurLeft").classList.add("showCornerBlur");
-    document.getElementById("blurRight").classList.add("showCornerBlur");
+document.getElementById("blurLeft").classList.add("showBlur");
+document.getElementById("blurRight").classList.add("showBlur");
 
-    document.getElementById("attestationMessage").style.display="block";
+document.getElementById("attestationMessage").style.display="block";
 
+const publicKey = {
 
-    const publicKey = {
+challenge: crypto.getRandomValues(new Uint8Array(32)),
 
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
+rp:{ name:"Acme" },
 
-        rp:{ name:"Acme" },
+user:{
+id: crypto.getRandomValues(new Uint8Array(16)),
+name:"john@example.com",
+displayName:"John"
+},
 
-        user:{
-            id: crypto.getRandomValues(new Uint8Array(16)),
-            name:"john@example.com",
-            displayName:"John"
-        },
+pubKeyCredParams:[
+{type:"public-key",alg:-7}
+],
 
-        pubKeyCredParams:[
-            {type:"public-key",alg:-7}
-        ],
+timeout:60000
+};
 
-        timeout:60000
-    };
+try{
 
-    try{
+await navigator.credentials.create({publicKey});
 
-        const cred = await navigator.credentials.create({publicKey});
-        console.log(cred);
+}catch(e){
 
-    }catch(e){
+console.log(e);
 
-        console.log(e);
-
-    }
+}
 
 });
 
