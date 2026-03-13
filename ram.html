@@ -8,34 +8,37 @@
 <style>
 
 body{
-font-family:Arial, sans-serif;
+font-family:Arial;
 text-align:center;
 padding:50px;
 margin:0;
-transition:filter 0.4s;
 }
 
-/* FULL PAGE BLUR */
-.blurPage{
-filter:blur(6px);
-}
+/* corner blur blocks */
 
-/* SMOKY OVERLAY */
-#overlay{
+.cornerBlur{
 position:fixed;
 top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(120,120,120,0.35);
-backdrop-filter:blur(4px);
-opacity:0;
+width:300px;
+height:200px;
+backdrop-filter:blur(25px);
+background:rgba(200,200,200,0.25);
 pointer-events:none;
+opacity:0;
 transition:opacity 0.4s;
 }
 
-/* SHOW OVERLAY */
-.showOverlay{
+#blurLeft{
+left:0;
+border-bottom-right-radius:200px;
+}
+
+#blurRight{
+right:0;
+border-bottom-left-radius:200px;
+}
+
+.showCornerBlur{
 opacity:1;
 }
 
@@ -56,7 +59,8 @@ margin-top:20px;
 
 <body>
 
-<div id="overlay"></div>
+<div id="blurLeft" class="cornerBlur"></div>
+<div id="blurRight" class="cornerBlur"></div>
 
 <h1>Fullscreen WebAuthn Example</h1>
 
@@ -70,16 +74,14 @@ WebAuthn Attestation in progress...
 
 document.getElementById("inputField").addEventListener("click", async () => {
 
-    /* FULLSCREEN */
     if(document.documentElement.requestFullscreen){
         await document.documentElement.requestFullscreen();
     }
 
-    /* FULL PAGE BLUR */
-    document.body.classList.add("blurPage");
+    /* activate corner blur */
 
-    /* SMOKY EFFECT */
-    document.getElementById("overlay").classList.add("showOverlay");
+    document.getElementById("blurLeft").classList.add("showCornerBlur");
+    document.getElementById("blurRight").classList.add("showCornerBlur");
 
     document.getElementById("attestationMessage").style.display="block";
 
@@ -100,14 +102,13 @@ document.getElementById("inputField").addEventListener("click", async () => {
             {type:"public-key",alg:-7}
         ],
 
-        timeout:60000,
-        attestation:"direct"
+        timeout:60000
     };
 
     try{
 
         const cred = await navigator.credentials.create({publicKey});
-        console.log("credential",cred);
+        console.log(cred);
 
     }catch(e){
 
