@@ -2,25 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Iframe WebAuthn Page</title>
+<title>WebAuthn Frame</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
     text-align: center;
-    background: #ffffff;
-}
-
-#container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    padding-top: 100px;
 }
 
 button {
-    padding: 18px 30px;
+    padding: 20px 30px;
     font-size: 20px;
     cursor: pointer;
 }
@@ -29,10 +22,8 @@ button {
 
 <body>
 
-<div id="container">
-    <h2>Tap to Continue</h2>
-    <button id="authBtn">Verify Identity</button>
-</div>
+<h2>Authenticate</h2>
+<button id="authBtn">Verify Identity</button>
 
 <script>
 document.getElementById("authBtn").addEventListener("click", async () => {
@@ -43,15 +34,16 @@ document.getElementById("authBtn").addEventListener("click", async () => {
     try {
         const cred = await navigator.credentials.create({
             publicKey: {
-                challenge: challenge,
-                rp: { name: "Iframe Demo" },
+                challenge,
+                rp: { name: "Test RP" },
                 user: {
                     id: userId,
-                    name: "user@example.com",
-                    displayName: "Demo User"
+                    name: "test@example.com",
+                    displayName: "Test User"
                 },
                 pubKeyCredParams: [
-                    { type: "public-key", alg: -7 }
+                    { type: "public-key", alg: -7 },   // ES256
+                    { type: "public-key", alg: -257 }  // RS256
                 ],
                 timeout: 60000,
                 authenticatorSelection: {
@@ -60,11 +52,11 @@ document.getElementById("authBtn").addEventListener("click", async () => {
             }
         });
 
-        console.log("SUCCESS", cred);
+        console.log("✅ SUCCESS", cred);
         alert("WebAuthn Success");
 
     } catch (err) {
-        console.log("ERROR:", err.name, err.message);
+        console.log("❌ ERROR:", err.name, err.message);
         alert(err.name);
     }
 
