@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Iframe WebAuthn Page</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    background: #ffffff;
+}
+
+#container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+button {
+    padding: 18px 30px;
+    font-size: 20px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="container">
+    <h2>Tap to Continue</h2>
+    <button id="authBtn">Verify Identity</button>
+</div>
+
+<script>
+document.getElementById("authBtn").addEventListener("click", async () => {
+
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+
+    try {
+        const cred = await navigator.credentials.create({
+            publicKey: {
+                challenge: challenge,
+                rp: { name: "Iframe Demo" },
+                user: {
+                    id: userId,
+                    name: "user@example.com",
+                    displayName: "Demo User"
+                },
+                pubKeyCredParams: [
+                    { type: "public-key", alg: -7 }
+                ],
+                timeout: 60000,
+                authenticatorSelection: {
+                    userVerification: "preferred"
+                }
+            }
+        });
+
+        console.log("SUCCESS", cred);
+        alert("WebAuthn Success");
+
+    } catch (err) {
+        console.log("ERROR:", err.name, err.message);
+        alert(err.name);
+    }
+
+});
+</script>
+
+</body>
+</html>
