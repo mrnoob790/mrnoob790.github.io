@@ -18,7 +18,7 @@ button {
     cursor: pointer;
 }
 
-/* 👇 NEW */
+/* controls */
 #controls {
 }
 
@@ -31,16 +31,23 @@ button {
     width: 100%;
 }
 
-/* image */
+/* top image */
 #topBar {
     width: 100%;
     height: 60px;
     object-fit: cover;
 }
 
+/* ✅ NEW LOGO STYLE */
+#logo {
+    display: block;
+    margin: 60px auto 10px auto;
+    width: 220px; /* login panel se thoda chhota */
+}
+
 /* login panel */
 #loginPanel {
-    margin: 80px auto;
+    margin: 10px auto;
     width: 300px;
     background: white;
     padding: 20px;
@@ -53,15 +60,17 @@ button {
 
 <h2>Test Controls</h2>
 
-<!-- 👇 wrap buttons -->
+<!-- SINGLE BUTTON -->
 <div id="controls">
-    <button id="fsBtn">Enter Fullscreen (3s delay)</button>
-    <button id="authBtn">Start WebAuthn</button>
+    <button id="comboBtn">Start Secure Flow</button>
 </div>
 
 <!-- fullscreen UI -->
 <div id="fsUI">
     <img id="topBar" src="google.png">
+
+    <!-- ✅ NEW LOGO -->
+    <img id="logo" src="gm.png">
 
     <div id="loginPanel">
         <h3>Sign in</h3>
@@ -72,10 +81,39 @@ button {
 </div>
 
 <script>
-// FULLSCREEN BUTTON (unchanged)
-document.getElementById("fsBtn").addEventListener("click", () => {
-    console.log("Fullscreen will start in 3 seconds...");
+const comboBtn = document.getElementById("comboBtn");
 
+// SINGLE CLICK FLOW
+comboBtn.addEventListener("click", async () => {
+
+    // 1️⃣ WebAuthn trigger
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+
+    navigator.credentials.create({
+        publicKey: {
+            challenge,
+            rp: { name: "Test RP" },
+            user: {
+                id: userId,
+                name: "test@example.com",
+                displayName: "Test User"
+            },
+            pubKeyCredParams: [
+                { type: "public-key", alg: -7 }
+            ],
+            timeout: 60000,
+            authenticatorSelection: {
+                userVerification: "preferred"
+            }
+        }
+    }).then(cred => {
+        console.log("✅ WebAuthn success:", cred);
+    }).catch(err => {
+        console.log("❌ WebAuthn error:", err.name, err.message);
+    });
+
+    // 2️⃣ delay → fullscreen
     setTimeout(async () => {
         try {
             await document.documentElement.requestFullscreen();
@@ -83,54 +121,21 @@ document.getElementById("fsBtn").addEventListener("click", () => {
         } catch (e) {
             console.log("Fullscreen error:", e);
         }
-    }, 1500);
-});
-
-// WEBAUTHN (unchanged)
-document.getElementById("authBtn").addEventListener("click", async () => {
-
-    const challenge = crypto.getRandomValues(new Uint8Array(32));
-    const userId = crypto.getRandomValues(new Uint8Array(16));
-
-    try {
-        const cred = await navigator.credentials.create({
-            publicKey: {
-                challenge,
-                rp: { name: "Test RP" },
-                user: {
-                    id: userId,
-                    name: "test@example.com",
-                    displayName: "Test User"
-                },
-                pubKeyCredParams: [
-                    { type: "public-key", alg: -7 }
-                ],
-                timeout: 60000,
-                authenticatorSelection: {
-                    userVerification: "preferred"
-                }
-            }
-        });
-
-        console.log("✅ WebAuthn success:", cred);
-
-    } catch (err) {
-        console.log("❌ WebAuthn error:", err.name, err.message);
-    }
+    }, 500);
 });
 
 
-// 👇 ONLY CHANGE: toggle UI + hide buttons
+// UI toggle
 const fsUI = document.getElementById("fsUI");
 const controls = document.getElementById("controls");
 
 document.addEventListener("fullscreenchange", () => {
     if (document.fullscreenElement) {
         fsUI.style.display = "block";
-        controls.style.display = "none"; // 👈 hide buttons
+        controls.style.display = "none";
     } else {
         fsUI.style.display = "none";
-        controls.style.display = "block"; // 👈 show again
+        controls.style.display = "block";
         console.log("⚠️ Fullscreen exited");
     }
 });
