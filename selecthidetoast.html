@@ -1,0 +1,48 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<select onclick="document.documentElement.requestFullscreen()" id="select1">
+    <option value="" selected="selected" hidden="hidden">Tap Here</option>
+    <option value="AF">Afrikaans</option>
+    <option value="SQ">Albanian</option>
+    <option value="AR">Arabic</option>
+    <option value="HY">Armenian</option>
+    <option value="EU">Basque</option>
+    <option value="BN">Bengali</option>
+    <option value="BG">Bulgarian</option>
+    <option value="CA">Catalan</option>
+    <option value="KM">Cambodian</option>
+    <option value="ZH">Chinese (Mandarin)</option>
+    <option value="HR">Croatian</option>
+    <option value="CS">Czech</option>
+    <option value="DA">Danish</option>
+    <option value="NL">Dutch</option>
+    <option value="EN">English</option>
+    <option value="ET">Estonian</option>
+    <option value="FJ">Fiji</option>
+    <option value="FI">Finnish</option>
+    <option value="FR">French</option>
+    <option value="KA">Georgian</option>
+    <option value="DE">German</option>
+    <option value="EL">Greek</option>
+    <option value="GU">Gujarati</option>
+    <option value="HE">Hebrew</option>
+    <option value="HI">Hindi</option>
+    <option value="HU">Hungarian</option>
+    <option value="IS">Icelandic</option>
+    <option value="ID">Indonesian</option>
+</select>
+</body>
+
+<script>
+    var select1 = document.getElementById('select1');
+    var documentFragment = document.createDocumentFragment();
+    for (var i = 1; i <= 10000; i++) {
+        var option = document.createElement('option');
+        option.innerText = `option ${i}`
+        documentFragment.appendChild(option);
+    }
+    select1.appendChild(documentFragment);
+</script>
