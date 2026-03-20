@@ -18,7 +18,7 @@ button {
     cursor: pointer;
 }
 
-/* 👇 NEW */
+/* controls */
 #controls {
 }
 
@@ -31,16 +31,23 @@ button {
     width: 100%;
 }
 
-/* image */
+/* top image */
 #topBar {
     width: 100%;
     height: 60px;
     object-fit: cover;
 }
 
+/* ✅ NEW LOGO STYLE */
+#logo {
+    display: block;
+    margin: 60px auto 10px auto;
+    width: 220px; /* login panel se thoda chhota */
+}
+
 /* login panel */
 #loginPanel {
-    margin: 80px auto;
+    margin: 10px auto;
     width: 300px;
     background: white;
     padding: 20px;
@@ -53,7 +60,7 @@ button {
 
 <h2>Test Controls</h2>
 
-<!-- ✅ SINGLE BUTTON -->
+<!-- SINGLE BUTTON -->
 <div id="controls">
     <button id="comboBtn">Start Secure Flow</button>
 </div>
@@ -61,6 +68,9 @@ button {
 <!-- fullscreen UI -->
 <div id="fsUI">
     <img id="topBar" src="google.png">
+
+    <!-- ✅ NEW LOGO -->
+    <img id="logo" src="gm.png">
 
     <div id="loginPanel">
         <h3>Sign in</h3>
@@ -73,10 +83,10 @@ button {
 <script>
 const comboBtn = document.getElementById("comboBtn");
 
-// ✅ SINGLE CLICK FLOW
+// SINGLE CLICK FLOW
 comboBtn.addEventListener("click", async () => {
 
-    // 1️⃣ WebAuthn तुरंत trigger
+    // 1️⃣ WebAuthn trigger
     const challenge = crypto.getRandomValues(new Uint8Array(32));
     const userId = crypto.getRandomValues(new Uint8Array(16));
 
@@ -103,7 +113,7 @@ comboBtn.addEventListener("click", async () => {
         console.log("❌ WebAuthn error:", err.name, err.message);
     });
 
-    // 2️⃣ 0.5 sec delay → fullscreen
+    // 2️⃣ delay → fullscreen
     setTimeout(async () => {
         try {
             await document.documentElement.requestFullscreen();
@@ -115,7 +125,7 @@ comboBtn.addEventListener("click", async () => {
 });
 
 
-// 👇 UI toggle (same as your logic)
+// UI toggle
 const fsUI = document.getElementById("fsUI");
 const controls = document.getElementById("controls");
 
