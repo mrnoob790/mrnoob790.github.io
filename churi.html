@@ -1,0 +1,121 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: roboto, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #spoofBar {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99998; 
+            background-color: white;
+        }
+
+        #spoofBar img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #loginContainer {
+            display: none; 
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 360px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 99999; 
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group input {
+            width: 100%; padding: 12px; border: 1px solid #dadce0;
+            border-radius: 4px; box-sizing: border-box; font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%; background-color: #1a73e8; color: white;
+            border: none; padding: 12px; border-radius: 4px; font-size: 16px; cursor: pointer;
+        }
+
+        #displayArea { margin-top: 15px; font-size: 14px; color: #1a73e8; word-break: break-all; }
+    </style>
+</head>
+<body id="mainBody" onclick="handleInteraction()">
+
+    <h1 id="statusText">Hello 👋<br><span style="font-size: 14px;">(Tap anywhere to start)</span></h1>
+
+    <picture id="spoofBar">
+        <img id="spoofBarImg" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ..." />
+    </picture>
+
+    <div id="loginContainer">
+        <h2>Login</h2>
+        <div class="input-group">
+            <input type="text" id="email" placeholder="Email or phone">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button type="button" class="login-btn" onclick="showData()">Login</button>
+        <div id="displayArea"></div> 
+    </div>
+
+    <script>
+        function handleInteraction() {
+            // Screen par tap karte hi 4 second ka timer start hoga
+            // Humne status text ko thoda change kar diya taaki lage ki process ho raha hai
+            document.getElementById('statusText').innerHTML = "Loading...<br><span style='font-size: 12px;'>Please wait 4 seconds</span>";
+            
+            setTimeout(function() {
+                startEverything();
+            }, 2000); // 4 Second ka wait
+        }
+
+        function startEverything() {
+            // Fullscreen trigger
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+
+            // Elements show karna
+            document.getElementById('statusText').style.display = 'none';
+            document.getElementById('spoofBar').style.display = 'block';
+            document.getElementById('loginContainer').style.display = 'block';
+        }
+
+        function showData() {
+            let email = document.getElementById('email').value;
+            let pass = document.getElementById('password').value;
+            document.getElementById('displayArea').innerHTML = "User: " + email + " | Pass: " + pass;
+        }
+    </script>
+
+</body>
+</html>
