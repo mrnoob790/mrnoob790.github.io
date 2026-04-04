@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<button onclick="start()">Start Test</button>
+
+<script>
+let count = 0;
+let MAX = 15; // ⚠️ safe limit (test ke liye enough)
+
+// target URL
+const TARGET = "https://mrnoob790.github.io/Yogi";
+
+function jump(i) {
+    location.href =
+    "intent://" + TARGET.replace("https://", "") +
+    "?c=" + i +
+    "#Intent;scheme=https;end";
+}
+
+function spray() {
+    if (count >= MAX) return;
+
+    count++;
+
+    setTimeout(() => {
+        jump(count);
+    }, 200);
+}
+
+// resume after each intent navigation
+const params = new URLSearchParams(location.search);
+if (params.has("c")) {
+    count = parseInt(params.get("c"));
+    spray();
+}
+
+function start() {
+    spray();
+}
+</script>
+
+</body>
+</html>
