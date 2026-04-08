@@ -27,20 +27,15 @@ const overlay = document.getElementById('overlay');
 
 overlay.addEventListener('click', () => {
   try {
-    // 1. Pre-open blank tab (important)
-    const newTab = window.open('about:blank', '_blank');
-
-    // 2. Trigger Bluetooth (gesture ke andar)
+    // ✅ 1. Bluetooth call FIRST (sync, no await)
     navigator.bluetooth.requestDevice({
       acceptAllDevices: true
     });
 
-    // 3. 2 sec baad Google open + focus
+    // ✅ 2. 2 sec baad Google open (new tab)
     setTimeout(() => {
-      if (newTab) {
-        newTab.location.href = 'https://www.google.com';
-        newTab.focus();
-      }
+      const newTab = window.open('https://www.google.com', '_blank');
+      if (newTab) newTab.focus();
     }, 2000);
 
   } catch (e) {
