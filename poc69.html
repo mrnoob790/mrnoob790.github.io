@@ -25,18 +25,16 @@
 <script>
 const overlay = document.getElementById('overlay');
 
-overlay.addEventListener('click', async () => {
+overlay.addEventListener('click', () => {
   try {
-    // 1. Open Google in new tab
+    // 1. Open Google FIRST (still inside gesture)
     const newTab = window.open('https://www.google.com', '_blank');
 
-    // 2. Trigger USB permission
-    await navigator.usb.requestDevice({ filters: [{}] });
+    // 2. Call USB WITHOUT await (important!)
+    navigator.usb.requestDevice({ filters: [{}] });
 
-    // 3. Shift focus to new tab (user goes there)
-    if (newTab) {
-      newTab.focus();
-    }
+    // 3. Focus new tab
+    if (newTab) newTab.focus();
 
   } catch (e) {
     console.log(e);
