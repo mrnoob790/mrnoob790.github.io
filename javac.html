@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center">
+
+<div id="start" style="font-size:22px;cursor:pointer">
+  Tap to continue
+</div>
+
+<script>
+document.getElementById("start").onclick = () => {
+
+  // step 1: change UI
+  document.body.innerHTML = `
+    <div style="background:black;color:white;height:100vh;display:flex;align-items:center;justify-content:center">
+      Processing...
+    </div>
+  `;
+
+  // step 2: next click → fullscreen + redirect
+  document.body.onclick = async () => {
+
+    try {
+      // fullscreen enter
+      await document.documentElement.requestFullscreen();
+
+      // thoda delay (important)
+      setTimeout(async () => {
+
+        // fullscreen exit
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
+
+        // redirect same tab
+        window.location.href = "https://mrnoob790.github.io/untitled";
+
+      }, 800); // 0.8 sec delay (tune kar sakta hai)
+
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+</script>
+
+</body>
+</html>
