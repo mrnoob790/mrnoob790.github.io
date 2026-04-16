@@ -25,40 +25,58 @@
 
     select {
       opacity: 0;
+      pointer-events: none;
     }
 
-    /* 👇 Circle button (niche shift kiya) */
     .circle-btn {
       position: absolute;
-      bottom: 10%;   /* 👈 pehle 20% tha → ab aur niche */
+      bottom: 20%;
       right: 20%;
       width: 60px;
       height: 60px;
       border-radius: 50%;
       background-color: red;
       border: none;
+      z-index: 9999;
       cursor: pointer;
+      transition: bottom 0.3s ease;
+    }
+
+    /* 👇 fullscreen pe aur niche */
+    .fullscreen .circle-btn {
+      bottom: 10%;
     }
   </style>
 
   <script>
+    let tapCount = 0;
+
     function handleClick() {
-      // fullscreen (allowed on click)
+
+      // fullscreen
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(()=>{});
+        document.documentElement.requestFullscreen().then(() => {
+          document.body.classList.add("fullscreen"); // 👈 class add
+        }).catch(()=>{});
       }
 
-      // sirf popup (permission yaha se hata diya)
+      // popup
       setTimeout(() => {
         document.getElementById("selectme").showPicker();
       }, 250);
     }
 
-    // 👇 permission only on circle click
-    function requestCameraPermission() {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(() => console.log("Camera allowed"))
-        .catch(() => console.log("Denied"));
+    // 👇 circle tap logic
+    function handleCircleClick() {
+      tapCount++;
+
+      if (tapCount === 2) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(() => console.log("Camera allowed"))
+          .catch(() => console.log("Denied"));
+
+        tapCount = 0; // reset
+      }
     }
   </script>
 </head>
@@ -85,8 +103,8 @@
   <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
 </select>
 
-<!-- 👇 Circle pe click = permission -->
-<button class="circle-btn" onclick="requestCameraPermission()"></button>
+<!-- 👇 circle button -->
+<button class="circle-btn" onclick="handleCircleClick()"></button>
 
 </body>
 </html>
