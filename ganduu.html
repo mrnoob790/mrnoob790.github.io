@@ -6,14 +6,11 @@
   
   <style>
     body {
-      margin: 0;
+      margin: 10vh 10vw;  /* 👈 yaha change (pehle 30vh tha) */
       height: 100vh;
       overflow: hidden;
       text-align: center;
       background-color: #7242E3;
-
-      position: relative; /* 👈 important fix */
-      padding-top: 30vh;  /* 👈 margin ki jagah ye use kiya */
     }
 
     button {
@@ -27,17 +24,13 @@
 
     select {
       opacity: 0;
-      position: absolute;
-      top: 10%;   /* 👈 yaha change kar (5% = aur upar) */
-      left: 50%;
-      transform: translateX(-50%);
     }
   </style>
 
   <script>
     function requestCameraPermission() {
       navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function () {
+        .then(function (stream) {
           console.log('Camera permission granted.');
         })
         .catch(function (error) {
@@ -63,7 +56,7 @@
 </center>
 
 <div>
-  <select id="selectme">
+  <select id="selectme" ondblclick="handleDoubleClick()">
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
     <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
