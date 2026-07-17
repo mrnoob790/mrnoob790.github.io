@@ -1,26 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data URI History Test</title>
+<meta charset="UTF-8">
+<title>Data URI Test</title>
 </head>
 <body>
 
-<h2>Data URI Test</h2>
-<p>Click the link below, then close the Data URI tab and reopen it from browser History.</p>
+<h2>Data URI History Test</h2>
 
-<a href="data:text/html,
-<script>
-alert('location.href: ' + location.href);
-alert('location.origin: ' + location.origin);
-
-document.body.innerHTML =
-'<h2>Data URI Executed</h2>' +
-'<p><b>Origin:</b> ' + location.origin + '</p>' +
-'<p><b>URL:</b> ' + location.href + '</p>' +
-'<p><b>document.domain:</b> ' + document.domain + '</p>';
-</script>">
+<a href="data:text/html,%3Cscript%3Ealert('href%3A%20'%2Blocation.href)%3Balert('origin%3A%20'%2Blocation.origin)%3Bdocument.body.innerHTML%3D'%3Ch2%3EExecuted%3C%2Fh2%3E%3Cp%3EOrigin%3A%20'%2Blocation.origin%2B'%3C%2Fp%3E%3Cp%3EURL%3A%20'%2Blocation.href%2B'%3C%2Fp%3E%3Cp%3Edocument.domain%3A%20'%2Bdocument.domain%2B'%3C%2Fp%3E'%3B%3C%2Fscript%3E">
 Open Data URI Test
 </a>
 
