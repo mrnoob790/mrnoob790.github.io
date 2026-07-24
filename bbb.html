@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fullscreen + Pointer Lock Test</title>
+<style>
+body{
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Arial,sans-serif;
+}
+button{
+    font-size:20px;
+    padding:15px 30px;
+}
+</style>
+</head>
+<body>
+
+<button id="start">Enter Fullscreen</button>
+
+<script>
+const btn = document.getElementById("start");
+
+btn.addEventListener("click", async () => {
+    await document.documentElement.requestFullscreen();
+    document.body.innerHTML =
+        "<h1 style='text-align:center'>Fullscreen Active<br>Click Anywhere</h1>";
+});
+
+document.addEventListener("click", () => {
+    if (document.fullscreenElement && !document.pointerLockElement) {
+        document.body.requestPointerLock();
+    }
+});
+
+document.addEventListener("pointerlockchange", () => {
+    if (document.pointerLockElement) {
+        console.log("Pointer Locked");
+
+        setTimeout(() => {
+            document.exitPointerLock();
+            console.log("Pointer Unlocked");
+        }, 1000);
+    }
+});
+</script>
+
+</body>
+</html>
