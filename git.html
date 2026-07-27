@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fullscreen & System Assistant PoC</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #121212;
+    color: #ffffff;
+    font-family: sans-serif;
+    text-align: center;
+    cursor: pointer;
+  }
+  .target-area {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  p {
+    pointer-events: none;
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+
+  <div class="target-area" id="trigger">
+    <p>Tap here to Fullscreen & Open Gemini (Assistant)</p>
+  </div>
+
+<script>
+  const triggerBtn = document.getElementById('trigger');
+
+  triggerBtn.addEventListener('click', () => {
+    
+    // 1. Fullscreen mode me jana
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error("Fullscreen error:", err);
+      });
+    }
+
+    // 2. Android Intent ke through system Assistant/Gemini trigger karna
+    // ACTION_ASSIST OS level par default assistant ko call karta hai
+    const assistantIntent = "intent:#Intent;action=android.intent.action.ASSIST;end";
+    
+    // Thoda delay taki fullscreen pehle process ho jaye
+    setTimeout(() => {
+      window.location.href = assistantIntent;
+    }, 150);
+
+  });
+</script>
+</body>
+</html>
