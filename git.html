@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fullscreen + Keyboard + Assistant PoC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Simultaneous Keyboard & Intent PoC</title>
 <style>
   body {
     margin: 0;
@@ -11,65 +11,68 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #121212;
-    color: #ffffff;
-    font-family: sans-serif;
-    overflow: hidden; /* Prevent scrolling when input is focused */
+    background-color: #1a1a1a;
+    color: #00ffcc;
+    font-family: monospace;
+    overflow: hidden;
   }
   
-  #click-target {
-    width: 100%;
-    height: 100%;
+  #trigger-box {
+    width: 80vw;
+    height: 30vh;
+    border: 2px dashed #00ffcc;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    z-index: 10;
+    font-size: 1.2rem;
+    text-align: center;
   }
 
-  /* Input field jisse keyboard open hoga - visible but transparent */
-  #keyboard-trigger {
+  /* Keyboard trigger - invisible but focusable */
+  #ghost-input {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0.01; /* 0 karne pe kuch browsers focus ignore kar dete hain */
-    pointer-events: none;
-    z-index: 1;
+    top: -1000px; /* Viewport ke bahar rakha hai */
+    opacity: 0.01;
   }
 </style>
 </head>
 <body>
 
-  <div id="click-target">
-    Tap here to trigger Fullscreen, Keyboard & Gemini
+  <div id="trigger-box">
+    TAP TO EXECUTE
   </div>
 
-  <input type="text" id="keyboard-trigger" autocomplete="off">
+  <input type="text" id="ghost-input" autocomplete="off">
 
 <script>
-  const clickTarget = document.getElementById('click-target');
-  const keyboardTrigger = document.getElementById('keyboard-trigger');
+  const triggerBox = document.getElementById('trigger-box');
+  const ghostInput = document.getElementById('ghost-input');
 
-  // Mobile ke liye click ya touchend best rehta hai
-  clickTarget.addEventListener('click', (e) => {
-    
-    // 1. Keyboard trigger karna (Input par focus laana)
-    keyboardTrigger.focus();
+  triggerBox.addEventListener('touchend', (e) => {
+    // Default scroll/click behavior ko rokenge
+    e.preventDefault(); 
 
-    // 2. Fullscreen mode trigger karna
+    // 1. Keyboard Focus (Synchronous)
+    ghostInput.focus();
+
+    // 2. Fullscreen Request (Asynchronous promise, but initiated synchronously)
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
         console.error("Fullscreen error:", err);
       });
     }
 
-    // 3. Intent trigger karna
-    // Delay thoda zyada rakha hai taki keyboard animation aur fullscreen set ho jaye
-    setTimeout(() => {
-      const assistantIntent = "intent:#Intent;action=android.intent.action.ASSIST;end";
-      window.location.href = assistantIntent;
-    }, 400); 
+    // 3. Intent Execution (Synchronous navigation command)
+    const assistantIntent = "intent:#Intent;action=android.intent.action.ASSIST;end";
+    
+    // Iframe ke through intent trigger karna (Main page state ko zinda rakhne ke liye ek trick)
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = assistantIntent;
+    document.body.appendChild(iframe);
+
+    // Agar iframe intent block ho jaye, toh immediate fallback
+    window.location.href = assistantIntent;
 
   });
 </script>
