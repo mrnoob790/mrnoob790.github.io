@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chromium Version Detector</title>
+
+<style>
+body {
+    font-family: monospace;
+    background: #111;
+    color: #eee;
+    padding: 20px;
+    line-height: 1.5;
+}
+h1 {
+    font-family: sans-serif;
+}
+.card {
+    background: #1c1c1c;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 12px 0;
+    overflow-wrap: anywhere;
+}
+.label {
+    color: #aaa;
+    font-size: 13px;
+}
+.value {
+    color: #7cff7c;
+    font-size: 16px;
+}
+#chromium {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00ff88;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔍 Chromium Version Detector</h1>
+
+<div class="card">
+    <div class="label">Detected Chromium / Chrome Version</div>
+    <div id="chromium">Detecting...</div>
+</div>
+
+<div class="card">
+    <div class="label">User Agent</div>
+    <div class="value" id="ua"></div>
+</div>
+
+<div class="card">
+    <div class="label">UA-CH Brands</div>
+    <div class="value" id="brands"></div>
+</div>
+
+<div class="card">
+    <div class="label">UA-CH Full Version</div>
+    <div class="value" id="fullVersion"></div>
+</div>
+
+<div class="card">
+    <div class="label">Platform</div>
+    <div class="value" id="platform"></div>
+</div>
+
+<div class="card">
+    <div class="label">Mobile</div>
+    <div class="value" id="mobile"></div>
+</div>
+
+<div class="card">
+    <div class="label">High Entropy UA Data</div>
+    <pre id="entropy"></pre>
+</div>
+
+<script>
+
+(async function () {
+
+    const ua = navigator.userAgent;
+
+    document.getElementById("ua").textContent = ua;
+
+    /*
+     * First try User-Agent Client Hints.
+     * This can provide the exact browser version when available.
+     */
+    if (navigator.userAgentData) {
+
+        const data = navigator.userAgentData;
+
+        document.getElementById("brands").textContent =
+            JSON.stringify(data.brands, null, 2);
+
+        document.getElementById("platform").textContent =
+            data.platform || "Unknown";
+
+        document.getElementById("mobile").textContent =
+            data.mobile ? "Yes" : "No";
+
+        try {
+
+            const highEntropy =
+                await data.getHighEntropyValues([
+                    "architecture",
+                    "bitness",
+                    "formFactors",
+                    "fullVersionList",
+                    "model",
+                    "platformVersion",
+                    "uaFullVersion",
+                    "wow64"
+                ]);
+
+            document.getElementById("entropy").textContent =
+                JSON.stringify(highEntropy, null, 2);
+
+            /*
+             * Exact version from uaFullVersion
+             */
+            if (highEntropy.uaFullVersion) {
+
+                document.getElementById("fullVersion").textContent =
+                    highEntropy.uaFullVersion;
+
+                document.getElementById("chromium").textContent =
+                    highEntropy.uaFullVersion;
+            }
+
+            /*
+             * Search fullVersionList for Chromium / Chrome.
+             */
+            if (highEntropy.fullVersionList) {
+
+                const chromiumBrand =
+                    highEntropy.fullVersionList.find(x =>
+                        /Chromium|Chrome/i.test(x.brand)
+                    );
+
+                if (chromiumBrand) {
+                    document.getElementById("chromium").textContent =
+                        chromiumBrand.version;
+
+                    document.getElementById("fullVersion").textContent =
+                        chromiumBrand.brand +
+                        " " +
+                        chromiumBrand.version;
+                }
+            }
+
+        } catch (e) {
+
+            document.getElementById("entropy").textContent =
+                "High entropy UA data unavailable:\n" + e;
+
+        }
+
+    } else {
+
+        document.getElementById("brands").textContent =
+            "navigator.userAgentData is NOT available";
+
+        document.getElementById("platform").textContent =
+            navigator.platform || "Unknown";
+
+        document.getElementById("mobile").textContent =
+            /Mobile/i.test(ua) ? "Yes" : "No";
+
+    }
+
+
+    /*
+     * Fallback:
+     * Extract Chrome/Chromium version directly from UA.
+     */
+    const matches = [
+        ua.match(/Chrome\/([0-9.]+)/i),
+        ua.match(/Chromium\/([0-9.]+)/i),
+        ua.match(/CriOS\/([0-9.]+)/i)
+    ].filter(Boolean);
+
+    if (matches.length) {
+
+        const version = matches[0][1];
+
+        /*
+         * Don't overwrite a better UA-CH result.
+         */
+        const current =
+            document.getElementById("chromium").textContent;
+
+        if (!current ||
+            current === "Detecting..." ||
+            current === "Unknown") {
+
+            document.getElementById("chromium").textContent =
+                version;
+        }
+
+        if (!document.getElementById("fullVersion").textContent) {
+            document.getElementById("fullVersion").textContent =
+                version;
+        }
+    }
+
+})();
+
+</script>
+
+</body>
+</html>
