@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fullscreen Test</title>
+<style>
+    body{
+        margin:0;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        background:#111;
+        color:#fff;
+        font-family:Arial, sans-serif;
+        text-align:center;
+        cursor:pointer;
+    }
+    h1{
+        font-size:32px;
+        line-height:1.6;
+    }
+</style>
+</head>
+<body onclick="main()">
+
+<h1>
+    Click Anywhere to Enter Fullscreen<br><br>
+    <span style="font-size:22px;color:#ffd54f;">
+        After the screen changes, rapidly double-click anywhere.
+    </span>
+</h1>
+
+<div id="pointerLockElement"></div>
+<div id="fullscreenElement"></div>
+
+<script>
+function main() {
+    pointerLockElement.requestPointerLock();
+    fullscreenElement.appendChild(pointerLockElement);
+    fullscreenElement.requestFullscreen();
+}
+</script>
+
+</body>
+</html>
