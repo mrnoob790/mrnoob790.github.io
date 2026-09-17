@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fullscreen Keyboard PoC</title>
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #111;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#fullscreenText {
+    display: none;
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+#inputField {
+    width: min(85%, 400px);
+    padding: 14px;
+    font-size: 18px;
+    border: 0;
+    border-radius: 8px;
+    outline: none;
+}
+
+#status {
+    margin-top: 18px;
+    font-size: 14px;
+    opacity: .8;
+}
+
+#popup {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    width: min(82%, 330px);
+    padding: 24px;
+    border-radius: 14px;
+    background: white;
+    color: #111;
+    text-align: center;
+    box-shadow: 0 12px 45px rgba(0,0,0,.5);
+}
+
+#popup h2 {
+    margin: 0 0 12px;
+}
+
+#timer {
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+/* Sample login panel */
+#loginPanel {
+    display: none;
+    width: min(88%, 360px);
+    padding: 26px;
+    background: white;
+    color: #111;
+    border-radius: 14px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 35px rgba(0,0,0,.35);
+}
+
+#loginPanel h2 {
+    margin: 0 0 8px;
+    font-size: 26px;
+}
+
+#loginPanel p {
+    margin: 0 0 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.loginInput {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#loginButton {
+    width: 100%;
+    padding: 13px;
+    border: 0;
+    border-radius: 8px;
+    background: #111;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#loginMessage {
+    display: none;
+    margin-top: 15px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="page">
+
+    <div id="fullscreenText">How r u</div>
+
+    <!-- Initial trigger input -->
+    <input
+        id="inputField"
+        type="text"
+        placeholder="Tap here"
+        autocomplete="off"
+    >
+
+    <!-- Sample login panel shown after countdown -->
+    <div id="loginPanel">
+        <h2>Welcome back</h2>
+        <p>Sign in to continue</p>
+
+        <input
+            class="loginInput"
+            id="username"
+            type="text"
+            placeholder="Username"
+            autocomplete="username"
+        >
+
+        <input
+            class="loginInput"
+            id="password"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+        >
+
+        <button id="loginButton" type="button">
+            Login
+        </button>
+
+        <div id="loginMessage">
+            Sample login submitted.
+        </div>
+    </div>
+
+    <div id="status">Waiting</div>
+</div>
+
+<div id="popup">
+    <h2>Waiting</h2>
+    <div id="timer">4</div>
+    <p>Please wait...</p>
+</div>
+
+<script>
+(function () {
+    const input = document.getElementById("inputField");
+    const popup = document.getElementById("popup");
+    const timer = document.getElementById("timer");
+    const status = document.getElementById("status");
+    const fullscreenText = document.getElementById("fullscreenText");
+    const loginPanel = document.getElementById("loginPanel");
+    const loginButton = document.getElementById("loginButton");
+    const loginMessage = document.getElementById("loginMessage");
+
+    let started = false;
+
+    async function requestFullscreen() {
+        try {
+            if (document.documentElement.requestFullscreen) {
+                await document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                await document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                await document.documentElement.mozRequestFullScreen();
+            }
+        } catch (e) {
+            console.log("Fullscreen request failed:", e);
+        }
+    }
+
+    function startCountdown() {
+        popup.style.display = "block";
+        timer.textContent = "4";
+
+        let remaining = 4;
+
+        const interval = setInterval(function () {
+            remaining--;
+
+            if (remaining > 0) {
+                timer.textContent = remaining;
+            } else {
+                clearInterval(interval);
+
+                /*
+                 * Countdown finished:
+                 * hide the trigger input, dismiss its focus,
+                 * hide the waiting popup, then show the sample
+                 * login panel.
+                 */
+                input.blur();
+                input.style.display = "none";
+
+                popup.style.display = "none";
+
+                fullscreenText.style.display = "block";
+                loginPanel.style.display = "block";
+
+                status.textContent = "Completed";
+            }
+        }, 1000);
+    }
+
+    input.addEventListener("click", async function () {
+        if (started) return;
+        started = true;
+
+        status.textContent = "Starting...";
+
+        await requestFullscreen();
+
+        input.focus();
+
+        fullscreenText.style.display = "none";
+        loginPanel.style.display = "none";
+
+        startCountdown();
+
+        status.textContent = "Waiting";
+    });
+
+    loginButton.addEventListener("click", function () {
+        loginMessage.style.display = "block";
+    });
+})();
+</script>
+
+</body>
+</html>
