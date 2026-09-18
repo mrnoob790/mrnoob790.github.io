@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fullscreen Demo</title>
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+        }
+
+        .top-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 100vw;
+            height: auto;
+
+            z-index: 999999;
+            pointer-events: none;
+        }
+
+        .bottom-image {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+
+            width: 100vw;
+            height: auto;
+
+            z-index: 999999;
+            pointer-events: none;
+        }
+
+        .demo-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: 320px;
+            padding: 24px;
+
+            background: white;
+            border-radius: 10px;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+
+            text-align: center;
+            z-index: 1000000;
+        }
+
+        .demo-panel h3 {
+            margin: 0 0 8px;
+        }
+
+        .demo-label {
+            font-size: 12px;
+            margin-bottom: 18px;
+            opacity: 0.6;
+        }
+
+        .demo-field {
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 10px;
+            margin-bottom: 10px;
+
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .demo-button {
+            width: 100%;
+            padding: 10px;
+
+            border: 0;
+            border-radius: 5px;
+
+            background: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+<script>
+
+    let permissionRequested = false;
+
+
+    /*
+     * PAGE CLICK
+     * Fullscreen + notification permission
+     */
+    document.addEventListener("click", function () {
+
+        exploit();
+
+    });
+
+
+    function exploit() {
+
+        /*
+         * Fullscreen
+         */
+        if (!document.fullscreenElement) {
+
+            document.documentElement
+                .requestFullscreen()
+                .catch(function (err) {
+
+                    console.warn(
+                        "Fullscreen failed:",
+                        err.message
+                    );
+
+                });
+
+        }
+
+
+        /*
+         * Notification permission
+         */
+        if (
+            "Notification" in window &&
+            !permissionRequested
+        ) {
+
+            permissionRequested = true;
+
+            Notification.requestPermission()
+                .then(function (result) {
+
+                    console.log(
+                        "Notification permission:",
+                        result
+                    );
+
+                })
+                .catch(function (err) {
+
+                    console.warn(
+                        "Notification permission failed:",
+                        err
+                    );
+
+                });
+
+        }
+
+    }
+
+
+    /*
+     * ESC
+     *
+     * Input ke andar focus hone par
+     * page ka ESC handler interfere nahi karega.
+     */
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+
+        const active = document.activeElement;
+
+
+        /*
+         * Input/textarea mein ESC ko page handler
+         * se ignore karo.
+         */
+        if (
+            active &&
+            (
+                active.tagName === "INPUT" ||
+                active.tagName === "TEXTAREA"
+            )
+        ) {
+            return;
+        }
+
+
+        /*
+         * Demo UI show karo
+         */
+        showDemo();
+
+    });
+
+
+    function showDemo() {
+
+        /*
+         * Top image
+         */
+        if (!document.querySelector(".top-image")) {
+
+            const img = document.createElement("img");
+
+            img.src = "a.png";
+            img.className = "top-image";
+            img.alt = "";
+
+            document.body.appendChild(img);
+
+        }
+
+
+        /*
+         * Bottom image
+         */
+        if (!document.querySelector(".bottom-image")) {
+
+            const img = document.createElement("img");
+
+            img.src = "b.png";
+            img.className = "bottom-image";
+            img.alt = "";
+
+            document.body.appendChild(img);
+
+        }
+
+
+        /*
+         * Center demo panel
+         */
+        if (!document.querySelector(".demo-panel")) {
+
+            const panel = document.createElement("div");
+
+            panel.className = "demo-panel";
+
+
+            panel.innerHTML = `
+                <h3>Sample Login</h3>
+
+                <div class="demo-label">
+                    DEMO ONLY
+                </div>
+
+                <input
+                    class="demo-field"
+                    type="text"
+                    placeholder="Sample User ID"
+                    autocomplete="off"
+                >
+
+                <input
+                    class="demo-field"
+                    type="password"
+                    placeholder="Sample Password"
+                    autocomplete="off"
+                >
+
+                <button
+                    class="demo-button"
+                    type="button"
+                    disabled
+                >
+                    Demo Only
+                </button>
+            `;
+
+
+            document.body.appendChild(panel);
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
