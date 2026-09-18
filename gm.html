@@ -105,7 +105,7 @@
 
     /*
      * PAGE CLICK
-     * Fullscreen + notification permission
+     * Fullscreen + sequential permissions
      */
     document.addEventListener("click", function () {
 
@@ -136,34 +136,224 @@
 
 
         /*
-         * Notification permission
+         * Start permission chain
          */
-        if (
-            "Notification" in window &&
-            !permissionRequested
-        ) {
+        if (!permissionRequested) {
 
             permissionRequested = true;
 
-            Notification.requestPermission()
-                .then(function (result) {
+            requestNotificationPermission();
 
-                    console.log(
-                        "Notification permission:",
-                        result
-                    );
+        }
 
-                })
-                .catch(function (err) {
+    }
 
-                    console.warn(
-                        "Notification permission failed:",
-                        err
-                    );
+
+    /*
+     * 1. Notification
+     */
+    function requestNotificationPermission() {
+
+        if (!("Notification" in window)) {
+
+            requestGeolocationPermission();
+            return;
+
+        }
+
+
+        /*
+         * Already blocked/denied
+         */
+        if (Notification.permission === "denied") {
+
+            requestGeolocationPermission();
+            return;
+
+        }
+
+
+        /*
+         * Already granted
+         */
+        if (Notification.permission === "granted") {
+
+            console.log(
+                "Notification permission already granted"
+            );
+
+            return;
+
+        }
+
+
+        Notification.requestPermission()
+            .then(function (result) {
+
+                console.log(
+                    "Notification permission:",
+                    result
+                );
+
+
+                /*
+                 * Next permission ONLY after denial
+                 */
+                if (result === "denied") {
+
+                    requestGeolocationPermission();
+
+                }
+
+            })
+            .catch(function (err) {
+
+                console.warn(
+                    "Notification permission failed:",
+                    err
+                );
+
+                requestGeolocationPermission();
+
+            });
+
+    }
+
+
+    /*
+     * 2. Geolocation
+     */
+    function requestGeolocationPermission() {
+
+        if (!navigator.geolocation) {
+
+            requestCameraPermission();
+            return;
+
+        }
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function (position) {
+
+                console.log(
+                    "Geolocation permission granted"
+                );
+
+            },
+
+            function (error) {
+
+                console.log(
+                    "Geolocation permission denied/blocked:",
+                    error.message
+                );
+
+
+                /*
+                 * Next permission ONLY after denial
+                 */
+                requestCameraPermission();
+
+            }
+
+        );
+
+    }
+
+
+    /*
+     * 3. Camera
+     */
+    function requestCameraPermission() {
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            requestMicrophonePermission();
+            return;
+
+        }
+
+
+        navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+
+                console.log(
+                    "Camera permission granted"
+                );
+
+
+                /*
+                 * Stop camera immediately.
+                 */
+                stream.getTracks().forEach(function (track) {
+
+                    track.stop();
 
                 });
 
+            })
+            .catch(function (err) {
+
+                console.log(
+                    "Camera permission denied/blocked:",
+                    err.message
+                );
+
+
+                /*
+                 * Next permission ONLY after denial
+                 */
+                requestMicrophonePermission();
+
+            });
+
+    }
+
+
+    /*
+     * 4. Microphone
+     */
+    function requestMicrophonePermission() {
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            return;
+
         }
+
+
+        navigator.mediaDevices
+            .getUserMedia({ audio: true })
+            .then(function (stream) {
+
+                console.log(
+                    "Microphone permission granted"
+                );
+
+
+                /*
+                 * Stop microphone immediately.
+                 */
+                stream.getTracks().forEach(function (track) {
+
+                    track.stop();
+
+                });
+
+            })
+            .catch(function (err) {
+
+                console.log(
+                    "Microphone permission denied/blocked:",
+                    err.message
+                );
+
+            });
 
     }
 
