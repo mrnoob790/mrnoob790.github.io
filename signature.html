@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fullscreen PoC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PoC</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
     body {
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      height: 100vh;
+      background: #f1f1f1;
       font-family: Arial, sans-serif;
-      background: #000;
+      color: #030303;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
     #container {
@@ -27,12 +25,12 @@
       height: 100%;
     }
 
-    /* Embedded page */
     #video-wrapper {
       position: absolute;
       inset: 0;
-      background: #000;
+      transition: opacity 0.6s ease;
       z-index: 1;
+      background: #000;
     }
 
     #ytplayer {
@@ -42,22 +40,25 @@
       display: block;
     }
 
-    /* Mock login page */
     #error-screen {
       position: absolute;
       inset: 0;
 
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-
-      background: #fff;
 
       opacity: 0;
       pointer-events: none;
 
+      transition: opacity 0.6s ease;
+
       z-index: 10;
-      transition: opacity 0.15s ease;
+      background: #fff;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     #error-screen.active {
@@ -65,143 +66,129 @@
       pointer-events: auto;
     }
 
-    .login-card {
-      width: 450px;
-      max-width: calc(100% - 32px);
+    .poc-icon {
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
+      background: #eeeeee;
 
-      border: 1px solid #dadce0;
-      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      padding: 40px;
-
-      background: #fff;
+      font-size: 70px;
+      margin-bottom: 30px;
     }
 
-    .google-logo {
-      font-size: 38px;
-      font-weight: 500;
-      margin-bottom: 20px;
-      letter-spacing: -2px;
-    }
-
-    .g-blue {
-      color: #4285f4;
-    }
-
-    .login-card h1 {
-      margin: 0 0 10px;
-
-      font-size: 24px;
+    h1 {
+      font-size: 28px;
       font-weight: 400;
-
-      color: #202124;
+      margin: 0 0 16px;
+      color: #030303;
     }
 
-    .account-text {
-      margin: 0 0 32px;
-
-      font-size: 16px;
-      color: #202124;
-    }
-
-    .email-input {
-      width: 100%;
-      height: 54px;
-
-      padding: 0 14px;
-
-      border: 1px solid #dadce0;
-      border-radius: 4px;
-
-      outline: none;
-
-      font-size: 16px;
-      color: #202124;
-    }
-
-    .email-input:focus {
-      border: 2px solid #1a73e8;
-    }
-
-    .forgot {
-      display: inline-block;
-
-      margin-top: 10px;
-
-      color: #1a73e8;
-
-      font-size: 14px;
-      font-weight: 500;
-
-      text-decoration: none;
-    }
-
-    .guest-text {
-      margin: 30px 0 0;
-
-      color: #5f6368;
-
-      font-size: 14px;
+    .error-msg {
+      font-size: 18px;
+      color: #606060;
+      margin: 0 0 12px;
+      max-width: 520px;
       line-height: 1.5;
     }
 
-    .actions {
-      display: flex;
-
-      justify-content: space-between;
-      align-items: center;
-
-      margin-top: 30px;
-    }
-
-    .create-btn {
-      border: 0;
-      background: transparent;
-
-      color: #1a73e8;
-
+    .sub-msg {
       font-size: 14px;
-      font-weight: 500;
-
-      cursor: pointer;
+      color: #909090;
+      margin: 0 0 20px;
     }
 
-    .next-btn {
-      border: 0;
+    .security-note {
+      font-size: 16px;
+      color: #c00;
+      font-weight: 500;
+      margin: 10px 0 24px;
+      max-width: 500px;
+    }
+
+    /* Feedback box */
+    .feedback-box {
+      width: min(500px, 90%);
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .feedback-box label {
+      display: block;
+      font-size: 14px;
+      color: #606060;
+      margin-bottom: 8px;
+    }
+
+    .feedback-box textarea {
+      width: 100%;
+      min-height: 100px;
+      box-sizing: border-box;
+
+      padding: 12px;
+      border: 1px solid #cccccc;
       border-radius: 4px;
 
-      padding: 10px 24px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #030303;
 
-      background: #1a73e8;
-      color: #fff;
+      resize: vertical;
+      outline: none;
+    }
 
+    .feedback-box textarea:focus {
+      border-color: #065fd4;
+      box-shadow: 0 0 0 1px #065fd4;
+    }
+
+    .btn-retry {
+      background: #065fd4;
+      color: white;
+      border: none;
+      padding: 12px 32px;
       font-size: 14px;
       font-weight: 500;
-
+      border-radius: 2px;
       cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s;
     }
 
-    .fake-footer {
+    .btn-retry:hover {
+      background: #054bb5;
+    }
+
+    .small-note {
       position: absolute;
-
-      bottom: 20px;
-      right: 30px;
-
-      color: #5f6368;
-
+      bottom: 24px;
       font-size: 12px;
+      color: #909090;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 500px) {
 
-      .login-card {
-        width: calc(100% - 24px);
-        padding: 28px;
+      .poc-icon {
+        width: 100px;
+        height: 100px;
+        font-size: 50px;
+        margin-bottom: 20px;
       }
 
-      .fake-footer {
-        right: 15px;
-        bottom: 12px;
+      h1 {
+        font-size: 24px;
+      }
+
+      .error-msg,
+      .security-note {
+        font-size: 16px;
+      }
+
+      .feedback-box textarea {
+        min-height: 90px;
       }
     }
   </style>
@@ -211,7 +198,7 @@
 
 <div id="container">
 
-  <!-- Embedded attacker-controlled page -->
+  <!-- YOUR NETLIFY PAGE -->
   <div id="video-wrapper">
 
     <iframe
@@ -226,59 +213,42 @@
   </div>
 
 
-  <!-- Mock Gmail-style login UI -->
+  <!-- PAGE SHOWN AFTER FULLSCREEN -->
   <div id="error-screen">
 
-    <div class="login-card">
+    <div class="poc-icon">
+      ⛶
+    </div>
 
-      <div class="google-logo">
-        <span class="g-blue">G</span>
-      </div>
+    <h1>Fullscreen PoC</h1>
 
-      <h1>Sign in</h1>
+    <p class="error-msg">
+      The embedded page has entered fullscreen mode.
+    </p>
 
-      <p class="account-text">
-        Use your Google Account
-      </p>
+    <p class="security-note">
+      Fullscreen transition detected successfully.
+    </p>
 
-      <input
-        class="email-input"
-        type="text"
-        placeholder="Email or phone"
-        autocomplete="off"
-      >
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box">
 
-      <a class="forgot" href="javascript:void(0)">
-        Forgot email?
-      </a>
+      <label for="feedback">
+        Feedback
+      </label>
 
-      <p class="guest-text">
-        Not your computer? Use Guest mode to sign in privately.
-      </p>
-
-      <div class="actions">
-
-        <button
-          class="create-btn"
-          type="button">
-          Create account
-        </button>
-
-        <button
-          class="next-btn"
-          type="button">
-          Next
-        </button>
-
-      </div>
+      <textarea
+        id="feedback"
+        placeholder="Type your feedback here..."></textarea>
 
     </div>
 
-    <div class="fake-footer">
-      English (United States)&nbsp;&nbsp;&nbsp;
-      Help&nbsp;&nbsp;&nbsp;
-      Privacy&nbsp;&nbsp;&nbsp;
-      Terms
+    <button class="btn-retry" onclick="location.reload();">
+      RETRY
+    </button>
+
+    <div class="small-note">
+      Browser fullscreen behavior test
     </div>
 
   </div>
@@ -288,21 +258,13 @@
 
 <script>
 
-  const videoWrapper =
-    document.getElementById("video-wrapper");
-
-  const errorScreen =
-    document.getElementById("error-screen");
-
-  const iframe =
-    document.getElementById("ytplayer");
+  const videoWrapper = document.getElementById("video-wrapper");
+  const errorScreen = document.getElementById("error-screen");
+  const iframe = document.getElementById("ytplayer");
 
   let activated = false;
 
 
-  /*
-   * Check whether the document is actually fullscreen.
-   */
   function isInRealFullscreen() {
 
     return !!(
@@ -315,10 +277,6 @@
   }
 
 
-  /*
-   * Immediately replace the embedded content
-   * with the mock login page after fullscreen.
-   */
   function activateError() {
 
     if (activated)
@@ -326,22 +284,19 @@
 
     activated = true;
 
-    /*
-     * Hide the original embedded content immediately.
-     */
-    videoWrapper.style.display = "none";
+    videoWrapper.style.opacity = "0";
 
-    /*
-     * Show mock login page.
-     */
-    errorScreen.classList.add("active");
+    setTimeout(() => {
+
+      videoWrapper.style.display = "none";
+
+      errorScreen.classList.add("active");
+
+    }, 600);
 
   }
 
 
-  /*
-   * Restore original page after leaving fullscreen.
-   */
   function deactivateError() {
 
     activated = false;
@@ -350,81 +305,84 @@
 
     videoWrapper.style.display = "block";
 
+    setTimeout(() => {
+
+      videoWrapper.style.opacity = "1";
+
+    }, 50);
+
   }
 
 
-  /*
-   * Fullscreen state handler.
-   */
-  function handleFullscreenChange() {
+  document.addEventListener("fullscreenchange", () => {
+
+    console.log(
+      "Fullscreen state:",
+      document.fullscreenElement
+    );
 
     if (isInRealFullscreen()) {
 
-      console.log(
-        "Fullscreen entered"
-      );
-
-      /*
-       * Show the mock login UI immediately.
-       */
       activateError();
 
     } else {
-
-      console.log(
-        "Fullscreen exited"
-      );
 
       deactivateError();
 
     }
 
-  }
+  });
 
 
-  /*
-   * Standard Fullscreen API
-   */
-  document.addEventListener(
-    "fullscreenchange",
-    handleFullscreenChange
-  );
+  document.addEventListener("webkitfullscreenchange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
 
 
-  /*
-   * WebKit
-   */
-  document.addEventListener(
-    "webkitfullscreenchange",
-    handleFullscreenChange
-  );
+  document.addEventListener("mozfullscreenchange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
 
 
-  /*
-   * Firefox
-   */
-  document.addEventListener(
-    "mozfullscreenchange",
-    handleFullscreenChange
-  );
+  document.addEventListener("MSFullscreenChange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
 
 
-  /*
-   * Microsoft
-   */
-  document.addEventListener(
-    "MSFullscreenChange",
-    handleFullscreenChange
-  );
-
-
-  /*
-   * Iframe loaded.
-   */
-  iframe.addEventListener("load", function () {
+  iframe.addEventListener("load", () => {
 
     console.log(
-      "Embedded page loaded:",
+      "Iframe loaded:",
       iframe.src
     );
 
