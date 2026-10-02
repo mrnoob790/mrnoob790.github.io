@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fullscreen PoC</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: #f1f1f1;
+      font-family: Arial, sans-serif;
+      color: #030303;
+      overflow: hidden;
+    }
+
+    #container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* iframe */
+    #frame-wrapper {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: #000;
+      transition: opacity 0.4s ease;
+    }
+
+    #test-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Page shown after fullscreen */
+    #fullscreen-page {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background: #fff;
+      text-align: center;
+      padding: 20px;
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #fullscreen-page.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 55px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
+      margin: 0 0 15px;
+    }
+
+    .message {
+      font-size: 18px;
+      color: #606060;
+      line-height: 1.5;
+      max-width: 550px;
+    }
+
+    .fullscreen-status {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 28px;
+      border: 0;
+      border-radius: 4px;
+      background: #065fd4;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #054bb5;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="container">
+
+  <!-- Your page inside iframe -->
+  <div id="frame-wrapper">
+
+    <iframe
+      id="test-frame"
+      src="https://mrnoob790.github.io/untitled"
+      title="Fullscreen PoC"
+      allow="fullscreen"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+
+  <!-- Page displayed when fullscreen starts -->
+  <div id="fullscreen-page">
+
+    <div class="icon">⛶</div>
+
+    <h1>Fullscreen Mode</h1>
+
+    <p class="message">
+      The iframe has entered fullscreen mode.
+      This page is displayed by the parent PoC after
+      detecting the fullscreen transition.
+    </p>
+
+    <div class="fullscreen-status">
+      Fullscreen detected successfully.
+    </div>
+
+    <button onclick="exitFullscreen()">
+      EXIT FULLSCREEN
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const frameWrapper = document.getElementById("frame-wrapper");
+const fullscreenPage = document.getElementById("fullscreen-page");
+const iframe = document.getElementById("test-frame");
+
+let alreadyActivated = false;
+
+
+/*
+ * Check whether the browser is currently in fullscreen.
+ */
+function isInFullscreen() {
+
+  return !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement
+  );
+
+}
+
+
+/*
+ * Show the fullscreen page.
+ */
+function activateFullscreenPage() {
+
+  if (alreadyActivated)
+    return;
+
+  alreadyActivated = true;
+
+  frameWrapper.style.opacity = "0";
+
+  setTimeout(() => {
+
+    frameWrapper.style.display = "none";
+
+    fullscreenPage.classList.add("active");
+
+  }, 400);
+
+}
+
+
+/*
+ * Hide fullscreen page when fullscreen ends.
+ */
+function deactivateFullscreenPage() {
+
+  alreadyActivated = false;
+
+  fullscreenPage.classList.remove("active");
+
+  setTimeout(() => {
+
+    frameWrapper.style.display = "block";
+    frameWrapper.style.opacity = "1";
+
+  }, 300);
+
+}
+
+
+/*
+ * Standard fullscreen event.
+ */
+document.addEventListener("fullscreenchange", () => {
+
+  console.log(
+    "fullscreenchange:",
+    document.fullscreenElement
+  );
+
+  if (isInFullscreen()) {
+
+    activateFullscreenPage();
+
+  } else {
+
+    deactivateFullscreenPage();
+
+  }
+
+});
+
+
+/*
+ * WebKit.
+ */
+document.addEventListener("webkitfullscreenchange", () => {
+
+  if (isInFullscreen()) {
+
+    activateFullscreenPage();
+
+  } else {
+
+    deactivateFullscreenPage();
+
+  }
+
+});
+
+
+/*
+ * Firefox.
+ */
+document.addEventListener("mozfullscreenchange", () => {
+
+  if (isInFullscreen()) {
+
+    activateFullscreenPage();
+
+  } else {
+
+    deactivateFullscreenPage();
+
+  }
+
+});
+
+
+/*
+ * Exit fullscreen button.
+ */
+function exitFullscreen() {
+
+  if (document.exitFullscreen) {
+
+    document.exitFullscreen();
+
+  } else if (document.webkitExitFullscreen) {
+
+    document.webkitExitFullscreen();
+
+  } else if (document.mozCancelFullScreen) {
+
+    document.mozCancelFullScreen();
+
+  } else if (document.msExitFullscreen) {
+
+    document.msExitFullscreen();
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
