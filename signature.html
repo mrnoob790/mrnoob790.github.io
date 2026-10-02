@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PoC</title>
+  <title>Fullscreen PoC</title>
 
   <style>
+    html,
     body {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      background: #f1f1f1;
-      font-family: Arial, sans-serif;
-      color: #030303;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #fff;
     }
 
     #container {
@@ -25,10 +23,10 @@
       height: 100%;
     }
 
+    /* IFRAME */
     #video-wrapper {
       position: absolute;
       inset: 0;
-      transition: opacity 0.6s ease;
       z-index: 1;
       background: #000;
     }
@@ -40,6 +38,9 @@
       display: block;
     }
 
+    /*
+     * Page shown immediately after fullscreen
+     */
     #error-screen {
       position: absolute;
       inset: 0;
@@ -49,26 +50,32 @@
       align-items: center;
       justify-content: center;
 
-      opacity: 0;
-      pointer-events: none;
+      z-index: 20;
 
-      transition: opacity 0.6s ease;
-
-      z-index: 10;
       background: #fff;
       text-align: center;
+
       padding: 20px;
       box-sizing: border-box;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+
+      /* very short transition */
+      transition: opacity 0.08s linear;
     }
 
     #error-screen.active {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
     .poc-icon {
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
+
       border-radius: 20px;
       background: #eeeeee;
 
@@ -76,68 +83,73 @@
       align-items: center;
       justify-content: center;
 
-      font-size: 70px;
-      margin-bottom: 30px;
+      font-size: 60px;
+      margin-bottom: 24px;
     }
 
     h1 {
       font-size: 28px;
       font-weight: 400;
-      margin: 0 0 16px;
+
+      margin: 0 0 14px;
+
       color: #030303;
     }
 
     .error-msg {
       font-size: 18px;
       color: #606060;
-      margin: 0 0 12px;
-      max-width: 520px;
-      line-height: 1.5;
-    }
 
-    .sub-msg {
-      font-size: 14px;
-      color: #909090;
-      margin: 0 0 20px;
+      margin: 0 0 12px;
+
+      max-width: 520px;
+
+      line-height: 1.5;
     }
 
     .security-note {
       font-size: 16px;
       color: #c00;
+
       font-weight: 500;
-      margin: 10px 0 24px;
-      max-width: 500px;
+
+      margin: 8px 0 22px;
     }
 
-    /* Feedback box */
+    /* FEEDBACK BOX */
+
     .feedback-box {
       width: min(500px, 90%);
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       text-align: left;
     }
 
     .feedback-box label {
       display: block;
+
       font-size: 14px;
       color: #606060;
+
       margin-bottom: 8px;
     }
 
     .feedback-box textarea {
       width: 100%;
-      min-height: 100px;
+      min-height: 110px;
+
       box-sizing: border-box;
 
       padding: 12px;
-      border: 1px solid #cccccc;
+
+      border: 1px solid #ccc;
       border-radius: 4px;
+
+      outline: none;
 
       font-family: Arial, sans-serif;
       font-size: 14px;
-      color: #030303;
 
       resize: vertical;
-      outline: none;
     }
 
     .feedback-box textarea:focus {
@@ -147,15 +159,21 @@
 
     .btn-retry {
       background: #065fd4;
+
       color: white;
+
       border: none;
+
       padding: 12px 32px;
+
       font-size: 14px;
       font-weight: 500;
+
       border-radius: 2px;
+
       cursor: pointer;
+
       text-transform: uppercase;
-      transition: background 0.2s;
     }
 
     .btn-retry:hover {
@@ -164,8 +182,11 @@
 
     .small-note {
       position: absolute;
+
       bottom: 24px;
+
       font-size: 12px;
+
       color: #909090;
     }
 
@@ -175,7 +196,6 @@
         width: 100px;
         height: 100px;
         font-size: 50px;
-        margin-bottom: 20px;
       }
 
       h1 {
@@ -187,9 +207,6 @@
         font-size: 16px;
       }
 
-      .feedback-box textarea {
-        min-height: 90px;
-      }
     }
   </style>
 </head>
@@ -198,7 +215,7 @@
 
 <div id="container">
 
-  <!-- YOUR NETLIFY PAGE -->
+  <!-- ORIGINAL PAGE -->
   <div id="video-wrapper">
 
     <iframe
@@ -213,14 +230,16 @@
   </div>
 
 
-  <!-- PAGE SHOWN AFTER FULLSCREEN -->
+  <!-- PAGE APPEARS AFTER FULLSCREEN -->
   <div id="error-screen">
 
     <div class="poc-icon">
       ⛶
     </div>
 
-    <h1>Fullscreen PoC</h1>
+    <h1>
+      Fullscreen PoC
+    </h1>
 
     <p class="error-msg">
       The embedded page has entered fullscreen mode.
@@ -230,7 +249,8 @@
       Fullscreen transition detected successfully.
     </p>
 
-    <!-- FEEDBACK BOX -->
+
+    <!-- FEEDBACK -->
     <div class="feedback-box">
 
       <label for="feedback">
@@ -243,9 +263,15 @@
 
     </div>
 
-    <button class="btn-retry" onclick="location.reload();">
+
+    <button
+      class="btn-retry"
+      onclick="location.reload()">
+
       RETRY
+
     </button>
+
 
     <div class="small-note">
       Browser fullscreen behavior test
@@ -258,25 +284,18 @@
 
 <script>
 
-  const videoWrapper = document.getElementById("video-wrapper");
-  const errorScreen = document.getElementById("error-screen");
-  const iframe = document.getElementById("ytplayer");
+  const videoWrapper =
+    document.getElementById("video-wrapper");
+
+  const errorScreen =
+    document.getElementById("error-screen");
 
   let activated = false;
 
 
-  function isInRealFullscreen() {
-
-    return !!(
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    );
-
-  }
-
-
+  /*
+   * Show the second page immediately.
+   */
   function activateError() {
 
     if (activated)
@@ -284,19 +303,20 @@
 
     activated = true;
 
-    videoWrapper.style.opacity = "0";
+    /*
+     * No 600ms delay.
+     * No waiting for animation.
+     */
+    videoWrapper.style.display = "none";
 
-    setTimeout(() => {
-
-      videoWrapper.style.display = "none";
-
-      errorScreen.classList.add("active");
-
-    }, 600);
+    errorScreen.classList.add("active");
 
   }
 
 
+  /*
+   * Hide second page when fullscreen exits.
+   */
   function deactivateError() {
 
     activated = false;
@@ -305,88 +325,126 @@
 
     videoWrapper.style.display = "block";
 
-    setTimeout(() => {
-
-      videoWrapper.style.opacity = "1";
-
-    }, 50);
-
   }
 
 
-  document.addEventListener("fullscreenchange", () => {
+  /*
+   * Standard Fullscreen API
+   */
+  document.addEventListener(
+    "fullscreenchange",
+    function () {
 
-    console.log(
-      "Fullscreen state:",
-      document.fullscreenElement
-    );
+      const fullscreen =
+        document.fullscreenElement;
 
-    if (isInRealFullscreen()) {
+      console.log(
+        "Fullscreen:",
+        fullscreen
+      );
 
-      activateError();
+      if (fullscreen) {
 
-    } else {
+        /*
+         * Fullscreen detected →
+         * immediately show page.
+         */
+        activateError();
 
-      deactivateError();
+      } else {
+
+        deactivateError();
+
+      }
+
+    },
+    true
+  );
+
+
+  /*
+   * WebKit
+   */
+  document.addEventListener(
+    "webkitfullscreenchange",
+    function () {
+
+      if (
+        document.webkitFullscreenElement
+      ) {
+
+        activateError();
+
+      } else {
+
+        deactivateError();
+
+      }
+
+    },
+    true
+  );
+
+
+  /*
+   * Firefox
+   */
+  document.addEventListener(
+    "mozfullscreenchange",
+    function () {
+
+      if (
+        document.mozFullScreenElement
+      ) {
+
+        activateError();
+
+      } else {
+
+        deactivateError();
+
+      }
+
+    },
+    true
+  );
+
+
+  /*
+   * MS
+   */
+  document.addEventListener(
+    "MSFullscreenChange",
+    function () {
+
+      if (
+        document.msFullscreenElement
+      ) {
+
+        activateError();
+
+      } else {
+
+        deactivateError();
+
+      }
+
+    },
+    true
+  );
+
+
+  iframe.addEventListener(
+    "load",
+    function () {
+
+      console.log(
+        "Iframe loaded:",
+        iframe.src
+      );
 
     }
-
-  });
-
-
-  document.addEventListener("webkitfullscreenchange", () => {
-
-    if (isInRealFullscreen()) {
-
-      activateError();
-
-    } else {
-
-      deactivateError();
-
-    }
-
-  });
-
-
-  document.addEventListener("mozfullscreenchange", () => {
-
-    if (isInRealFullscreen()) {
-
-      activateError();
-
-    } else {
-
-      deactivateError();
-
-    }
-
-  });
-
-
-  document.addEventListener("MSFullscreenChange", () => {
-
-    if (isInRealFullscreen()) {
-
-      activateError();
-
-    } else {
-
-      deactivateError();
-
-    }
-
-  });
-
-
-  iframe.addEventListener("load", () => {
-
-    console.log(
-      "Iframe loaded:",
-      iframe.src
-    );
-
-  });
+  );
 
 </script>
 
