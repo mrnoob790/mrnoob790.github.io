@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PoC</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: #f1f1f1;
+      font-family: Arial, sans-serif;
+      color: #030303;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Iframe */
+    #video-wrapper {
+      position: absolute;
+      inset: 0;
+      transition: opacity 0.6s ease;
+      z-index: 1;
+      background: #000;
+    }
+
+    #ytplayer {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Page shown after fullscreen */
+    #error-screen {
+      position: absolute;
+      inset: 0;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: opacity 0.6s ease;
+
+      z-index: 10;
+      background: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #error-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .poc-icon {
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
+      background: #eeeeee;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 70px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
+      margin: 0 0 16px;
+      color: #030303;
+    }
+
+    .error-msg {
+      font-size: 18px;
+      color: #606060;
+      margin: 0 0 12px;
+      max-width: 520px;
+      line-height: 1.5;
+    }
+
+    .sub-msg {
+      font-size: 14px;
+      color: #909090;
+      margin: 0 0 32px;
+    }
+
+    .security-note {
+      font-size: 16px;
+      color: #c00;
+      font-weight: 500;
+      margin: 24px 0 40px;
+      max-width: 500px;
+    }
+
+    .btn-retry {
+      background: #065fd4;
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+
+    .btn-retry:hover {
+      background: #054bb5;
+    }
+
+    .small-note {
+      position: absolute;
+      bottom: 24px;
+      font-size: 12px;
+      color: #909090;
+    }
+
+    @media (max-width: 500px) {
+      .poc-icon {
+        width: 120px;
+        height: 120px;
+        font-size: 55px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .error-msg,
+      .security-note {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="container">
+
+  <!-- KICK VIDEO IFRAME -->
+  <div id="video-wrapper">
+
+    <iframe
+      id="ytplayer"
+      src="https://x.com/afrojack/status/1672340271957422080"
+      title="Kick Video"
+      frameborder="0"
+      allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+
+  <!-- PAGE SHOWN AFTER FULLSCREEN -->
+  <div id="error-screen">
+
+    <div class="poc-icon">
+      ⛶
+    </div>
+
+    <h1>Fullscreen PoC</h1>
+
+    <p class="error-msg">
+      The embedded page has entered fullscreen mode.
+    </p>
+
+    <p class="security-note">
+      Fullscreen transition detected successfully.
+    </p>
+
+    <button class="btn-retry" onclick="location.reload();">
+      RETRY
+    </button>
+
+    <div class="small-note">
+      Browser fullscreen behavior test
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  const videoWrapper = document.getElementById("video-wrapper");
+  const errorScreen = document.getElementById("error-screen");
+  const iframe = document.getElementById("ytplayer");
+
+  let activated = false;
+
+
+  /*
+   * Check real fullscreen state
+   */
+  function isInRealFullscreen() {
+
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+
+  }
+
+
+  /*
+   * Show page after fullscreen
+   */
+  function activateError() {
+
+    if (activated)
+      return;
+
+    activated = true;
+
+    videoWrapper.style.opacity = "0";
+
+    setTimeout(() => {
+
+      videoWrapper.style.display = "none";
+
+      errorScreen.classList.add("active");
+
+    }, 600);
+
+  }
+
+
+  /*
+   * Restore iframe when fullscreen exits
+   */
+  function deactivateError() {
+
+    activated = false;
+
+    errorScreen.classList.remove("active");
+
+    videoWrapper.style.display = "block";
+
+    setTimeout(() => {
+
+      videoWrapper.style.opacity = "1";
+
+    }, 50);
+
+  }
+
+
+  /*
+   * Standard fullscreen event
+   */
+  document.addEventListener("fullscreenchange", () => {
+
+    console.log(
+      "Fullscreen state:",
+      document.fullscreenElement
+    );
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
+
+
+  /*
+   * WebKit
+   */
+  document.addEventListener("webkitfullscreenchange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
+
+
+  /*
+   * Firefox
+   */
+  document.addEventListener("mozfullscreenchange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
+
+
+  /*
+   * MS fullscreen
+   */
+  document.addEventListener("MSFullscreenChange", () => {
+
+    if (isInRealFullscreen()) {
+
+      activateError();
+
+    } else {
+
+      deactivateError();
+
+    }
+
+  });
+
+
+  /*
+   * Log iframe fullscreen state
+   */
+  iframe.addEventListener("load", () => {
+
+    console.log(
+      "Iframe loaded:",
+      iframe.src
+    );
+
+  });
+
+</script>
+
+</body>
+</html>
