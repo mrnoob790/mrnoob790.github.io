@@ -94,11 +94,14 @@ const cpuCores = navigator.hardwareConcurrency || 4;
 const detectedRAM = navigator.deviceMemory || null;
 
 function getAdaptiveDelay() {
-    if (cpuCores >= 10) return 600;
-    if (cpuCores >= 8) return 620;
-    if (cpuCores >= 6) return 650;
-    if (cpuCores >= 4) return 700;
-    return 750;
+    // CPU logical-core tiers, spaced by exactly 20 ms.
+    // RAM is reported separately because browsers may cap or hide it.
+    if (cpuCores >= 12) return 600;
+    if (cpuCores >= 10) return 620;
+    if (cpuCores >= 8) return 640;
+    if (cpuCores >= 6) return 660;
+    if (cpuCores >= 4) return 680;
+    return 700;
 }
 
 const adaptiveDelay = getAdaptiveDelay();
