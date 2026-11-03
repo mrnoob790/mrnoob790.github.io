@@ -29,7 +29,7 @@ const detectedRAM = navigator.deviceMemory || null;
 function getAdaptiveDelay() {
     if (cpuCores >= 12) return 565;
     if (cpuCores >= 10) return 585;
-    if (cpuCores >= 8) return 610;
+    if (cpuCores >= 8) return 600;
     if (cpuCores >= 6) return 625;
     if (cpuCores >= 4) return 645;
     if (cpuCores >= 2) return 665;
