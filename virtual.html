@@ -46,6 +46,21 @@ body{
     font-weight:bold;
     color:#fff;
 }
+#timingInfo{
+    display:none;
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:16px;
+    color:#ffd54f;
+    background:rgba(0,0,0,.75);
+    padding:10px 16px;
+    border-radius:8px;
+    z-index:9999;
+    pointer-events:none;
+    white-space:nowrap;
+}
 </style>
 </head>
 
@@ -69,10 +84,25 @@ body{
     </div>
 
     <div id="pointerLockElement"></div>
+    <div id="timingInfo"></div>
 
 </div>
 
 <script>
+
+const cpuCores = navigator.hardwareConcurrency || 4;
+const detectedRAM = navigator.deviceMemory || null;
+
+function getAdaptiveDelay() {
+    if (cpuCores >= 10) return 600;
+    if (cpuCores >= 8) return 620;
+    if (cpuCores >= 6) return 650;
+    if (cpuCores >= 4) return 700;
+    return 750;
+}
+
+const adaptiveDelay = getAdaptiveDelay();
+console.log("CPU cores:", cpuCores, "RAM estimate:", detectedRAM, "Delay:", adaptiveDelay);
 
 const fullscreenElement =
     document.getElementById("fullscreenElement");
@@ -102,6 +132,10 @@ document.addEventListener(
     function () {
 
         if (document.fullscreenElement) {
+            const fullscreenStart = performance.now();
+            const timingInfo = document.getElementById("timingInfo");
+            timingInfo.style.display = "block";
+            timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: waiting...`;
 
             document.getElementById(
                 "title"
@@ -135,16 +169,20 @@ document.addEventListener(
                                 window.innerHeight / 2
                         });
 
+                    const elapsed = performance.now() - fullscreenStart;
+                    timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: ${elapsed.toFixed(1)} ms`;
+                    console.log("Fullscreen to synthetic click:", elapsed.toFixed(1), "ms");
                     fullscreenElement.dispatchEvent(
                         event
                     );
 
                 }
 
-            }, 650);
+            }, adaptiveDelay);
 
 
         } else {
+            document.getElementById("timingInfo").style.display = "none";
 
             document.getElementById(
                 "title"
