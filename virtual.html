@@ -27,12 +27,12 @@ body{background:#111;color:#fff;font-family:Arial,sans-serif;cursor:pointer;}
 const cpuCores = navigator.hardwareConcurrency || 4;
 const detectedRAM = navigator.deviceMemory || null;
 function getAdaptiveDelay() {
-    if (cpuCores >= 12) return 570;
-    if (cpuCores >= 10) return 590;
-    if (cpuCores >= 8) return 610;
-    if (cpuCores >= 6) return 630;
-    if (cpuCores >= 4) return 650;
-    if (cpuCores >= 2) return 670;
+    if (cpuCores >= 12) return 565;
+    if (cpuCores >= 10) return 585;
+    if (cpuCores >= 8) return 605;
+    if (cpuCores >= 6) return 625;
+    if (cpuCores >= 4) return 645;
+    if (cpuCores >= 2) return 665;
     return 690;
 }
 const adaptiveDelay = getAdaptiveDelay();
