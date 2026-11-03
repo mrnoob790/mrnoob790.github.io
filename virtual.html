@@ -3,204 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Fullscreen Test</title>
-
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:#111;
-    color:#fff;
-    font-family:Arial, sans-serif;
-    cursor:pointer;
-}
-
-#fullscreenElement{
-    width:100vw;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    background:#111;
-}
-
-#title{
-    font-size:32px;
-    line-height:1.6;
-}
-
-#title span{
-    font-size:22px;
-    color:#ffd54f;
-}
-
-#fullscreenMessage{
-    display:none;
-    font-size:60px;
-    font-weight:bold;
-    color:#fff;
-}
-#timingInfo{
-    display:none;
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:16px;
-    color:#ffd54f;
-    background:rgba(0,0,0,.75);
-    padding:10px 16px;
-    border-radius:8px;
-    z-index:9999;
-    pointer-events:none;
-    white-space:nowrap;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:Arial,sans-serif;cursor:pointer;}
+#fullscreenElement{width:100vw;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;background:#111;}
+#title{font-size:32px;line-height:1.6;}
+#title span{font-size:22px;color:#ffd54f;}
+#fullscreenMessage{display:none;font-size:60px;font-weight:bold;color:#fff;}
+#timingInfo{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:16px;color:#ffd54f;background:rgba(0,0,0,.75);padding:10px 16px;border-radius:8px;z-index:9999;pointer-events:none;white-space:nowrap;}
 </style>
 </head>
-
 <body onclick="main()">
-
 <div id="fullscreenElement">
-
     <div>
-        <div id="title">
-            Click Anywhere to Enter Fullscreen
-            <br><br>
-
-            <span>
-                After the screen changes, rapidly double-click anywhere.
-            </span>
-        </div>
-
-        <div id="fullscreenMessage">
-            How are you?
-        </div>
+        <div id="title">Click Anywhere to Enter Fullscreen<br><br><span>After the screen changes, rapidly double-click anywhere.</span></div>
+        <div id="fullscreenMessage">How are you?</div>
     </div>
-
     <div id="pointerLockElement"></div>
     <div id="timingInfo"></div>
-
 </div>
-
 <script>
-
 const cpuCores = navigator.hardwareConcurrency || 4;
 const detectedRAM = navigator.deviceMemory || null;
-
 function getAdaptiveDelay() {
-    // CPU logical-core tiers, spaced by exactly 20 ms.
-    // RAM is reported separately because browsers may cap or hide it.
-    if (cpuCores >= 12) return 600;
-    if (cpuCores >= 10) return 620;
-    if (cpuCores >= 8) return 630;
-    if (cpuCores >= 6) return 650;
+    if (cpuCores >= 12) return 570;
+    if (cpuCores >= 10) return 590;
+    if (cpuCores >= 8) return 610;
+    if (cpuCores >= 6) return 630;
     if (cpuCores >= 4) return 650;
-    return 700;
+    if (cpuCores >= 2) return 670;
+    return 690;
 }
-
 const adaptiveDelay = getAdaptiveDelay();
 console.log("CPU cores:", cpuCores, "RAM estimate:", detectedRAM, "Delay:", adaptiveDelay);
-
-const fullscreenElement =
-    document.getElementById("fullscreenElement");
-
-const pointerLockElement =
-    document.getElementById("pointerLockElement");
-
-
+const fullscreenElement = document.getElementById("fullscreenElement");
+const pointerLockElement = document.getElementById("pointerLockElement");
 function main() {
-
-    /*
-    Original Pointer Lock
-    */
+    /* Original Pointer Lock */
     pointerLockElement.requestPointerLock();
-
-    fullscreenElement.appendChild(
-        pointerLockElement
-    );
-
+    fullscreenElement.appendChild(pointerLockElement);
     fullscreenElement.requestFullscreen();
-
 }
-
-
-document.addEventListener(
-    "fullscreenchange",
-    function () {
-
-        if (document.fullscreenElement) {
-            const fullscreenStart = performance.now();
-            const timingInfo = document.getElementById("timingInfo");
-            timingInfo.style.display = "block";
-            timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: waiting...`;
-
-            document.getElementById(
-                "title"
-            ).style.display = "none";
-
-            document.getElementById(
-                "fullscreenMessage"
-            ).style.display = "block";
-
-
-            /*
-            Fullscreen hone ke 600ms baad
-            automatically page par synthetic click event
-            */
-            setTimeout(() => {
-
-                if (
-                    document.fullscreenElement
-                ) {
-
-                    const event =
-                        new MouseEvent("click", {
-                            bubbles: true,
-                            cancelable: true,
-                            view: window,
-
-                            clientX:
-                                window.innerWidth / 2,
-
-                            clientY:
-                                window.innerHeight / 2
-                        });
-
-                    const elapsed = performance.now() - fullscreenStart;
-                    timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: ${elapsed.toFixed(1)} ms`;
-                    console.log("Fullscreen to synthetic click:", elapsed.toFixed(1), "ms");
-                    fullscreenElement.dispatchEvent(
-                        event
-                    );
-
-                }
-
-            }, adaptiveDelay);
-
-
-        } else {
-            document.getElementById("timingInfo").style.display = "none";
-
-            document.getElementById(
-                "title"
-            ).style.display = "block";
-
-            document.getElementById(
-                "fullscreenMessage"
-            ).style.display = "none";
-
-        }
-
+document.addEventListener("fullscreenchange", function () {
+    if (document.fullscreenElement) {
+        const fullscreenStart = performance.now();
+        const timingInfo = document.getElementById("timingInfo");
+        timingInfo.style.display = "block";
+        timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: waiting...`;
+        document.getElementById("title").style.display = "none";
+        document.getElementById("fullscreenMessage").style.display = "block";
+        /* Fullscreen ke adaptive delay baad synthetic click */
+        setTimeout(() => {
+            if (document.fullscreenElement) {
+                const event = new MouseEvent("click", {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2
+                });
+                const elapsed = performance.now() - fullscreenStart;
+                timingInfo.textContent = `Scheduled: ${adaptiveDelay} ms | Actual: ${elapsed.toFixed(1)} ms`;
+                console.log("Fullscreen to synthetic click:", elapsed.toFixed(1), "ms");
+                fullscreenElement.dispatchEvent(event);
+            }
+        }, adaptiveDelay);
+    } else {
+        document.getElementById("timingInfo").style.display = "none";
+        document.getElementById("title").style.display = "block";
+        document.getElementById("fullscreenMessage").style.display = "none";
     }
-);
-
+});
 </script>
-
 </body>
 </html>
