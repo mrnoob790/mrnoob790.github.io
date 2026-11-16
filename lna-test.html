@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dia LNA Security Test</title>
+</head>
+<body>
+<h2>Dia LNA Security Test</h2>
+<p id="status">Ready</p>
+<button id="normal">Test Normal WebSocket</button>
+<button id="opaque">Test Opaque Iframe</button>
+<pre id="log"></pre>
+
+<script>
+const log = msg => {
+  document.querySelector('#log').textContent +=
+    msg + '\n';
+};
+
+async function permission() {
+  try {
+    return (await navigator.permissions.query({
+      name: 'loopback-network'
+    })).state;
+  } catch (e) {
+    return 'unsupported: ' + e.name;
+  }
+}
+
+function testWS(label) {
+  log(label + ': Starting');
+  const ws = new WebSocket(
+    'ws://127.0.0.1:9999/ws'
+  );
+  ws.onopen = () => log(label + ': OPEN');
+  ws.onmessage = e =>
+    log(label + ': MESSAGE ' + e.data);
+  ws.onerror = () => log(label + ': ERROR');
+  ws.onclose = e =>
+    log(label + ': CLOSE ' + e.code);
+}
+
+document.querySelector('#normal').onclick =
+  async () => {
+    log('Permission: ' + await permission());
+    testWS('NORMAL');
+  };
+
+window.addEventListener('message', e => {
+  if (e.source !== document.querySelector(
+    '#testframe'
+  )?.contentWindow) return;
+  log('IFRAME: ' + JSON.stringify(e.data));
+});
+
+document.querySelector('#opaque').onclick =
+  async () => {
+    log('Permission: ' + await permission());
+    document.querySelector('#testframe')?.remove();
+
+    const f = document.createElement('iframe');
+    f.id = 'testframe';
+    f.sandbox = 'allow-scripts';
+    f.srcdoc = `
+      <script>
+      const send = data =>
+        parent.postMessage(data, '*');
+      send({
+        event: 'START',
+        origin: location.origin,
+        secure: isSecureContext
+      });
+      const ws = new WebSocket(
+        'ws://127.0.0.1:9999/ws'
+      );
+      ws.onopen = () =>
+        send({event:'OPEN'});
+      ws.onmessage = e =>
+        send({event:'MESSAGE', data:e.data});
+      ws.onerror = () =>
+        send({event:'ERROR'});
+      ws.onclose = e =>
+        send({event:'CLOSE', code:e.code});
+      <\/script>`;
+    document.body.appendChild(f);
+  };
+</script>
+</body>
+</html>
