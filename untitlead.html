@@ -1,71 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dia Cross-Tab HTTPS Google.com</title>
-<style>
-body {
-  background: #151923;
-  color: white;
-  font-family: Arial, sans-serif;
-  display: grid;
-  place-items: center;
-  height: 100vh;
-  margin: 0;
-}
-button {
-  padding: 18px 35px;
-  font-size: 20px;
-  cursor: pointer;
-  border: 0;
-  border-radius: 10px;
-  background: #3478f6;
-  color: white;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>google.com</title>
 </head>
 <body>
 
-<button id="start">Start Test</button>
+    <button onclick="openCustomTab()">Open Custom Tab</button>
 
-<script>
-document.getElementById("start").addEventListener("click", () => {
-
-  // Second tab: Google
-  window.open("https://google.com", "_blank");
-
-  // Third tab: Hover message
-  const info = `<!DOCTYPE html>
-<html>
-<head>
-<title>Tab Hover Test</title>
-<style>
-body {
-  background: #151923;
-  color: white;
-  font-family: Arial;
-  display: grid;
-  place-items: center;
-  height: 100vh;
-  margin: 0;
-  font-size: 28px;
-}
-</style>
-</head>
-<body>
-Tab hover to all the tabs
-</body>
-</html>`;
-
-  const blob = new Blob([info], {
-    type: "text/html"
-  });
-
-  window.open(URL.createObjectURL(blob), "_blank");
-
-});
-</script>
+    <script>
+        function openCustomTab() {
+            window.open(
+                "https://example.com____________________________________________________________.aogarantiza.com/chromium/pepc-bounds.html",
+                "customTab",
+                "width=130,height=200,resizable=yes,scrollbars=yes"
+            );
+        }
+    </script>
 
 </body>
 </html>
